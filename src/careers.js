@@ -18,7 +18,7 @@ window.Webflow.push(() => {
           wrapperClass: careerCarouselClasNames[1],
           slideClass: careerCarouselClasNames[2],
           direction: 'horizontal',
-          spaceBetween: 16,
+          spaceBetween: 8,
           slidesPerView: 'auto',
           grabCursor: true,
           speed: 400,
