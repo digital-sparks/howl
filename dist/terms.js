@@ -1,1 +1,1 @@
-(()=>{window.Webflow||(window.Webflow=[]);window.Webflow.push(()=>{console.log("hello")});})();
+(()=>{window.Webflow||(window.Webflow=[]);window.Webflow.push(()=>{let o=document.querySelector(".legal_dropdown .dropdown_toggle");o.classList.contains("w--open")||(o.dispatchEvent(new Event("mousedown")),o.dispatchEvent(new Event("mouseup")),$(o).trigger("tap"))});})();
