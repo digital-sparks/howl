@@ -1,1 +1,16 @@
-(()=>{window.Webflow||(window.Webflow=[]);window.Webflow.push(()=>{let o=document.querySelector(".legal_dropdown .dropdown_toggle");o.classList.contains("w--open")||(o.dispatchEvent(new Event("mousedown")),o.dispatchEvent(new Event("mouseup")),$(o).trigger("tap"))});})();
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/terms.js
+  window.Webflow ||= [];
+  window.Webflow.push(() => {
+    const firstDropdown = document.querySelector(".legal_dropdown .dropdown_toggle");
+    if (!firstDropdown.classList.contains("w--open")) {
+      firstDropdown.dispatchEvent(new Event("mousedown"));
+      firstDropdown.dispatchEvent(new Event("mouseup"));
+      $(firstDropdown).trigger("tap");
+    }
+  });
+})();
+//# sourceMappingURL=terms.js.map
