@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../bin/live-reload.js", "../src/terms.js"],
-  "sourcesContent": ["new EventSource(`${SERVE_ORIGIN}/esbuild`).addEventListener('change', () => location.reload());\n", "window.Webflow ||= [];\nwindow.Webflow.push(() => {\n  const firstDropdown = document.querySelector('.legal_dropdown .dropdown_toggle');\n\n  if (!firstDropdown.classList.contains('w--open')) {\n    firstDropdown.dispatchEvent(new Event('mousedown'));\n    firstDropdown.dispatchEvent(new Event('mouseup'));\n    $(firstDropdown).trigger('tap');\n  }\n});\n"],
-  "mappings": ";;AAAA,MAAI,YAAY,GAAG,uBAAY,UAAU,EAAE,iBAAiB,UAAU,MAAM,SAAS,OAAO,CAAC;;;ACA7F,SAAO,YAAY,CAAC;AACpB,SAAO,QAAQ,KAAK,MAAM;AACxB,UAAM,gBAAgB,SAAS,cAAc,kCAAkC;AAE/E,QAAI,CAAC,cAAc,UAAU,SAAS,SAAS,GAAG;AAChD,oBAAc,cAAc,IAAI,MAAM,WAAW,CAAC;AAClD,oBAAc,cAAc,IAAI,MAAM,SAAS,CAAC;AAChD,QAAE,aAAa,EAAE,QAAQ,KAAK;AAAA,IAChC;AAAA,EACF,CAAC;",
+  "sourcesContent": ["new EventSource(`${SERVE_ORIGIN}/esbuild`).addEventListener('change', () => location.reload());\n", "window.Webflow ||= [];\nwindow.Webflow.push(() => {\n  /*\n  const firstDropdown = document.querySelector('.legal_dropdown .dropdown_toggle');\n\n  if (!firstDropdown.classList.contains('w--open')) {\n    firstDropdown.dispatchEvent(new Event('mousedown'));\n    firstDropdown.dispatchEvent(new Event('mouseup'));\n    $(firstDropdown).trigger('tap');\n  }\n  */\n});\n"],
+  "mappings": ";;AAAA,MAAI,YAAY,GAAG,uBAAY,UAAU,EAAE,iBAAiB,UAAU,MAAM,SAAS,OAAO,CAAC;;;ACA7F,SAAO,YAAY,CAAC;AACpB,SAAO,QAAQ,KAAK,MAAM;AAAA,EAU1B,CAAC;",
   "names": []
 }
