@@ -1,1 +1,4 @@
-(()=>{window.Webflow||(window.Webflow=[]);window.Webflow.push(()=>{});})();
+(() => {
+  window.Webflow || (window.Webflow = []);
+  window.Webflow.push(() => {});
+})();
