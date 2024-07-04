@@ -3,6 +3,9 @@ logs
 *.log
 npm-debug.log*
 
+# Credentials
+.npmrc
+
 # Dependency directories
 node_modules/
 

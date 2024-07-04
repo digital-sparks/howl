@@ -1,17 +1,8 @@
 import Swiper from 'swiper';
 import { Keyboard, Mousewheel } from 'swiper/modules';
-// import gsap from 'gsap';
-// import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-// bin/live-reload.js
-new EventSource(`${'http://localhost:3000'}/esbuild`).addEventListener('change', () =>
-  location.reload()
-);
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  console.log('hello');
-
   // ————— Testimonials Swiper ————— //
   testimonialsCarousel = new Swiper(`.testimonials_swiper-wrapper`, {
     modules: [Keyboard, Mousewheel],
@@ -22,9 +13,15 @@ window.Webflow.push(() => {
     slidesPerView: 'auto',
     grabCursor: true,
     speed: 400,
+    autoHeight: true,
     keyboard: {
       enabled: true,
       onlyInViewport: true,
+    },
+    breakpoints: {
+      768: {
+        autoHeight: false,
+      },
     },
     mousewheel: {
       enabled: true,
