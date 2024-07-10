@@ -35,6 +35,36 @@ window.Webflow.push(() => {
   }
   // ————— Vimeo Videos ————— //
 
+  // ————— Arrow Up and Down Movement ————— //
+  gsap.to('.arrow_component', {
+    y: '1rem',
+    duration: 1,
+    yoyo: true,
+    repeat: -1,
+    ease: 'power1.inOut',
+  });
+  // ————— Arrow Up and Down Movement ————— //
+
+  // ————— Title Links on Hover ————— //
+  $('.text-link').hover(
+    function () {
+      // On hover
+      gsap.to($(this).find('.text-link-icon'), {
+        x: '150%',
+        y: '-100%',
+        duration: 0.3,
+        onComplete: function () {
+          gsap.set(this.targets(), { x: 0, y: 0 });
+        },
+      });
+    },
+    function () {
+      // On hover out
+      gsap.set($(this).find('.text-link-icon'), { x: 0, y: 0 });
+    }
+  );
+  // ————— Title Links on Hover ————— //
+
   // —————  Hero Marquee ————— //
 
   document.querySelectorAll('[marquee=component]').forEach((marqueeEl) => {
