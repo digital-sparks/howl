@@ -35,6 +35,109 @@ window.Webflow.push(() => {
   }
   // ————— Vimeo Videos ————— //
 
+  // ————— Buttons ————— //
+
+  const buttons = document.querySelectorAll('.button');
+
+  buttons.forEach((button, i) => {
+    if (button.querySelector('.button-text.is-pre')) {
+      const buttonTextFirst = new SplitType(button.querySelector('.button-text.is-pre'), {
+        types: 'chars',
+        tagName: 'span',
+      });
+      const buttonTextSecond = new SplitType(button.querySelector('.button-text.is-post'), {
+        types: 'chars',
+        tagName: 'span',
+      });
+
+      button.addEventListener('mouseenter', () => {
+        gsap.fromTo(
+          buttonTextFirst.elements,
+          {
+            yPercent: 0,
+          },
+          {
+            yPercent: -300,
+            duration: 0.4,
+          }
+        );
+        gsap.to(buttonTextSecond.elements, {
+          yPercent: -300,
+          duration: 0.4,
+        });
+        gsap.fromTo(
+          buttonTextSecond.chars,
+          {
+            yPercent: 50,
+            rotationZ: 10,
+          },
+          {
+            yPercent: 0,
+            rotationZ: 0,
+            stagger: { amount: 0.3 },
+            duration: 0.5,
+          }
+        );
+      });
+
+      button.addEventListener('mouseleave', () => {
+        gsap.to(buttonTextFirst.elements, {
+          yPercent: 0,
+          duration: 0.35,
+        });
+        gsap.to(buttonTextSecond.elements, {
+          yPercent: 0,
+          duration: 0.35,
+        });
+        gsap.fromTo(
+          buttonTextFirst.chars,
+          {
+            yPercent: -50,
+            rotationZ: -10,
+          },
+          {
+            yPercent: 0,
+            rotationZ: 0,
+            stagger: { amount: 0.3 },
+            duration: 0.5,
+          }
+        );
+      });
+    }
+  });
+  // ————— Buttons ————— //
+
+  // ————— Footer Links on Hover ————— //
+  const footerLinks = document.querySelectorAll('.footer_link');
+
+  footerLinks.forEach((footerLink, i) => {
+    new SplitType(footerLink.querySelector('div'), { types: 'chars', tagName: 'span' });
+
+    $(footerLink).hover(
+      () => {
+        gsap.to(footerLink.querySelectorAll('div .char'), {
+          yPercent: function (a, b, c) {
+            return -0.4 * a * a;
+          },
+          rotateZ: function (a, b, c) {
+            return -1.9 * a;
+          },
+          duration: 0.5,
+          ease: 'back.out',
+        });
+      },
+      () => {
+        gsap.to(footerLink.querySelectorAll('div .char'), {
+          yPercent: 0,
+          rotateZ: 0,
+          duration: 0.6,
+          ease: 'back.out',
+        });
+      }
+    );
+  });
+  // ————— Footer Links on Hover ————— //
+
   // ————— Arrow Up and Down Movement ————— //
   gsap.to('.arrow_component', {
     y: '1rem',
@@ -45,7 +148,7 @@ window.Webflow.push(() => {
   });
   // ————— Arrow Up and Down Movement ————— //
 
-  // ————— Title Links on Hover ————— //
+  // ————— Text Links on Hover ————— //
   $('.text-link').hover(
     function () {
       // On hover
@@ -63,7 +166,7 @@ window.Webflow.push(() => {
       gsap.set($(this).find('.text-link-icon'), { x: 0, y: 0 });
     }
   );
-  // ————— Title Links on Hover ————— //
+  // ————— Text Links on Hover ————— //
 
   // —————  Hero Marquee ————— //
 

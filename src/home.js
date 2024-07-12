@@ -1,14 +1,13 @@
 import Swiper from 'swiper';
 import { Keyboard, Mousewheel, Autoplay } from 'swiper/modules';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+//import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('hello');
 
   // ————— Hero Animation ————— //
-
   const duration = 1.25;
   const delay = 0.5;
   const onceEvery = 3;
@@ -67,7 +66,6 @@ window.Webflow.push(() => {
   });
 
   heroShowHideTl.play();
-
   // ————— Hero Animation ————— //
 
   // ————— Hero Notifications ————— //
@@ -149,4 +147,18 @@ window.Webflow.push(() => {
     },
   });
   // ————— Creator Spotlight Swiper ————— //
+
+  // ————— Creators Wanted Text ————— //
+  const marquee = $('.creators_bg-text-marquee');
+
+  gsap.to(marquee, {
+    y: `-100%`,
+    duration: 20, // Adjust the duration as needed
+    ease: 'linear',
+    repeat: -1,
+    onRepeat: function () {
+      gsap.set(marquee, { y: 0 }); // Reset to the starting position
+    },
+  });
+  // ————— Creators Wanted Text ————— //
 });
