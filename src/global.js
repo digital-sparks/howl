@@ -67,9 +67,16 @@ window.Webflow.push(() => {
   // });
   // ————— Footer Links on Hover ————— //
   function initFooterHover() {
+    const footerLinks = document.querySelector('.footer_links');
+    if (!footerLinks) return;
+
     const footerHover = document.querySelector('.footer_hover');
-    gsap.set(footerHover, { opacity: 0 });
+    if (!footerHover) return;
+
     const hoverableElements = document.querySelectorAll('.footer_link, .social-link');
+    if (hoverableElements.length === 0) return;
+
+    gsap.set(footerHover, { opacity: 0 });
     let isVisible = false;
 
     function applyHoverEffects() {
@@ -123,33 +130,42 @@ window.Webflow.push(() => {
         });
       });
 
-      document.querySelector('.footer_links').addEventListener('mouseleave', () => {
+      footerLinks.addEventListener('mouseleave', () => {
         isVisible = false;
       });
     }
 
+    function removeHoverEffects() {
+      hoverableElements.forEach((element) => {
+        element.removeEventListener('mouseenter', null);
+        element.removeEventListener('mouseleave', null);
+        element.removeEventListener('mousedown', null);
+        element.removeEventListener('mouseup', null);
+      });
+      footerLinks.removeEventListener('mouseleave', null);
+    }
+
     function handleResize() {
       if (window.matchMedia('(min-width: 992px)').matches) {
+        removeHoverEffects();
         applyHoverEffects();
       } else {
-        // Remove event listeners if screen width is less than 992px
-        hoverableElements.forEach((element) => {
-          element.removeEventListener('mouseenter', null);
-          element.removeEventListener('mouseleave', null);
-          element.removeEventListener('mousedown', null);
-          element.removeEventListener('mouseup', null);
-        });
-        document.querySelector('.footer_links').removeEventListener('mouseleave', null);
+        removeHoverEffects();
       }
     }
 
-    // Initial check on load
+    // Initial application of hover effects
     handleResize();
 
     // Listen for window resize events
     window.addEventListener('resize', handleResize);
   }
-  initFooterHover();
+
+  // Only run initFooterHover if .footer_links exists
+  if (document.querySelector('.footer_links')) {
+    initFooterHover();
+  }
+
   // ————— Footer Links on Hover ————— //
 
   // ————— Arrow Up and Down Movement ————— //
@@ -660,6 +676,7 @@ window.Webflow.push(() => {
     const nav = document.querySelector('.nav_menu');
     const scrollThreshold = 50;
     let accumulatedScrollDown = 0;
+    let scrollTriggerInstance;
 
     // Set initial state
     gsap.set(nav, { yPercent: 0, opacity: 1 });
@@ -668,41 +685,62 @@ window.Webflow.push(() => {
     const tl = gsap.timeline({ paused: true });
     tl.to(nav, { yPercent: 25, opacity: 0, duration: 0.2, ease: 'power1.inOut' });
 
-    // Create ScrollTrigger
-    ScrollTrigger.create({
-      start: 0,
-      end: 'max',
-      onUpdate: (self) => {
-        const st = self.scroll();
-        const maxScroll = self.end - self.start - self.scroll();
+    function createScrollTrigger() {
+      // Kill existing ScrollTrigger if it exists
+      if (scrollTriggerInstance) {
+        scrollTriggerInstance.kill();
+      }
 
-        // Check if at the bottom of the page
-        if (maxScroll <= 1) {
-          isAtBottom = true;
-          tl.reverse();
-        } else {
-          isAtBottom = false;
-        }
+      // Create new ScrollTrigger
+      scrollTriggerInstance = ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: (self) => {
+          const st = self.scroll();
+          const maxScroll = self.end - self.start - self.scroll();
 
-        // Calculate scroll difference
-        const scrollDiff = st - lastScrollTop;
-
-        if (scrollDiff > 0 && !isAtBottom) {
-          // Scrolling down
-          accumulatedScrollDown += scrollDiff;
-          if (accumulatedScrollDown > scrollThreshold) {
-            tl.play();
-            accumulatedScrollDown = 0; // Reset accumulated scroll
+          // Check if at the bottom of the page
+          if (maxScroll <= 1) {
+            isAtBottom = true;
+            tl.reverse();
+          } else {
+            isAtBottom = false;
           }
-        } else if (scrollDiff < 0 || isAtBottom) {
-          // Scrolling up or at the bottom
-          accumulatedScrollDown = 0; // Reset accumulated scroll
-          tl.reverse();
-        }
 
-        lastScrollTop = st;
-      },
-    });
+          // Calculate scroll difference
+          const scrollDiff = st - lastScrollTop;
+
+          if (scrollDiff > 0 && !isAtBottom) {
+            // Scrolling down
+            accumulatedScrollDown += scrollDiff;
+            if (accumulatedScrollDown > scrollThreshold) {
+              tl.play();
+              accumulatedScrollDown = 0; // Reset accumulated scroll
+            }
+          } else if (scrollDiff < 0 || isAtBottom) {
+            // Scrolling up or at the bottom
+            accumulatedScrollDown = 0; // Reset accumulated scroll
+            tl.reverse();
+          }
+
+          lastScrollTop = st;
+        },
+      });
+    }
+
+    // Initial creation of ScrollTrigger
+    createScrollTrigger();
+
+    // Recreate ScrollTrigger on window resize
+    window.addEventListener('resize', createScrollTrigger);
+
+    // Return a cleanup function
+    return () => {
+      if (scrollTriggerInstance) {
+        scrollTriggerInstance.kill();
+      }
+      window.removeEventListener('resize', createScrollTrigger);
+    };
   }
 
   // Use GSAP matchMedia for responsive behavior
@@ -710,12 +748,11 @@ window.Webflow.push(() => {
 
   mm.add('(min-width: 768px)', () => {
     // This code will run when the viewport is 768px or wider
-    setupStickyNavAnimation();
+    const cleanup = setupStickyNavAnimation();
 
     return () => {
       // This optional return function will run when the viewport becomes narrower than 768px
-      // You can add cleanup code here if needed
-      ScrollTrigger.getAll().forEach((st) => st.kill());
+      cleanup();
     };
   });
 
@@ -898,7 +935,7 @@ window.Webflow.push(() => {
   const buttons = document.querySelectorAll('.button');
 
   buttons.forEach((button) => {
-    const isHuge = button.classList.contains('is-huge'),
+    const isHuge = button.classList.contains('is-huge') || button.classList.contains('is-graphic'),
       letterSpacing =
         gsap.getProperty(button, 'letterSpacing') / gsap.getProperty(button, 'font-size'),
       buttonText = button.querySelector('.button-text');

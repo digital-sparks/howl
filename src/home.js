@@ -179,20 +179,30 @@ window.Webflow.push(() => {
   // ————— Creators Wanted Text ————— //
 
   let direction = 1; // 1 = downward, -1 = upward
+  let roll1;
+  let originalElement, cloneElement;
 
-  const roll1 = roll('.creators_bg-text-marquee', { duration: 15 });
+  function initRoll() {
+    // Kill previous animation if it exists
+    if (roll1) {
+      roll1.kill();
+    }
 
-  const scroll = ScrollTrigger.create({
-    onUpdate(self) {
-      if (self.direction !== direction) {
-        direction *= -1;
-        gsap.to(roll1, { timeScale: direction, overwrite: true });
-      }
-    },
-  });
+    roll1 = roll('.creators_bg-text-marquee', { duration: 15 });
 
-  // helper function that clones the targets, places them next to the original,
-  // then animates the yPercent in a loop to make it appear to roll across the screen in a seamless loop.
+    const scroll = ScrollTrigger.create({
+      onUpdate(self) {
+        if (self.direction !== direction) {
+          direction *= -1;
+          gsap.to(roll1, { timeScale: direction, overwrite: true });
+        }
+      },
+    });
+
+    // Start the animation
+    roll1.play();
+  }
+
   function roll(target, vars) {
     const tl = gsap.timeline({
       repeat: -1,
@@ -204,23 +214,49 @@ window.Webflow.push(() => {
     vars = vars || {};
     vars.ease || (vars.ease = 'none');
 
-    const el = document.querySelector(target);
-    let clone = el.cloneNode(true);
-    el.parentNode.appendChild(clone);
+    originalElement = document.querySelector(target);
+    cloneElement = originalElement.cloneNode(true);
+    originalElement.parentNode.appendChild(cloneElement);
 
-    gsap.set(clone, {
-      position: 'absolute',
-      top: el.offsetTop + el.offsetHeight,
-      left: el.offsetLeft,
-    });
+    updateElementPositions();
 
-    tl.to([el, clone], { yPercent: -100, ...vars }, 0);
+    tl.to([originalElement, cloneElement], { yPercent: -100, ...vars }, 0);
 
     return tl;
   }
 
-  // Start the animation
-  roll1.play();
+  function updateElementPositions() {
+    gsap.set(cloneElement, {
+      position: 'absolute',
+      top: originalElement.offsetTop + originalElement.offsetHeight,
+      left: originalElement.offsetLeft,
+    });
+  }
+
+  // Initialize the roll
+  initRoll();
+
+  // Add resize event listener
+  window.addEventListener(
+    'resize',
+    debounce(() => {
+      updateElementPositions();
+      roll1.restart();
+    }, 5)
+  );
+
+  // Debounce function to limit how often the resize function is called
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
 
   // ————— Creators Wanted Text ————— //
 
