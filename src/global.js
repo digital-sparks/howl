@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrambleTextPlugin, SplitText, ScrollTrigger, Draggable, Ine
 window.Webflow ||= [];
 window.Webflow.push(() => {
   // ————— Vimeo Videos ————— //
-  const vimeoReady = setInterval(function () {
+  const vimeoReady = setInterval(() => {
     if (window.Vimeo && window.Vimeo.Player) {
       clearInterval(vimeoReady);
       loadVideos();
@@ -40,7 +40,7 @@ window.Webflow.push(() => {
   // const footerLinks = document.querySelectorAll('.footer_link');
 
   // footerLinks.forEach((footerLink, i) => {
-  //   new SplitType(footerLink.querySelector('div'), { types: 'chars', tagName: 'span' });
+  //   new SplitText(footerLink.querySelector('div'), { types: 'chars', tagName: 'span' });
 
   //   $(footerLink).hover(
   //     () => {
@@ -586,8 +586,8 @@ window.Webflow.push(() => {
 
   // Loop through each '.dit-148pt' element
   textElements.forEach((textElement) => {
-    // Split the text into characters using SplitType
-    const splitText = new SplitType(textElement, { types: ['lines', 'words', 'chars'] });
+    // Split the text into characters using SplitText
+    const splitText = new SplitText(textElement, { types: ['lines', 'words', 'chars'] });
 
     // Add CSS to prevent words from breaking
     splitText.words.forEach((word) => {
