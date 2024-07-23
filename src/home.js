@@ -1,108 +1,135 @@
 import Swiper from 'swiper';
-import { Keyboard, Mousewheel, Autoplay } from 'swiper/modules';
+import { Keyboard, Mousewheel, Autoplay, Parallax } from 'swiper/modules';
 import gsap from 'gsap';
-//import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+import { SplitText } from 'gsap/SplitText';
+import { CustomEase } from 'gsap/CustomEase';
+
+gsap.registerPlugin(ScrambleTextPlugin, SplitText, ScrollTrigger, CustomEase);
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  console.log('hello');
+  function heroAnimation() {
+    // ————— Hero Animation ————— //
+    const duration = 1.1,
+      delay = 1.5,
+      onceEvery = 2,
+      customEase = 'power2.inOut',
+      largeDelay = delay * (onceEvery + 1) + duration * onceEvery;
+    console.log(largeDelay);
 
-  // ————— Hero Animation ————— //
-  const duration = 1.25;
-  const delay = 0.5;
-  const onceEvery = 3;
-
-  // Rotations
-
-  gsap.to('.home-hero_logo', {
-    rotationY: -360,
-    duration: duration,
-    repeat: -1,
-    delay: delay,
-    repeatDelay: delay,
-    ease: 'none',
-  });
-
-  const largeDelay = delay * (onceEvery + 1) + duration * onceEvery;
-
-  gsap.to('.home-hero_tags-item, .home-hero_heading-span', {
-    rotationY: -360,
-    duration: duration,
-    repeat: -1,
-    delay: largeDelay,
-    repeatDelay: largeDelay,
-    ease: 'none',
-  });
-
-  // Hide/Show
-
-  const logoItems = $('.home-hero_logo');
-  const bgItems = $('.home-hero_span-item');
-  const tagItems = $('.home-hero_tags-item');
-  const totalItems = logoItems.length;
-
-  logoItems.hide().first().show();
-  bgItems.hide().first().show();
-  tagItems.hide().first().show();
-
-  const showDelay = delay * (onceEvery + 1) + duration * (onceEvery + 0.25);
-
-  let heroShowHideTl = gsap.timeline({ repeat: -1, repeatDelay: 0.75 * duration });
-
-  logoItems.each(function (index) {
-    heroShowHideTl.to(logoItems, {
-      duration: 0,
-      autoAlpha: 1,
-      delay: index === 0 ? showDelay : showDelay + duration * 0.75,
-      onComplete: function () {
-        logoItems.eq(index).hide();
-        logoItems.eq((index + 1) % totalItems).show();
-        bgItems.eq(index).hide();
-        bgItems.eq((index + 1) % totalItems).show();
-        tagItems.eq(index).hide();
-        tagItems.eq((index + 1) % totalItems).show();
-      },
+    // Rotations
+    gsap.to('.home-hero_logo', {
+      rotationY: -360,
+      duration: duration,
+      repeat: -1,
+      delay: delay,
+      repeatDelay: delay,
+      ease: customEase,
     });
-  });
 
-  heroShowHideTl.play();
+    // Hide/Show
+    const logoItems = document.querySelectorAll('.home-hero_logo');
+    const bgItems = document.querySelectorAll('.home-hero_span-item');
+    const tagItems = document.querySelectorAll('.home-hero_tags-item');
+    const videoItems = document.querySelectorAll('.home-hero_video-item');
+    const totalItems = logoItems.length;
+    let index = 0;
+
+    gsap.set([logoItems, bgItems, tagItems, videoItems], { display: 'none' });
+    gsap.set([logoItems[0], bgItems[0], tagItems[0], videoItems[0]], { display: 'block' });
+    gsap.set(videoItems, { autoAlpha: 0 });
+    gsap.set(videoItems[0], { autoAlpha: 1 });
+
+    //.home-hero_tags-item,
+    const rotationAnimation = gsap.to('.home-hero_heading-span, .home-hero_tags-item', {
+      rotationY: -360,
+      duration: duration,
+      repeat: -1,
+      delay: largeDelay,
+      repeatDelay: largeDelay,
+      ease: customEase,
+      onUpdate: checkRotation,
+      onRepeat: resetIndex,
+    });
+
+    let hasReached270 = false;
+
+    function checkRotation() {
+      const currentRotation = gsap.getProperty('.home-hero_heading-span', 'rotationY');
+      if (currentRotation <= -270 && !hasReached270) {
+        switchLogo();
+        hasReached270 = true;
+      }
+    }
+
+    function resetIndex() {
+      hasReached270 = false;
+    }
+
+    function switchLogo() {
+      gsap.set([logoItems[index], bgItems[index], tagItems[index]], { display: 'none' });
+      gsap.to(videoItems[index], {
+        autoAlpha: 0,
+        duration: 0.5,
+        onComplete: function () {
+          gsap.set(this.targets(), { display: 'none' });
+        },
+      });
+
+      gsap.set(
+        [
+          logoItems[(index + 1) % totalItems],
+          bgItems[(index + 1) % totalItems],
+          tagItems[(index + 1) % totalItems],
+          videoItems[(index + 1) % totalItems],
+        ],
+        {
+          display: 'block',
+        }
+      );
+      gsap.to(videoItems[(index + 1) % totalItems], {
+        autoAlpha: 1,
+        duration: 0.5,
+      });
+
+      index = (index + 1) % totalItems;
+    }
+  }
+  heroAnimation();
   // ————— Hero Animation ————— //
 
   // ————— Hero Notifications ————— //
-  const notifications = $('.home-hero_notification');
-  const notificationHeight = notifications.outerHeight(true);
+  const notificationsWrap = document.querySelector('.home-hero_notifications-wrap');
+  const notifications = notificationsWrap.querySelectorAll('.home-hero_notification');
+  const notificationHeight = notifications[0].offsetHeight;
 
-  const firstNotification = $('.home-hero_notification').first();
-  const clonedNotification = firstNotification.clone();
-  $('.home-hero_notifications-wrap').append(clonedNotification);
+  // Clone the first notification and append it to the end
+  notificationsWrap.appendChild(notifications[0].cloneNode(true));
 
-  let heroNotificationsTl = gsap.timeline({ repeat: -1 });
+  let heroNotificationsTl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
 
-  notifications.each(function (index) {
-    heroNotificationsTl.to(
-      $('.home-hero_notification'),
-      {
-        y: `-=${notificationHeight}px`,
-        duration: 0.5,
-        ease: 'power1.inOut',
-        delay: index === 0 ? 2.5 : 3,
-      },
-      index * 3
-    );
+  notifications.forEach((notification, index) => {
+    heroNotificationsTl.to(document.querySelectorAll('.home-hero_notification'), {
+      y: `-=${notificationHeight}px`,
+      duration: 0.8,
+      ease: 'slow(0.7,0.7,false)',
+      delay: index === 0 ? 1 : 3,
+    });
   });
-
-  heroNotificationsTl.to(notifications, { y: 0, duration: 0 });
   // ————— Hero Notifications ————— //
 
   // ————— Updates - New on Howl Swiper ————— //
   updatesCarousel = new Swiper(`.new_swiper-wrapper`, {
-    modules: [Keyboard, Mousewheel],
+    modules: [Keyboard, Mousewheel, Parallax],
     wrapperClass: 'new_swiper-list',
     slideClass: 'new_swiper-item',
     direction: 'horizontal',
     spaceBetween: 24,
     slidesPerView: 'auto',
     grabCursor: true,
+    parallax: true,
     speed: 400,
     keyboard: {
       enabled: true,
@@ -114,8 +141,8 @@ window.Webflow.push(() => {
       releaseOnEdges: true,
     },
     on: {
-      beforeInit: function () {
-        $(this.wrapperEl).css('grid-column-gap', 'unset');
+      beforeInit: (swiper) => {
+        swiper.wrapperEl.style.gridColumnGap = 'unset';
       },
     },
   });
@@ -123,10 +150,11 @@ window.Webflow.push(() => {
 
   // ————— Creator Spotlight Swiper ————— //
   spotlightCarousel = new Swiper(`.spotlight_swiper-wrapper`, {
-    modules: [Keyboard, Mousewheel],
+    modules: [Keyboard, Mousewheel, Parallax],
     wrapperClass: 'spotlight_swiper-list',
     slideClass: 'spotlight_swiper-item',
     direction: 'horizontal',
+    parallax: true,
     spaceBetween: 24,
     slidesPerView: 'auto',
     grabCursor: true,
@@ -141,24 +169,191 @@ window.Webflow.push(() => {
       releaseOnEdges: true,
     },
     on: {
-      beforeInit: function () {
-        $(this.wrapperEl).css('grid-column-gap', 'unset');
+      beforeInit: (swiper) => {
+        swiper.wrapperEl.style.gridColumnGap = 'unset';
       },
     },
   });
   // ————— Creator Spotlight Swiper ————— //
 
   // ————— Creators Wanted Text ————— //
-  const marquee = $('.creators_bg-text-marquee');
 
-  gsap.to(marquee, {
-    y: `-100%`,
-    duration: 20, // Adjust the duration as needed
-    ease: 'linear',
-    repeat: -1,
-    onRepeat: function () {
-      gsap.set(marquee, { y: 0 }); // Reset to the starting position
+  let direction = 1; // 1 = downward, -1 = upward
+
+  const roll1 = roll('.creators_bg-text-marquee', { duration: 15 });
+
+  const scroll = ScrollTrigger.create({
+    onUpdate(self) {
+      if (self.direction !== direction) {
+        direction *= -1;
+        gsap.to(roll1, { timeScale: direction, overwrite: true });
+      }
     },
   });
+
+  // helper function that clones the targets, places them next to the original,
+  // then animates the yPercent in a loop to make it appear to roll across the screen in a seamless loop.
+  function roll(target, vars) {
+    const tl = gsap.timeline({
+      repeat: -1,
+      onReverseComplete() {
+        this.totalTime(this.rawTime() + this.duration() * 10);
+      },
+    });
+
+    vars = vars || {};
+    vars.ease || (vars.ease = 'none');
+
+    const el = document.querySelector(target);
+    let clone = el.cloneNode(true);
+    el.parentNode.appendChild(clone);
+
+    gsap.set(clone, {
+      position: 'absolute',
+      top: el.offsetTop + el.offsetHeight,
+      left: el.offsetLeft,
+    });
+
+    tl.to([el, clone], { yPercent: -100, ...vars }, 0);
+
+    return tl;
+  }
+
+  // Start the animation
+  roll1.play();
+
   // ————— Creators Wanted Text ————— //
+
+  const images = gsap.utils.toArray('.creators_gif-wrap img');
+  const totalImages = images.length;
+  const intervalDuration = 0.25;
+  let currentIndex = 0;
+
+  // Hide all images except the first one
+  gsap.set(images.slice(1), { autoAlpha: 0 });
+
+  function showNextImage() {
+    gsap.to(images[currentIndex], { autoAlpha: 0, delay: intervalDuration, duration: 0 });
+    currentIndex++;
+
+    if (currentIndex >= totalImages) {
+      // Reset to start when all images have been shown
+      currentIndex = 0;
+      // gsap.set(images, { autoAlpha: 0 });
+    }
+
+    gsap.to(images[currentIndex], {
+      autoAlpha: 1,
+      delay: intervalDuration,
+      duration: 0,
+      onComplete: showNextImage,
+    });
+  }
+
+  // Start the animation
+  showNextImage();
+
+  // document.querySelectorAll('.new_component, .spotlight_component').forEach((instance) => {
+  //   gsap.from(instance.querySelectorAll('.w-dyn-item'), {
+  //     scrollTrigger: {
+  //       trigger: instance.querySelector('.w-dyn-list'),
+  //       start: 'center bottom',
+  //       markers: true,
+  //     },
+  //     opacity: 0,
+  //     duration: 0.6,
+  //     // scale: 0.95,
+  //     x: '2rem',
+  //     // y: '.25rem',
+  //     transformOrigin: 'left top',
+  //     stagger: 0.025,
+  //     ease: 'power2.out',
+  //   });
+  // });
+
+  gsap.to('.spotlight_f1-brand-logo, .new_f3-logo', {
+    rotationY: -360,
+    duration: 1.1,
+    repeat: -1,
+    delay: 1.5,
+    repeatDelay: 2.5,
+    ease: 'power2.inOut',
+  });
+
+  // document
+  //   .querySelectorAll('.new_f1-link, .new_f2-link, .new_f3-link, .new_f4-link')
+  //   .forEach((item) => {
+  //     const imageNode = item.querySelector('.image-absolute');
+  //     const imageParentNode = imageNode.parentNode;
+  //     const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
+
+  //     item.addEventListener('mouseenter', () => {
+  //       gsap.to(imageParentNode, {
+  //         borderRadius: `${borderRadius * 3}rem`,
+  //         duration: 0.2,
+  //         ease: 'power2.out',
+  //       });
+  //       gsap.to(imageNode, {
+  //         scale: 1.025,
+  //         duration: 0.4,
+  //         ease: 'power2.out',
+  //       });
+  //     });
+
+  //     item.addEventListener('mouseleave', () => {
+  //       gsap.to(imageParentNode, {
+  //         borderRadius: `${borderRadius}rem`,
+  //         duration: 0.2,
+  //         ease: 'power2.out',
+  //       });
+  //       gsap.to(imageNode, {
+  //         scale: 1,
+  //         duration: 0.2,
+  //         ease: 'power2.out',
+  //       });
+  //     });
+  //   });
+
+  document
+    .querySelectorAll('.new_f1-link, .new_f2-link, .spotlight_f1-link, .spotlight_f2-link')
+    .forEach((item) => {
+      const imageNodes = item.querySelectorAll('.image-absolute');
+      const imageParentNode = imageNodes[0].parentNode;
+      const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
+      const defaultScaleLarge = 1.05;
+      if (borderRadius) gsap.set(imageNodes, { scale: defaultScaleLarge });
+
+      const animateHover = (isEntering) => {
+        // Kill any ongoing animations
+        gsap.killTweensOf([imageParentNode, imageNodes]);
+
+        if (isEntering) {
+          gsap.to(imageParentNode, {
+            borderRadius: borderRadius ? `${borderRadius * 1.5}rem` : `1.5rem`,
+            duration: 0.25,
+            ease: 'power3.out',
+          });
+          gsap.to(imageNodes, {
+            delay: 0.05,
+            scale: borderRadius ? 1 : 1.04,
+            duration: 0.3,
+            ease: 'power1.out',
+          });
+        } else {
+          gsap.to(imageParentNode, {
+            borderRadius: `${borderRadius}rem`,
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+          gsap.to(imageNodes, {
+            scale: borderRadius ? defaultScaleLarge : 1,
+            duration: 0.2,
+            ease: 'power1.out',
+          });
+        }
+      };
+
+      item.addEventListener('mouseenter', () => animateHover(true));
+      item.addEventListener('mouseleave', () => animateHover(false));
+    });
 });
