@@ -439,20 +439,40 @@ window.Webflow.push(() => {
       },
     });
 
+    let previousWidth = window.innerWidth;
+    let debounceTimer;
+
     function resize() {
-      // Update animation with new totalX
-      animation.kill();
-      // Recalculate positions
-      calculatePositions();
-      animation = createAnimation();
-      if (isHovering) {
-        gsap.to(animation, { timeScale: 0.25, duration: 0.5, onComplete: () => animation.play() }); // Resume animation at slower speed
-      } else {
-        animation.play(); // Resume the animation at normal speed
+      const currentWidth = window.innerWidth;
+
+      // Check if the width has changed
+      if (currentWidth !== previousWidth) {
+        // Update the previous width
+        previousWidth = currentWidth;
+
+        // Update animation with new totalX
+        animation.kill();
+        // Recalculate positions
+        calculatePositions();
+        animation = createAnimation();
+        if (isHovering) {
+          gsap.to(animation, {
+            timeScale: 0.25,
+            duration: 0.5,
+            onComplete: () => animation.play(),
+          }); // Resume animation at slower speed
+        } else {
+          animation.play(); // Resume the animation at normal speed
+        }
       }
     }
 
-    window.addEventListener('resize', resize);
+    function debounceResize() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(resize, 50); // Adjust the delay (in milliseconds) as needed
+    }
+
+    window.addEventListener('resize', debounceResize);
 
     // Slow down on hover if specified
     if (pauseOnHover) {
