@@ -1,13 +1,14 @@
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
+import { SplitText } from 'gsap/SplitText';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 
-gsap.registerPlugin(Draggable, InertiaPlugin);
+gsap.registerPlugin(ScrambleTextPlugin, SplitText, ScrollTrigger, Draggable, InertiaPlugin);
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  console.log('hello');
-
   // ————— Vimeo Videos ————— //
   const vimeoReady = setInterval(function () {
     if (window.Vimeo && window.Vimeo.Player) {
@@ -35,144 +36,255 @@ window.Webflow.push(() => {
   }
   // ————— Vimeo Videos ————— //
 
-  // ————— Buttons ————— //
+  // ————— Footer Links on Hover ————— //
+  // const footerLinks = document.querySelectorAll('.footer_link');
 
-  const buttons = document.querySelectorAll('.button');
+  // footerLinks.forEach((footerLink, i) => {
+  //   new SplitType(footerLink.querySelector('div'), { types: 'chars', tagName: 'span' });
 
-  buttons.forEach((button, i) => {
-    if (button.querySelector('.button-text.is-pre')) {
-      const buttonTextFirst = new SplitType(button.querySelector('.button-text.is-pre'), {
-        types: 'chars',
-        tagName: 'span',
-      });
-      const buttonTextSecond = new SplitType(button.querySelector('.button-text.is-post'), {
-        types: 'chars',
-        tagName: 'span',
-      });
+  //   $(footerLink).hover(
+  //     () => {
+  //       gsap.to(footerLink.querySelectorAll('div .char'), {
+  //         yPercent: function (a, b, c) {
+  //           return -0.4 * a * a;
+  //         },
+  //         rotateZ: function (a, b, c) {
+  //           return -1.9 * a;
+  //         },
+  //         duration: 0.5,
+  //         ease: 'back.out',
+  //       });
+  //     },
+  //     () => {
+  //       gsap.to(footerLink.querySelectorAll('div .char'), {
+  //         yPercent: 0,
+  //         rotateZ: 0,
+  //         duration: 0.6,
+  //         ease: 'back.out',
+  //       });
+  //     }
+  //   );
+  // });
+  // ————— Footer Links on Hover ————— //
+  function initFooterHover() {
+    const footerHover = document.querySelector('.footer_hover');
+    gsap.set(footerHover, { opacity: 0 });
+    const hoverableElements = document.querySelectorAll('.footer_link, .social-link');
+    let isVisible = false;
 
-      button.addEventListener('mouseenter', () => {
-        gsap.fromTo(
-          buttonTextFirst.elements,
-          {
-            yPercent: 0,
-          },
-          {
-            yPercent: -300,
-            duration: 0.4,
-          }
-        );
-        gsap.to(buttonTextSecond.elements, {
-          yPercent: -300,
-          duration: 0.4,
+    function applyHoverEffects() {
+      hoverableElements.forEach((element) => {
+        element.addEventListener('mouseenter', () => {
+          const rect = element.getBoundingClientRect();
+          const parentRect = element.closest('.footer_links').getBoundingClientRect();
+          const isSocialLink = element.classList.contains('social-link');
+
+          gsap.to(footerHover, {
+            background: isSocialLink ? 'black' : 'transparent',
+            width: rect.width,
+            x: rect.left - parentRect.left,
+            duration: isVisible ? 0.3 : 0,
+            ease: 'power3.out',
+          });
+
+          gsap.to(footerHover, {
+            opacity: 1,
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+
+          isVisible = true;
         });
-        gsap.fromTo(
-          buttonTextSecond.chars,
-          {
-            yPercent: 50,
-            rotationZ: 10,
-          },
-          {
-            yPercent: 0,
-            rotationZ: 0,
-            stagger: { amount: 0.3 },
-            duration: 0.5,
-          }
-        );
+
+        element.addEventListener('mouseleave', () => {
+          gsap.to(footerHover, {
+            opacity: 0,
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+        });
+
+        element.addEventListener('mousedown', () => {
+          gsap.to(footerHover, {
+            background: 'black',
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+        });
+
+        element.addEventListener('mouseup', () => {
+          const isSocialLink = element.classList.contains('social-link');
+
+          gsap.to(footerHover, {
+            background: isSocialLink ? 'black' : 'transparent',
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+        });
       });
 
-      button.addEventListener('mouseleave', () => {
-        gsap.to(buttonTextFirst.elements, {
-          yPercent: 0,
-          duration: 0.35,
-        });
-        gsap.to(buttonTextSecond.elements, {
-          yPercent: 0,
-          duration: 0.35,
-        });
-        gsap.fromTo(
-          buttonTextFirst.chars,
-          {
-            yPercent: -50,
-            rotationZ: -10,
-          },
-          {
-            yPercent: 0,
-            rotationZ: 0,
-            stagger: { amount: 0.3 },
-            duration: 0.5,
-          }
-        );
+      document.querySelector('.footer_links').addEventListener('mouseleave', () => {
+        isVisible = false;
       });
     }
-  });
-  // ————— Buttons ————— //
 
-  // ————— Footer Links on Hover ————— //
-  const footerLinks = document.querySelectorAll('.footer_link');
-
-  footerLinks.forEach((footerLink, i) => {
-    new SplitType(footerLink.querySelector('div'), { types: 'chars', tagName: 'span' });
-
-    $(footerLink).hover(
-      () => {
-        gsap.to(footerLink.querySelectorAll('div .char'), {
-          yPercent: function (a, b, c) {
-            return -0.4 * a * a;
-          },
-          rotateZ: function (a, b, c) {
-            return -1.9 * a;
-          },
-          duration: 0.5,
-          ease: 'back.out',
+    function handleResize() {
+      if (window.matchMedia('(min-width: 992px)').matches) {
+        applyHoverEffects();
+      } else {
+        // Remove event listeners if screen width is less than 992px
+        hoverableElements.forEach((element) => {
+          element.removeEventListener('mouseenter', null);
+          element.removeEventListener('mouseleave', null);
+          element.removeEventListener('mousedown', null);
+          element.removeEventListener('mouseup', null);
         });
-      },
-      () => {
-        gsap.to(footerLink.querySelectorAll('div .char'), {
-          yPercent: 0,
-          rotateZ: 0,
-          duration: 0.6,
-          ease: 'back.out',
-        });
+        document.querySelector('.footer_links').removeEventListener('mouseleave', null);
       }
-    );
-  });
+    }
+
+    // Initial check on load
+    handleResize();
+
+    // Listen for window resize events
+    window.addEventListener('resize', handleResize);
+  }
+  initFooterHover();
   // ————— Footer Links on Hover ————— //
 
   // ————— Arrow Up and Down Movement ————— //
-  gsap.to('.arrow_component', {
-    y: '1rem',
-    duration: 1,
-    yoyo: true,
-    repeat: -1,
-    ease: 'power1.inOut',
-  });
+  gsap
+    .timeline({
+      repeat: -1,
+      repeatDelay: 0.4,
+    })
+    .to(
+      '.arrow_component',
+
+      {
+        yPercent: 25,
+        duration: 0.8,
+        yoyo: true,
+        repeat: 1,
+        repeatDelay: 0.05,
+        ease: 'power3.inOut',
+      }
+    );
   // ————— Arrow Up and Down Movement ————— //
 
   // ————— Text Links on Hover ————— //
-  $('.text-link').hover(
-    function () {
-      // On hover
-      gsap.to($(this).find('.text-link-icon'), {
-        x: '150%',
-        y: '-100%',
-        duration: 0.3,
-        onComplete: function () {
-          gsap.set(this.targets(), { x: 0, y: 0 });
-        },
+  function initTextLinkEffect() {
+    // Array of font families to cycle through
+    const fontFamilies = ['Fragment Mono', 'Foundry DIT'];
+
+    // Select all elements with the classes .text-link and .fragment-16pt
+    const elements = document.querySelectorAll('.text-link .fragment-16pt');
+    const duration = 150;
+
+    elements.forEach((element) => {
+      // Split the text into characters
+      const split = new SplitText(element, { type: 'chars' });
+      const chars = split.chars;
+
+      // Function to randomly change font family
+      function randomizeFonts() {
+        chars.forEach((char) => {
+          gsap.to(char, {
+            fontFamily: fontFamilies[Math.floor(Math.random() * fontFamilies.length)],
+            duration: duration / 100,
+          });
+        });
+      }
+
+      // Variable to store the interval
+      let interval;
+
+      // Add event listeners for mouseenter and mouseleave
+      element.addEventListener('mouseenter', () => {
+        // Start the continuous font change
+        interval = setInterval(randomizeFonts, duration);
       });
-    },
-    function () {
-      // On hover out
-      gsap.set($(this).find('.text-link-icon'), { x: 0, y: 0 });
-    }
-  );
+
+      element.addEventListener('mouseleave', () => {
+        // Clear the interval
+        clearInterval(interval);
+
+        // Reset to default font family
+        gsap.to(chars, {
+          fontFamily: '', // This will reset to the default font family
+          duration: (duration / 100) * 2,
+        });
+      });
+    });
+  }
+  // initTextLinkEffect();
+
+  // gsap.set('.text-link-icon-duplicate', { display: 'none' });
+
+  function setupTextLinkAnimations() {
+    document.querySelectorAll('.text-link').forEach((link) => {
+      const icon = link.querySelector('.text-link-icon');
+      const text = link.querySelector('.fragment-16pt');
+      const currentBackground = gsap.getProperty(link, 'backgroundColor');
+
+      function handleMouseEnter() {
+        gsap.to(link, {
+          backgroundColor: '#01ffa7',
+          paddingRight: '0.625rem',
+          paddingLeft: '0.5rem',
+          duration: 0.25,
+          borderRadius: '1rem',
+          ease: 'power3.out',
+        });
+        gsap.to(text, {
+          scale: 0.95,
+          duration: 0.25,
+          transformOrigin: 'center center',
+          ease: 'power3.out',
+        });
+        gsap.to(icon, {
+          x: '200%',
+          y: '-100%',
+          delay: 0.015,
+          duration: 0.35,
+          ease: 'power2.out',
+          onComplete: function () {
+            gsap.set(icon, { x: 0, y: 0 });
+          },
+        });
+      }
+
+      function handleMouseLeave() {
+        gsap.to(text, { scale: 1, duration: 0.2, ease: 'power3.out' });
+        gsap.to(link, {
+          backgroundColor: currentBackground,
+          paddingRight: '1rem',
+          paddingLeft: '0rem',
+          borderRadius: '0rem',
+          duration: 0.2,
+          ease: 'power3.out',
+        });
+      }
+
+      link.addEventListener('mouseenter', handleMouseEnter);
+      link.addEventListener('mouseleave', handleMouseLeave);
+    });
+  }
+
+  // Call the function to set up the animations
+  setupTextLinkAnimations();
+
   // ————— Text Links on Hover ————— //
 
   // —————  Hero Marquee ————— //
 
+  const marqueeGroups = {};
+
   document.querySelectorAll('[marquee=component]').forEach((marqueeEl) => {
     const marquee = marqueeEl;
     const track = marquee.querySelector('[marquee=track]');
+    const pauseOnHover = marquee.getAttribute('marquee-pause') === 'true';
+    const groupName = marquee.getAttribute('marquee-group');
 
     // Clone items to create an infinite loop effect
     marquee.querySelectorAll('[marquee=slide]').forEach((item) => {
@@ -184,9 +296,33 @@ window.Webflow.push(() => {
 
     let direction = 'to-left'; // Initial direction: "to-left" | "to-right"
     let directionVal = direction === 'to-left' ? -1 : 1;
-    const gap = gsap.getProperty(track, 'grid-row-gap');
-    console.log(gap);
-    //12; // Gap between items
+    const gap = parseFloat(getComputedStyle(track).getPropertyValue('grid-row-gap')) || 12; // Gap between items
+
+    if (groupName) {
+      if (!marqueeGroups[groupName]) {
+        marqueeGroups[groupName] = [];
+      }
+      marqueeGroups[groupName].push({
+        marquee,
+        setDirection: (newDirection) => {
+          direction = newDirection;
+          directionVal = direction === 'to-left' ? -1 : 1;
+          animation.kill();
+          animation = createAnimation();
+          animation.play();
+        },
+      });
+    }
+
+    function updateGroupDirection(newDirection) {
+      if (groupName) {
+        marqueeGroups[groupName].forEach((item) => {
+          if (item.marquee !== marquee) {
+            item.setDirection(newDirection);
+          }
+        });
+      }
+    }
 
     let totalX = 0;
     let marqueeH = 0;
@@ -217,7 +353,7 @@ window.Webflow.push(() => {
       const stringX = directionVal === -1 ? `-=${totalX}` : `+=${totalX}`;
       return gsap.to(marquee.querySelectorAll('[marquee=slide]'), {
         repeat: -1,
-        duration: 40, // Updated duration from 10 to 40 seconds
+        duration: 30, // Updated duration from 10 to 40 seconds
         x: stringX,
         ease: 'none',
         paused: true,
@@ -252,6 +388,7 @@ window.Webflow.push(() => {
     }
 
     let dragDirection = direction; // Track the drag direction
+    let isHovering = false; // Track if the mouse is hovering over the marquee
 
     Draggable.create(proxy, {
       type: 'x',
@@ -270,7 +407,15 @@ window.Webflow.push(() => {
       },
       onThrowUpdate: updateProgress,
       onRelease: function () {
-        animation.play(); // Resume the animation when dragging ends
+        if (isHovering) {
+          gsap.to(animation, {
+            timeScale: 0.25,
+            duration: 0.5,
+            onComplete: () => animation.play(),
+          }); // Resume animation at slower speed
+        } else {
+          animation.play(); // Resume the animation at normal speed
+        }
       },
       onDragEnd: function () {
         // Update direction based on drag direction
@@ -279,7 +424,18 @@ window.Webflow.push(() => {
         // Smoothly update the animation direction
         animation.kill();
         animation = createAnimation();
-        animation.play();
+
+        // Update direction for other marquees in the same group
+        updateGroupDirection(direction);
+        if (isHovering) {
+          gsap.to(animation, {
+            timeScale: 0.25,
+            duration: 0.5,
+            onComplete: () => animation.play(),
+          }); // Resume animation at slower speed
+        } else {
+          animation.play(); // Resume the animation at normal speed
+        }
       },
     });
 
@@ -289,13 +445,523 @@ window.Webflow.push(() => {
       // Recalculate positions
       calculatePositions();
       animation = createAnimation();
-      animation.play();
+      if (isHovering) {
+        gsap.to(animation, { timeScale: 0.25, duration: 0.5, onComplete: () => animation.play() }); // Resume animation at slower speed
+      } else {
+        animation.play(); // Resume the animation at normal speed
+      }
     }
 
     window.addEventListener('resize', resize);
+
+    // Slow down on hover if specified
+    if (pauseOnHover) {
+      marquee.addEventListener('mouseenter', () => {
+        isHovering = true;
+        gsap.to(animation, { timeScale: 0.25, duration: 0.5 });
+      });
+      marquee.addEventListener('mouseleave', () => {
+        isHovering = false;
+        gsap.to(animation, { timeScale: 1, duration: 0.5 });
+      });
+    }
 
     // AUTOPLAY
     animation.play();
   });
   // —————  Hero Marquee ————— //
+
+  function animateProductCards() {
+    const cards = gsap.utils.toArray('.products_card-wrap');
+    let visibleCards = [];
+    let lastShownIndex = -1;
+
+    function isInView(element) {
+      const rect = element.getBoundingClientRect();
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
+    }
+
+    function getNextValidCard() {
+      const hiddenCards = cards.filter((card) => !visibleCards.includes(card));
+      const validCards = hiddenCards.filter((card, index) => {
+        const cardIndex = cards.indexOf(card);
+        const swiperItem = card.closest('.products_swiper-item');
+        return Math.abs(cardIndex - lastShownIndex) > 1 && isInView(swiperItem);
+      });
+
+      if (validCards.length > 0) {
+        const randomCard = validCards[Math.floor(Math.random() * validCards.length)];
+        lastShownIndex = cards.indexOf(randomCard);
+        return randomCard;
+      }
+      return null;
+    }
+
+    function animateCard() {
+      if (visibleCards.length < 2) {
+        const cardToAnimate = getNextValidCard();
+        if (cardToAnimate) {
+          visibleCards.push(cardToAnimate);
+
+          gsap.to(cardToAnimate, {
+            opacity: 1,
+            scale: 1.05,
+            duration: 0.5,
+            ease: 'back.out(1.7)',
+            onComplete: () => {
+              // Schedule fade out
+              gsap.delayedCall(Math.random() * 1.5 + 1.5, () => {
+                gsap.to(cardToAnimate, {
+                  opacity: 0,
+                  scale: 1,
+                  duration: 0.5,
+                  ease: 'back.in(1.7)',
+                  onComplete: () => {
+                    visibleCards = visibleCards.filter((card) => card !== cardToAnimate);
+                  },
+                });
+              });
+            },
+          });
+        }
+      }
+
+      // Schedule next animation
+      gsap.delayedCall(Math.random() * 2 + 1, animateCard);
+    }
+
+    // Initially hide all cards
+    gsap.set(cards, { opacity: 0 });
+
+    // Start the animation
+    animateCard();
+  }
+
+  // Call the function to start the animation
+  animateProductCards();
+
+  document.querySelectorAll('.products_swiper-item').forEach((item) => {
+    const buttonWrap = item.querySelector('.products_button-wrap');
+
+    // Set initial state
+    gsap.set(buttonWrap, { autoAlpha: 0 });
+
+    // Create the animation in a paused state
+    const animation = gsap
+      .timeline({ paused: true })
+      .fromTo(
+        buttonWrap,
+        { autoAlpha: 0, duration: 0.2, ease: 'none' },
+        { autoAlpha: 1, duration: 0.2, ease: 'none' }
+      );
+
+    item.addEventListener('mouseenter', () => {
+      animation.play();
+    });
+    item.addEventListener('mouseleave', () => {
+      animation.reverse();
+    });
+  });
+
+  // Select all elements with the class 'dit-148pt'
+  const textElements = document.querySelectorAll('.dit-148pt, .dit-180pt');
+
+  // Function to generate random characters
+  const randomChar = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    return chars[Math.floor(Math.random() * chars.length)];
+  };
+
+  // Animation settings
+  const ANIMATION_DURATION = 0.175; // Modify this to change the duration
+  const STAGGER_DELAY = 0.06; // Delay between each character animation
+
+  // const ANIMATION_DURATION = 0.2; // Modify this to change the duration
+  // const STAGGER_DELAY = 0.025; // Delay between each character animation
+
+  // Loop through each '.dit-148pt' element
+  textElements.forEach((textElement) => {
+    // Split the text into characters using SplitType
+    const splitText = new SplitType(textElement, { types: ['lines', 'words', 'chars'] });
+
+    // Add CSS to prevent words from breaking
+    splitText.words.forEach((word) => {
+      word.style.display = 'inline-block';
+      word.style.whiteSpace = 'nowrap';
+    });
+
+    // Ensure lines stay together
+    splitText.lines.forEach((line) => {
+      line.style.display = 'block';
+    });
+
+    // Create a timeline for the animation
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: textElement,
+        start: 'center bottom', // Adjust this value to change when the animation starts
+        markers: false,
+      },
+    });
+
+    // Set initial state: all characters with low opacity
+    gsap.set(splitText.chars, { opacity: 0.1 });
+
+    // Animate each character
+    splitText.chars.forEach((char, index) => {
+      tl.to(
+        char,
+        {
+          duration: ANIMATION_DURATION,
+          opacity: 1,
+          scrambleText: {
+            text: char.innerText,
+            chars: randomChar,
+            revealDelay: 0.05,
+            speed: 0.5,
+          },
+          ease: 'linear',
+        },
+        index * STAGGER_DELAY
+      ); // Stagger the animations
+    });
+  });
+
+  // ————— Sticky Navigation Desktop ————— //
+
+  function setupStickyNavAnimation() {
+    let lastScrollTop = 0;
+    let isAtBottom = false;
+    const nav = document.querySelector('.nav_menu');
+    const scrollThreshold = 50;
+    let accumulatedScrollDown = 0;
+
+    // Set initial state
+    gsap.set(nav, { yPercent: 0, opacity: 1 });
+
+    // Create the animation timeline
+    const tl = gsap.timeline({ paused: true });
+    tl.to(nav, { yPercent: 25, opacity: 0, duration: 0.2, ease: 'power1.inOut' });
+
+    // Create ScrollTrigger
+    ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: (self) => {
+        const st = self.scroll();
+        const maxScroll = self.end - self.start - self.scroll();
+
+        // Check if at the bottom of the page
+        if (maxScroll <= 1) {
+          isAtBottom = true;
+          tl.reverse();
+        } else {
+          isAtBottom = false;
+        }
+
+        // Calculate scroll difference
+        const scrollDiff = st - lastScrollTop;
+
+        if (scrollDiff > 0 && !isAtBottom) {
+          // Scrolling down
+          accumulatedScrollDown += scrollDiff;
+          if (accumulatedScrollDown > scrollThreshold) {
+            tl.play();
+            accumulatedScrollDown = 0; // Reset accumulated scroll
+          }
+        } else if (scrollDiff < 0 || isAtBottom) {
+          // Scrolling up or at the bottom
+          accumulatedScrollDown = 0; // Reset accumulated scroll
+          tl.reverse();
+        }
+
+        lastScrollTop = st;
+      },
+    });
+  }
+
+  // Use GSAP matchMedia for responsive behavior
+  const mm = gsap.matchMedia();
+
+  mm.add('(min-width: 768px)', () => {
+    // This code will run when the viewport is 768px or wider
+    setupStickyNavAnimation();
+
+    return () => {
+      // This optional return function will run when the viewport becomes narrower than 768px
+      // You can add cleanup code here if needed
+      ScrollTrigger.getAll().forEach((st) => st.kill());
+    };
+  });
+
+  // ————— Sticky Navigation Desktop ————— //
+
+  // ————— Sticky Navigation Desktop ————— //
+
+  // Wrap the entire code in a matchMedia context
+  gsap.matchMedia().add('(max-width: 767px)', () => {
+    const navMenu = document.querySelector('.nav_menu');
+    const navMenuBurger = document.querySelector('.nav_menu-burger');
+    const navMenuLink = document.querySelector('.nav_menu > a');
+
+    gsap.set(navMenu, { display: 'none', pointerEvents: 'none' });
+
+    const openMenu = () => {
+      gsap
+        .timeline({
+          onStart: () => {
+            gsap.set(navMenu, { pointerEvents: 'auto' });
+          },
+        })
+        .to(
+          navMenuBurger,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 0.4,
+            ease: 'power3.out',
+          },
+          '<'
+        )
+        .fromTo(
+          navMenu,
+          { display: 'none' },
+          {
+            display: 'flex',
+            opacity: 1,
+            duration: 0,
+          },
+          '<'
+        )
+        .fromTo(
+          navMenu,
+          { scale: 0 },
+          {
+            transformOrigin: 'bottom right',
+            scale: 1,
+            ease: 'power3.inOut',
+            duration: 0.75,
+          },
+          '<'
+        )
+        .fromTo(
+          '.nav_menu > *',
+          { opacity: 0 },
+          {
+            opacity: 1,
+            delay: 0.4,
+          },
+          '<'
+        )
+        .fromTo(
+          '.nav_menu .nav_menu-link > div',
+          {
+            yPercent: 50,
+            opacity: 0,
+          },
+          {
+            yPercent: 0,
+            opacity: 1,
+            ease: 'power3.out',
+            duration: 0.4,
+          },
+          '<'
+        );
+    };
+
+    const closeMenu = () => {
+      gsap
+        .timeline({
+          paused: false,
+          onStart: () => {
+            gsap.set(navMenu, { pointerEvents: 'none' });
+          },
+          onComplete: () => {
+            gsap.set(navMenu, { display: 'none' });
+          },
+        })
+        .to(
+          '.nav_menu > *',
+          {
+            opacity: 0,
+            duration: 0.7,
+          },
+          '<'
+        )
+        .to(
+          navMenu,
+          {
+            transformOrigin: 'bottom right',
+            scale: 0,
+            opacity: 0,
+            ease: 'power3.inOut',
+            duration: 0.5,
+          },
+          '<'
+        )
+        .to(
+          '.nav_menu .nav_menu-link > div',
+          {
+            yPercent: 50,
+            opacity: 0,
+            delay: 0.1,
+            ease: 'power3.out',
+            duration: 0.4,
+          },
+          '<'
+        )
+        .fromTo(
+          navMenuBurger,
+          {
+            yPercent: 100,
+            opacity: 0,
+          },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.4,
+            ease: 'power3.out',
+          },
+          '<+0.4'
+        );
+    };
+
+    navMenuBurger.addEventListener('click', openMenu);
+    navMenuLink.addEventListener('click', closeMenu);
+
+    // Return an object with a cleanup method
+    return {
+      // This cleanup method will be called when the media query no longer matches
+      cleanup() {
+        navMenuBurger.removeEventListener('click', openMenu);
+        navMenuLink.removeEventListener('click', closeMenu);
+        // Reset any styles or states as needed
+        gsap.set(navMenu, { clearProps: 'all' });
+        gsap.set(navMenuBurger, { clearProps: 'all' });
+      },
+    };
+  });
+
+  // ————— Sticky Navigation Desktop ————— //
+
+  /// -- footer logo hover in --- ///
+
+  document.querySelectorAll('.footer_logo').forEach((logo) => {
+    const gifElement = logo.querySelector('.footer_gif');
+
+    logo.addEventListener('mouseenter', () => {
+      gsap.to(gifElement, {
+        scale: 1.1,
+        duration: 0.3,
+        ease: 'power3.out',
+      });
+    });
+    logo.addEventListener('mouseleave', () => {
+      gsap.to(gifElement, {
+        scale: 1,
+        duration: 0.3,
+        ease: 'power3.out',
+      });
+    });
+  });
+
+  /// -- footer logo hover in --- ///
+
+  /// -- button animation --- ///
+
+  // Select all elements with the class 'button'
+  const buttons = document.querySelectorAll('.button');
+
+  buttons.forEach((button) => {
+    const isHuge = button.classList.contains('is-huge'),
+      letterSpacing =
+        gsap.getProperty(button, 'letterSpacing') / gsap.getProperty(button, 'font-size'),
+      buttonText = button.querySelector('.button-text');
+
+    const createAnimation = (enter) => {
+      const duration = enter ? 0.2 : 0.16;
+      const scale = enter ? (isHuge ? 1.05 : 1) : 1;
+      const textScale = enter ? (isHuge ? 1.05 : 1.075) : 1;
+
+      return gsap
+        .timeline({
+          defaults: { ease: 'power3.out', overwrite: true, duration: duration },
+        })
+        .to(button, {
+          letterSpacing: `${letterSpacing / (enter ? 1.25 : 1)}em`,
+          scale,
+          delay: enter ? 0 : 0.075,
+        })
+        .to(
+          buttonText,
+          {
+            scale: textScale,
+            delay: enter && isHuge ? 0.025 : 0,
+          },
+          '<'
+        );
+    };
+
+    button.addEventListener('mouseenter', () => createAnimation(true));
+    button.addEventListener('mouseleave', () => createAnimation(false));
+  });
+
+  /// -- button animation --- ///
+
+  function setupPinning(selector, options = {}) {
+    const section = document.querySelector(selector);
+    let st;
+
+    function createScrollTrigger() {
+      if (st) st.kill();
+
+      const sectionHeight = section.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      st = ScrollTrigger.create({
+        trigger: selector,
+        pin: true,
+        pinSpacing: false,
+        start:
+          options.start ||
+          (() => {
+            if (sectionHeight < viewportHeight) {
+              return 'top top';
+            } else {
+              return `bottom bottom`;
+            }
+          }),
+        end: options.end || 'bottom top',
+        markers: false,
+        anticipatePin: 1,
+        ...options,
+      });
+    }
+
+    createScrollTrigger();
+
+    window.addEventListener('resize', () => {
+      requestAnimationFrame(createScrollTrigger);
+    });
+  }
+
+  // Setup for the top section (as we did before)
+  // setupPinning('[gsap-pin-section=bottom]');
+
+  // gsap.set('[gsap-pin-section=center]', { position: 'fixed' });
+  // Setup for the third section
+  // ScrollTrigger.create({
+  //   trigger: '[gsap-pin-section=center]',
+  //   pin: true,
+  //   // pinType: 'fixed',
+  //   pinSpacing: false,
+  //   start: 'top bottom', // This will be ignored initially due to pinType: 'fixed'
+  //   end: 'bottom bottom',
+  //   markers: true,
+  // });
 });

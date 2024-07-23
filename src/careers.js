@@ -1,7 +1,9 @@
 import Swiper from 'swiper';
 import { Keyboard, Mousewheel } from 'swiper/modules';
-// import gsap from 'gsap';
-// import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -50,4 +52,49 @@ window.Webflow.push(() => {
   initCareerCarousel();
   window.addEventListener('resize', initCareerCarousel);
   // ————— Career Swiper ————— //
+
+  // ————— Career item Hover ————— //
+  document.querySelectorAll('.career_item-link').forEach((item, index) => {
+    const image = item.querySelector('.image-absolute'),
+      defaultBorderRadius = gsap.getProperty(item, 'borderRadius') / 16,
+      animationDuration = 0.35,
+      animationEase = 'power2.out';
+
+    const tl = gsap
+      .timeline({ paused: true })
+      .to(item, {
+        borderRadius: `${defaultBorderRadius * 1.625}rem`,
+        scale: 0.975,
+      })
+      .fromTo(
+        image,
+        { autoAlpha: 0, scale: 1.2 },
+        {
+          autoAlpha: 1,
+          scale: 1,
+        },
+        '<'
+      );
+
+    item.addEventListener('mouseenter', () => {
+      gsap.to(tl, {
+        time: tl.duration(),
+        duration: animationDuration,
+        ease: animationEase,
+        overwrite: true,
+      });
+    });
+
+    item.addEventListener('mouseleave', () => {
+      gsap.to(tl, {
+        delay: 0.075,
+        time: 0,
+        duration: animationDuration / 1.5,
+        ease: animationEase,
+        overwrite: true,
+      });
+    });
+  });
+
+  // ————— Career item Hover ————— //
 });
