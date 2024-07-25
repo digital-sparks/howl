@@ -12,12 +12,11 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   function heroAnimation() {
     // ————— Hero Animation ————— //
-    const duration = 1.1,
-      delay = 1.5,
+    const duration = 1.5,
+      delay = 1.2,
       onceEvery = 2,
       customEase = 'power2.inOut',
       largeDelay = delay * (onceEvery + 1) + duration * onceEvery;
-    console.log(largeDelay);
 
     // Rotations
     gsap.to('.home-hero_logo', {
@@ -92,12 +91,23 @@ window.Webflow.push(() => {
       gsap.to(videoItems[(index + 1) % totalItems], {
         autoAlpha: 1,
         duration: 0.5,
+        onStart: function () {
+          const video = this.targets()[0].querySelector('video');
+          video.currentTime = 0;
+          video.play();
+        },
       });
 
       index = (index + 1) % totalItems;
     }
   }
+
+  // start playing the initial video
+  document.querySelector('video#adidas').play();
   heroAnimation();
+
+  // });
+
   // ————— Hero Animation ————— //
 
   // ————— Hero Notifications ————— //
@@ -351,7 +361,9 @@ window.Webflow.push(() => {
   //   });
 
   document
-    .querySelectorAll('.new_f1-link, .new_f2-link, .spotlight_f1-link, .spotlight_f2-link')
+    .querySelectorAll(
+      '.new_f1-link, .new_f2-link, .new_f4-link, .new_f5-link, .spotlight_f1-link, .spotlight_f2-link'
+    )
     .forEach((item) => {
       const imageNodes = item.querySelectorAll('.image-absolute');
       const imageParentNode = imageNodes[0].parentNode;
@@ -392,4 +404,47 @@ window.Webflow.push(() => {
       item.addEventListener('mouseenter', () => animateHover(true));
       item.addEventListener('mouseleave', () => animateHover(false));
     });
+
+  document.querySelectorAll('.new_f3-link').forEach((item) => {
+    const borderRadius = gsap.getProperty(item, 'borderRadius') / 16;
+
+    const animateHover = (isEntering) => {
+      if (isEntering) {
+        gsap.to(item, {
+          borderRadius: `${borderRadius * 1.5}rem`,
+          scale: 0.985,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      } else {
+        gsap.to(item, {
+          borderRadius: `${borderRadius}rem`,
+          duration: 0.25,
+          scale: 1,
+          ease: 'power2.out',
+        });
+      }
+    };
+
+    item.addEventListener('mouseenter', () => animateHover(true));
+    item.addEventListener('mouseleave', () => animateHover(false));
+  });
+
+  // ————— How It Works Video ————— //
+
+  const playerElement = document.querySelector('#howl-it-works-video');
+  const player = new playerjs.Player(playerElement);
+
+  player.on('ready', () => {
+    ScrollTrigger.create({
+      trigger: playerElement,
+      start: '25% 75%',
+      once: true,
+      onEnter: () => {
+        player.play();
+      },
+    });
+  });
+
+  // ————— How It Works Video ————— //
 });

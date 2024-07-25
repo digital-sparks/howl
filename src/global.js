@@ -9,32 +9,32 @@ gsap.registerPlugin(ScrambleTextPlugin, SplitText, ScrollTrigger, Draggable, Ine
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  // ————— Vimeo Videos ————— //
-  const vimeoReady = setInterval(() => {
-    if (window.Vimeo && window.Vimeo.Player) {
-      clearInterval(vimeoReady);
-      loadVideos();
-    }
-  }, 50);
+  // // ————— Vimeo Videos ————— //
+  // const vimeoReady = setInterval(() => {
+  //   if (window.Vimeo && window.Vimeo.Player) {
+  //     clearInterval(vimeoReady);
+  //     // loadVideos();
+  //   }
+  // }, 50);
 
-  function loadVideos() {
-    const vimeoDivs = document.querySelectorAll('div[vimeo-data-id]');
-    vimeoDivs.forEach((div) => {
-      const videoId = div.getAttribute('vimeo-data-id');
-      if (videoId) {
-        const options = {
-          id: videoId,
-          background: true,
-          loop: true,
-          autoplay: true,
-          muted: true,
-          dnt: true,
-        };
-        const player = new Vimeo.Player(div, options);
-      }
-    });
-  }
-  // ————— Vimeo Videos ————— //
+  // function loadVideos() {
+  //   const vimeoDivs = document.querySelectorAll('div[vimeo-data-id]');
+  //   vimeoDivs.forEach((div) => {
+  //     const videoId = div.getAttribute('vimeo-data-id');
+  //     if (videoId) {
+  //       const options = {
+  //         id: videoId,
+  //         background: true,
+  //         loop: true,
+  //         autoplay: true,
+  //         muted: true,
+  //         dnt: true,
+  //       };
+  //       const player = new Vimeo.Player(div, options);
+  //     }
+  //   });
+  // }
+  // // ————— Vimeo Videos ————— //
 
   // ————— Footer Links on Hover ————— //
   // const footerLinks = document.querySelectorAll('.footer_link');
@@ -169,73 +169,76 @@ window.Webflow.push(() => {
   // ————— Footer Links on Hover ————— //
 
   // ————— Arrow Up and Down Movement ————— //
-  gsap
-    .timeline({
-      repeat: -1,
-      repeatDelay: 0.4,
-    })
-    .to(
-      '.arrow_component',
 
-      {
-        yPercent: 25,
-        duration: 0.8,
-        yoyo: true,
-        repeat: 1,
-        repeatDelay: 0.05,
-        ease: 'power3.inOut',
-      }
-    );
+  if (document.querySelector('.arrow_component')) {
+    gsap
+      .timeline({
+        repeat: -1,
+        repeatDelay: 0.4,
+      })
+      .to(
+        '.arrow_component',
+
+        {
+          yPercent: 25,
+          duration: 0.8,
+          yoyo: true,
+          repeat: 1,
+          repeatDelay: 0.05,
+          ease: 'power3.inOut',
+        }
+      );
+  }
   // ————— Arrow Up and Down Movement ————— //
 
-  // ————— Text Links on Hover ————— //
-  function initTextLinkEffect() {
-    // Array of font families to cycle through
-    const fontFamilies = ['Fragment Mono', 'Foundry DIT'];
+  // // ————— Text Links on Hover ————— //
+  // function initTextLinkEffect() {
+  //   // Array of font families to cycle through
+  //   const fontFamilies = ['Fragment Mono', 'Foundry DIT'];
 
-    // Select all elements with the classes .text-link and .fragment-16pt
-    const elements = document.querySelectorAll('.text-link .fragment-16pt');
-    const duration = 150;
+  //   // Select all elements with the classes .text-link and .fragment-16pt
+  //   const elements = document.querySelectorAll('.text-link .fragment-16pt');
+  //   const duration = 150;
 
-    elements.forEach((element) => {
-      // Split the text into characters
-      const split = new SplitText(element, { type: 'chars' });
-      const chars = split.chars;
+  //   elements.forEach((element) => {
+  //     // Split the text into characters
+  //     const split = new SplitText(element, { type: 'chars' });
+  //     const chars = split.chars;
 
-      // Function to randomly change font family
-      function randomizeFonts() {
-        chars.forEach((char) => {
-          gsap.to(char, {
-            fontFamily: fontFamilies[Math.floor(Math.random() * fontFamilies.length)],
-            duration: duration / 100,
-          });
-        });
-      }
+  //     // Function to randomly change font family
+  //     function randomizeFonts() {
+  //       chars.forEach((char) => {
+  //         gsap.to(char, {
+  //           fontFamily: fontFamilies[Math.floor(Math.random() * fontFamilies.length)],
+  //           duration: duration / 100,
+  //         });
+  //       });
+  //     }
 
-      // Variable to store the interval
-      let interval;
+  //     // Variable to store the interval
+  //     let interval;
 
-      // Add event listeners for mouseenter and mouseleave
-      element.addEventListener('mouseenter', () => {
-        // Start the continuous font change
-        interval = setInterval(randomizeFonts, duration);
-      });
+  //     // Add event listeners for mouseenter and mouseleave
+  //     element.addEventListener('mouseenter', () => {
+  //       // Start the continuous font change
+  //       interval = setInterval(randomizeFonts, duration);
+  //     });
 
-      element.addEventListener('mouseleave', () => {
-        // Clear the interval
-        clearInterval(interval);
+  //     element.addEventListener('mouseleave', () => {
+  //       // Clear the interval
+  //       clearInterval(interval);
 
-        // Reset to default font family
-        gsap.to(chars, {
-          fontFamily: '', // This will reset to the default font family
-          duration: (duration / 100) * 2,
-        });
-      });
-    });
-  }
-  // initTextLinkEffect();
+  //       // Reset to default font family
+  //       gsap.to(chars, {
+  //         fontFamily: '', // This will reset to the default font family
+  //         duration: (duration / 100) * 2,
+  //       });
+  //     });
+  //   });
+  // }
+  // // initTextLinkEffect();
 
-  // gsap.set('.text-link-icon-duplicate', { display: 'none' });
+  // // gsap.set('.text-link-icon-duplicate', { display: 'none' });
 
   function setupTextLinkAnimations() {
     document.querySelectorAll('.text-link').forEach((link) => {
@@ -271,7 +274,7 @@ window.Webflow.push(() => {
       }
 
       function handleMouseLeave() {
-        gsap.to(text, { scale: 1, duration: 0.2, ease: 'power3.out' });
+        gsap.to(text, { scale: 1, duration: 0.2, ease: 'power3.out', overwrite: true });
         gsap.to(link, {
           backgroundColor: currentBackground,
           paddingRight: '1rem',
@@ -279,6 +282,7 @@ window.Webflow.push(() => {
           borderRadius: '0rem',
           duration: 0.2,
           ease: 'power3.out',
+          overwrite: true,
         });
       }
 
@@ -579,7 +583,8 @@ window.Webflow.push(() => {
   }
 
   // Call the function to start the animation
-  animateProductCards();
+
+  if (document.querySelector('.products_card-wrap')) animateProductCards();
 
   document.querySelectorAll('.products_swiper-item').forEach((item) => {
     const buttonWrap = item.querySelector('.products_button-wrap');

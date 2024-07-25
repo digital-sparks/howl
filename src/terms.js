@@ -1,5 +1,4 @@
 import gsap from 'gsap';
-//import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -7,7 +6,7 @@ window.Webflow.push(() => {
   gsap.to('.toc_sticky', {
     xPercent: -100,
     x: '1.25rem',
-    duration: 0, // Because there is already a css transition that has a duration
+    duration: 0,
     delay: 0.5,
     ease: 'power1.out',
   });

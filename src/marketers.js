@@ -13,16 +13,124 @@ window.Webflow.push(() => {
 
   tags[0].classList.add('is-color-inverse');
 
-  tags.forEach((tag, index) => {
-    tag.addEventListener('click', function () {
-      tags.forEach((t) => t.classList.remove('is-color-inverse'));
-      this.classList.add('is-color-inverse');
+  const handleTagClick = (index) => {
+    tags.forEach((t) => t.classList.remove('is-color-inverse'));
+    tags[index].classList.add('is-color-inverse');
 
-      wraps.forEach((wrap) => gsap.to(wrap, { opacity: 0, pointerEvents: 'none', duration: 0.3 }));
-      gsap.to(wraps[index], { opacity: 1, pointerEvents: 'auto', duration: 0.3 });
+    wraps.forEach((wrap, i) => {
+      gsap.to(wrap, {
+        opacity: i === index ? 1 : 0,
+        pointerEvents: i === index ? 'auto' : 'none',
+        duration: 0.3,
+      });
     });
+  };
+
+  tags.forEach((tag, index) => {
+    tag.addEventListener('click', () => handleTagClick(index));
   });
   // ————— Hero Marquee Filters ————— //
+
+  // ————— Platform Swiper ————— //
+  const baseConfig = {
+    modules: [Keyboard, Mousewheel, Autoplay],
+    direction: 'horizontal',
+    grabCursor: true,
+    loop: true,
+    keyboard: {
+      enabled: true,
+      onlyInViewport: true,
+    },
+    mousewheel: {
+      enabled: true,
+      forceToAxis: true,
+      releaseOnEdges: true,
+    },
+  };
+
+  const platformCarousel = new Swiper('.platform_swiper-container', {
+    ...baseConfig,
+    wrapperClass: 'platform_swiper-wrapper',
+    slideClass: 'platform_swiper-slide',
+    spaceBetween: 32,
+    slidesPerView: 'auto',
+    speed: 500,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: true,
+      pauseOnMouseEnter: false,
+    },
+    breakpoints: {
+      768: {
+        speed: 750,
+      },
+      480: {
+        speed: 500,
+      },
+    },
+    on: {
+      afterInit: (swiper) => {
+        swiper.autoplay.pause();
+        ScrollTrigger.create({
+          trigger: swiper.wrapperEl,
+          start: 'bottom bottom',
+          once: true,
+          onEnter: () => {
+            setTimeout(() => {
+              swiper.slideNext();
+              swiper.autoplay.start();
+            }, 250);
+          },
+        });
+
+        // Media query check
+        const mq = window.matchMedia('(min-width: 992px)');
+
+        function handleHoverEffects(e) {
+          if (e.matches) {
+            // Apply hover effects for screens 992px and above
+            for (const slide of swiper.slides) {
+              const animationDuration = 0.25,
+                animationEase = 'power2.out',
+                image = slide.querySelector('img');
+
+              image.addEventListener('mouseenter', () => {
+                gsap.to(image, {
+                  scale: 0.975,
+                  duration: animationDuration,
+                  ease: animationEase,
+                });
+              });
+
+              image.addEventListener('mouseleave', () => {
+                gsap.to(image, {
+                  scale: 1,
+                  duration: animationDuration / 1.25,
+                  ease: animationEase,
+                });
+              });
+            }
+          } else {
+            // Remove hover effects for screens below 992px
+            for (const slide of swiper.slides) {
+              slide.removeEventListener('mouseenter', null);
+              slide.removeEventListener('mouseleave', null);
+              gsap.set(image, { clearProps: 'all' });
+            }
+            gsap.set(swiper.slides, { clearProps: 'all' });
+          }
+        }
+
+        // Initial check
+        handleHoverEffects(mq);
+
+        // Add listener for window resize
+        mq.addListener(handleHoverEffects);
+      },
+    },
+  });
+
+  // ————— Platform Swiper ————— //
 
   // ————— Tools for Growing Faster ————— //
   gsap.utils.toArray('.growing_row').forEach((row) => {
@@ -32,8 +140,6 @@ window.Webflow.push(() => {
           trigger: row,
           start: 'top bottom',
           end: 'top top',
-          // toggleActions: 'play none none reset',
-          // markers: true,
         },
       })
       .from(row.querySelector('img'), {
@@ -59,26 +165,19 @@ window.Webflow.push(() => {
   // ————— Tools for Growing Faster ————— //
 
   // ————— Testimonials Swiper ————— //
-  testimonialsCarousel = new Swiper(`.testimonials_swiper-wrapper`, {
-    modules: [Keyboard, Mousewheel, Autoplay],
+  const testimonialsCarousel = new Swiper(`.testimonials_swiper-wrapper`, {
+    ...baseConfig,
     wrapperClass: 'testimonials_swiper-list',
     slideClass: 'testimonials_swiper-item',
-    direction: 'horizontal',
     spaceBetween: 24,
     slidesPerView: 'auto',
-    grabCursor: true,
     speed: 500,
     autoHeight: true,
-    loop: true,
     centeredSlides: true,
     autoplay: {
       delay: 4000,
       disableOnInteraction: true,
       pauseOnMouseEnter: true,
-    },
-    keyboard: {
-      enabled: true,
-      onlyInViewport: true,
     },
     breakpoints: {
       768: {
@@ -89,17 +188,11 @@ window.Webflow.push(() => {
         speed: 500,
       },
     },
-    mousewheel: {
-      enabled: true,
-      forceToAxis: true,
-      releaseOnEdges: true,
-    },
-
     on: {
       beforeInit: (swiper) => {
-        swiper.wrapperEl.querySelectorAll('.w-dyn-item').forEach((slide) => {
+        for (const slide of swiper.wrapperEl.querySelectorAll('.w-dyn-item')) {
           swiper.wrapperEl.append(slide.cloneNode(true));
-        });
+        }
 
         swiper.wrapperEl.style.gridColumnGap = 'unset';
       },
@@ -121,7 +214,7 @@ window.Webflow.push(() => {
         function handleHoverEffects(e) {
           if (e.matches) {
             // Apply hover effects for screens 992px and above
-            swiper.slides.forEach((slide) => {
+            for (const slide of swiper.slides) {
               const borderRadius = gsap.getProperty(slide, 'borderRadius') / 16,
                 animationDuration = 0.25,
                 animationEase = 'power2.out';
@@ -143,14 +236,14 @@ window.Webflow.push(() => {
                   ease: animationEase,
                 });
               });
-            });
+            }
           } else {
             // Remove hover effects for screens below 992px
-            swiper.slides.forEach((slide) => {
+            for (const slide of swiper.slides) {
               slide.removeEventListener('mouseenter', null);
               slide.removeEventListener('mouseleave', null);
               gsap.set(slide, { clearProps: 'all' });
-            });
+            }
             gsap.set(swiper.slides, { clearProps: 'all' });
           }
         }

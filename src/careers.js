@@ -10,47 +10,55 @@ window.Webflow.push(() => {
   // ————— Career Swiper ————— //
   let careerCarouselInitialized = false,
     careerCarousel;
-  const careerCarouselClasNames = ['career_component', 'career_wrapper', 'career_item'];
+  const careerCarouselClassNames = {
+    container: 'career_component',
+    wrapper: 'career_wrapper',
+    slide: 'career_item',
+  };
 
   function initCareerCarousel() {
-    if (window.innerWidth <= 767) {
-      if (!careerCarouselInitialized) {
-        careerCarousel = new Swiper(`.${careerCarouselClasNames[0]}`, {
-          modules: [Keyboard, Mousewheel],
-          wrapperClass: careerCarouselClasNames[1],
-          slideClass: careerCarouselClasNames[2],
-          direction: 'horizontal',
-          spaceBetween: 8,
-          slidesPerView: 'auto',
-          grabCursor: true,
-          speed: 400,
-          keyboard: {
-            enabled: true,
-            onlyInViewport: true,
+    const isMobile = window.innerWidth <= 767;
+    if (isMobile && !careerCarouselInitialized) {
+      careerCarousel = new Swiper(`.${careerCarouselClassNames.container}`, {
+        modules: [Keyboard, Mousewheel],
+        wrapperClass: careerCarouselClassNames.wrapper,
+        slideClass: careerCarouselClassNames.slide,
+        direction: 'horizontal',
+        spaceBetween: 8,
+        slidesPerView: 'auto',
+        grabCursor: true,
+        speed: 400,
+        keyboard: {
+          enabled: true,
+          onlyInViewport: true,
+        },
+        mousewheel: {
+          enabled: true,
+          forceToAxis: true,
+          releaseOnEdges: true,
+        },
+        on: {
+          beforeInit: function () {
+            $(this.wrapperEl).css('grid-column-gap', 'unset');
           },
-          mousewheel: {
-            enabled: true,
-            forceToAxis: true,
-            releaseOnEdges: true,
+          afterInit: function () {
+            careerCarouselInitialized = true;
           },
-          on: {
-            beforeInit: function () {
-              $(this.wrapperEl).css('grid-column-gap', 'unset');
-            },
-            afterInit: function () {
-              careerCarouselInitialized = true;
-            },
-          },
-        });
-      }
-    } else if (careerCarouselInitialized) {
+        },
+      });
+    } else if (!isMobile && careerCarouselInitialized) {
       careerCarousel.destroy(true, true);
       careerCarouselInitialized = false;
     }
   }
 
   initCareerCarousel();
-  window.addEventListener('resize', initCareerCarousel);
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(resizeTimer);
+    resizeTimer = requestAnimationFrame(initCareerCarousel);
+  });
   // ————— Career Swiper ————— //
 
   // ————— Career item Hover ————— //

@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 window.Webflow ||= [];
 window.Webflow.push(() => {
   // ————— Team Swiper ————— //
-  testimonialsCarousel = new Swiper(`.team_swiper-wrapper`, {
+  const testimonialsCarousel = new Swiper('.team_swiper-wrapper', {
     modules: [Keyboard, Mousewheel, Parallax],
     wrapperClass: 'team_swiper-list',
     slideClass: 'team_swiper-item',
@@ -42,13 +42,17 @@ window.Webflow.push(() => {
 
   // ————— Company News Item Hover ————— //
 
-  document.querySelectorAll('.news_item').forEach((item) => {
-    const link = item.querySelector('a');
-    const image = item.querySelector('.news_image');
-    const defaultBorderRadius = gsap.getProperty(link, 'borderRadius') / 16;
-    const animationDuration = 0.35;
-    const animationEase = 'power2.out';
+  const animConfig = { duration: 0.35, ease: 'power2.out' };
+  const newsItems = document.querySelectorAll('.news_item');
 
+  newsItems.forEach((item) => {
+    const [link, image] = item.querySelectorAll('a, .news_image');
+
+    // Get the computed style and parse the border-radius
+    const borderRadiusString = window.getComputedStyle(link).borderRadius;
+    const defaultBorderRadius = parseFloat(borderRadiusString) / 16;
+
+    // Create a timeline for each item
     const tl = gsap
       .timeline({ paused: true })
       .to(link, {
@@ -60,8 +64,7 @@ window.Webflow.push(() => {
     function animateOpacity(hovered) {
       gsap.to('.news_item img', {
         opacity: hovered ? 0.75 : 1,
-        duration: animationDuration,
-        ease: animationEase,
+        ...animConfig,
         delay: hovered ? 0 : 0.075,
         overwrite: true,
       });
@@ -69,8 +72,7 @@ window.Webflow.push(() => {
       if (hovered) {
         gsap.to(item.querySelector('img'), {
           opacity: 1,
-          duration: animationDuration,
-          ease: animationEase,
+          ...animConfig,
         });
       }
     }
@@ -79,8 +81,7 @@ window.Webflow.push(() => {
       animateOpacity(true);
       gsap.to(tl, {
         time: tl.duration(),
-        duration: animationDuration,
-        ease: animationEase,
+        ...animConfig,
         overwrite: true,
       });
     });
@@ -90,46 +91,12 @@ window.Webflow.push(() => {
       gsap.to(tl, {
         delay: 0.075,
         time: 0,
-        duration: animationDuration / 1.5,
-        ease: animationEase,
+        duration: animConfig.duration / 1.5,
+        ease: animConfig.ease,
         overwrite: true,
       });
     });
   });
-  // ————— Company News Item Hover ————— //
 
   // ————— Company News Item Hover ————— //
-
-  // ————— Mission Text Size ————— //
-  // let toSize;
-  // const mm = gsap.matchMedia();
-
-  // mm.add('(min-width: 962px)', () => {
-  //   toSize = '7.375rem';
-  //   missionAnimation(toSize);
-  // });
-
-  // mm.add('(max-width: 991px) and (min-width: 768px)', () => {
-  //   toSize = '5rem';
-  //   missionAnimation(toSize);
-  // });
-
-  // mm.add('(max-width: 767px)', () => {
-  //   toSize = '3.375rem';
-  //   missionAnimation(toSize);
-  // });
-
-  // function missionAnimation(toSize) {
-  //   const headingSpan = $('.mission_component').find('.heading-span');
-  //   gsap
-  //     .timeline({
-  //       scrollTrigger: {
-  //         trigger: $('.mission_component'),
-  //         start: 'top 70%',
-  //         end: 'top bottom',
-  //       },
-  //     })
-  //     .to(headingSpan, { fontSize: toSize, duration: 1 });
-  // }
-  // ————— Mission Text Size ————— //
 });
