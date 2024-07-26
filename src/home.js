@@ -103,10 +103,56 @@ window.Webflow.push(() => {
   }
 
   // start playing the initial video
-  document.querySelector('video#adidas').play();
+  // Usage
+  playVideoWhenReady('video#adidas');
   heroAnimation();
 
   // });
+
+  function playVideoWhenReady(videoSelector) {
+    const video = document.querySelector(videoSelector);
+
+    if (!video) {
+      console.error('Video element not found');
+      return;
+    }
+
+    function attemptPlay() {
+      if (video.readyState >= 4) {
+        const playPromise = video.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Video playback started successfully');
+            })
+            .catch((error) => {
+              if (error.name === 'NotAllowedError') {
+                console.log('Playback prevented by browser policy. User interaction required.');
+                console.log(error);
+                // You might want to show a play button or instructions to the user here
+              } else {
+                console.error('Error attempting to play video:', error);
+              }
+            });
+        }
+      } else {
+        // Video is not ready yet, check again in a short while
+        setTimeout(attemptPlay, 100);
+      }
+    }
+
+    // Start checking if the video is ready
+    attemptPlay();
+
+    // Add event listener for iOS low-power mode
+    video.addEventListener('loadedmetadata', () => {
+      if (video.paused) {
+        console.log('Video loaded but paused. User interaction may be required to play.');
+        // You might want to show a play button or instructions to the user here
+      }
+    });
+  }
 
   // ————— Hero Animation ————— //
 
@@ -432,15 +478,14 @@ window.Webflow.push(() => {
 
   // ————— How It Works Video ————— //
 
-  const playerElement = document.querySelector('#howl-it-works-video');
-  const player = new playerjs.Player(playerElement);
-
   player.on('ready', () => {
     ScrollTrigger.create({
       trigger: playerElement,
       start: '25% 75%',
       once: true,
       onEnter: () => {
+        const playerElement = document.querySelector('#howl-it-works-video');
+        const player = new playerjs.Player(playerElement);
         player.play();
       },
     });
