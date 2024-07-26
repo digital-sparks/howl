@@ -478,12 +478,13 @@ window.Webflow.push(() => {
 
   // ————— How It Works Video ————— //
 
+  const playerElement = document.querySelector('#howl-it-works-video');
+
   ScrollTrigger.create({
     trigger: playerElement,
     start: '25% 75%',
     once: true,
     onEnter: () => {
-      const playerElement = document.querySelector('#howl-it-works-video');
       const player = new playerjs.Player(playerElement);
       player.on('ready', () => {
         player.play();
