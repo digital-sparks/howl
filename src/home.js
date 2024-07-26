@@ -478,17 +478,17 @@ window.Webflow.push(() => {
 
   // ————— How It Works Video ————— //
 
-  player.on('ready', () => {
-    ScrollTrigger.create({
-      trigger: playerElement,
-      start: '25% 75%',
-      once: true,
-      onEnter: () => {
-        const playerElement = document.querySelector('#howl-it-works-video');
-        const player = new playerjs.Player(playerElement);
+  ScrollTrigger.create({
+    trigger: playerElement,
+    start: '25% 75%',
+    once: true,
+    onEnter: () => {
+      const playerElement = document.querySelector('#howl-it-works-video');
+      const player = new playerjs.Player(playerElement);
+      player.on('ready', () => {
         player.play();
-      },
-    });
+      });
+    },
   });
 
   // ————— How It Works Video ————— //
