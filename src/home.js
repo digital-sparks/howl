@@ -138,6 +138,7 @@ window.Webflow.push(() => {
         }
       } else {
         // Video is not ready yet, check again in a short while
+        console.log('video did not start playback, checking again in 100 milliseconds');
         setTimeout(attemptPlay, 100);
       }
     }
@@ -183,6 +184,7 @@ window.Webflow.push(() => {
     slideClass: 'new_swiper-item',
     direction: 'horizontal',
     spaceBetween: 24,
+    lazyPreloadPrevNext: 2,
     slidesPerView: 'auto',
     grabCursor: true,
     parallax: true,
@@ -211,6 +213,7 @@ window.Webflow.push(() => {
     slideClass: 'spotlight_swiper-item',
     direction: 'horizontal',
     parallax: true,
+    lazyPreloadPrevNext: 2,
     spaceBetween: 24,
     slidesPerView: 'auto',
     grabCursor: true,
@@ -292,12 +295,23 @@ window.Webflow.push(() => {
   // Initialize the roll
   initRoll();
 
+  // Store the initial window width
+  let prevWindowWidth = window.innerWidth;
+
   // Add resize event listener
   window.addEventListener(
     'resize',
     debounce(() => {
-      updateElementPositions();
-      roll1.restart();
+      const currentWindowWidth = window.innerWidth;
+
+      // Check if the width has changed
+      if (currentWindowWidth !== prevWindowWidth) {
+        updateElementPositions();
+        roll1.restart();
+
+        // Update the stored width
+        prevWindowWidth = currentWindowWidth;
+      }
     }, 5)
   );
 
@@ -412,35 +426,35 @@ window.Webflow.push(() => {
     )
     .forEach((item) => {
       const imageNodes = item.querySelectorAll('.image-absolute');
-      const imageParentNode = imageNodes[0].parentNode;
-      const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
-      const defaultScaleLarge = 1.05;
-      if (borderRadius) gsap.set(imageNodes, { scale: defaultScaleLarge });
+      // const imageParentNode = imageNodes[0].parentNode;
+      // const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
+      // const defaultScaleLarge = 1.05;
+      // if (borderRadius) gsap.set(imageNodes, { scale: defaultScaleLarge });
 
       const animateHover = (isEntering) => {
         // Kill any ongoing animations
-        gsap.killTweensOf([imageParentNode, imageNodes]);
+        gsap.killTweensOf([imageNodes]);
 
         if (isEntering) {
-          gsap.to(imageParentNode, {
-            borderRadius: borderRadius ? `${borderRadius * 1.5}rem` : `1.5rem`,
-            duration: 0.25,
-            ease: 'power3.out',
-          });
+          // gsap.to(imageParentNode, {
+          //   borderRadius: borderRadius ? `${borderRadius * 1.5}rem` : `1.5rem`,
+          //   duration: 0.25,
+          //   ease: 'power3.out',
+          // });
           gsap.to(imageNodes, {
             delay: 0.05,
-            scale: borderRadius ? 1 : 1.04,
+            scale: 1.03, //borderRadius ? 1 : 1.04,
             duration: 0.3,
-            ease: 'power1.out',
-          });
-        } else {
-          gsap.to(imageParentNode, {
-            borderRadius: `${borderRadius}rem`,
-            duration: 0.2,
             ease: 'power2.out',
           });
+        } else {
+          // gsap.to(imageParentNode, {
+          //   borderRadius: `${borderRadius}rem`,
+          //   duration: 0.2,
+          //   ease: 'power2.out',
+          // });
           gsap.to(imageNodes, {
-            scale: borderRadius ? defaultScaleLarge : 1,
+            scale: 1, //borderRadius ? defaultScaleLarge : 1,
             duration: 0.2,
             ease: 'power1.out',
           });
@@ -451,30 +465,30 @@ window.Webflow.push(() => {
       item.addEventListener('mouseleave', () => animateHover(false));
     });
 
-  document.querySelectorAll('.new_f3-link').forEach((item) => {
-    const borderRadius = gsap.getProperty(item, 'borderRadius') / 16;
+  // document.querySelectorAll('.new_f3-link').forEach((item) => {
+  //   const borderRadius = gsap.getProperty(item, 'borderRadius') / 16;
 
-    const animateHover = (isEntering) => {
-      if (isEntering) {
-        gsap.to(item, {
-          borderRadius: `${borderRadius * 1.5}rem`,
-          scale: 0.985,
-          duration: 0.3,
-          ease: 'power2.out',
-        });
-      } else {
-        gsap.to(item, {
-          borderRadius: `${borderRadius}rem`,
-          duration: 0.25,
-          scale: 1,
-          ease: 'power2.out',
-        });
-      }
-    };
+  //   const animateHover = (isEntering) => {
+  //     if (isEntering) {
+  //       gsap.to(item, {
+  //         borderRadius: `${borderRadius * 1.5}rem`,
+  //         scale: 0.985,
+  //         duration: 0.3,
+  //         ease: 'power2.out',
+  //       });
+  //     } else {
+  //       gsap.to(item, {
+  //         borderRadius: `${borderRadius}rem`,
+  //         duration: 0.25,
+  //         scale: 1,
+  //         ease: 'power2.out',
+  //       });
+  //     }
+  //   };
 
-    item.addEventListener('mouseenter', () => animateHover(true));
-    item.addEventListener('mouseleave', () => animateHover(false));
-  });
+  //   item.addEventListener('mouseenter', () => animateHover(true));
+  //   item.addEventListener('mouseleave', () => animateHover(false));
+  // });
 
   // ————— How It Works Video ————— //
 

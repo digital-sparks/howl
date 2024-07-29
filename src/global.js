@@ -192,53 +192,6 @@ window.Webflow.push(() => {
   // ————— Arrow Up and Down Movement ————— //
 
   // // ————— Text Links on Hover ————— //
-  // function initTextLinkEffect() {
-  //   // Array of font families to cycle through
-  //   const fontFamilies = ['Fragment Mono', 'Foundry DIT'];
-
-  //   // Select all elements with the classes .text-link and .fragment-16pt
-  //   const elements = document.querySelectorAll('.text-link .fragment-16pt');
-  //   const duration = 150;
-
-  //   elements.forEach((element) => {
-  //     // Split the text into characters
-  //     const split = new SplitText(element, { type: 'chars' });
-  //     const chars = split.chars;
-
-  //     // Function to randomly change font family
-  //     function randomizeFonts() {
-  //       chars.forEach((char) => {
-  //         gsap.to(char, {
-  //           fontFamily: fontFamilies[Math.floor(Math.random() * fontFamilies.length)],
-  //           duration: duration / 100,
-  //         });
-  //       });
-  //     }
-
-  //     // Variable to store the interval
-  //     let interval;
-
-  //     // Add event listeners for mouseenter and mouseleave
-  //     element.addEventListener('mouseenter', () => {
-  //       // Start the continuous font change
-  //       interval = setInterval(randomizeFonts, duration);
-  //     });
-
-  //     element.addEventListener('mouseleave', () => {
-  //       // Clear the interval
-  //       clearInterval(interval);
-
-  //       // Reset to default font family
-  //       gsap.to(chars, {
-  //         fontFamily: '', // This will reset to the default font family
-  //         duration: (duration / 100) * 2,
-  //       });
-  //     });
-  //   });
-  // }
-  // // initTextLinkEffect();
-
-  // // gsap.set('.text-link-icon-duplicate', { display: 'none' });
 
   function setupTextLinkAnimations() {
     document.querySelectorAll('.text-link').forEach((link) => {
@@ -249,18 +202,13 @@ window.Webflow.push(() => {
       function handleMouseEnter() {
         gsap.to(link, {
           backgroundColor: '#01ffa7',
-          paddingRight: '0.625rem',
+          paddingRight: '0.5rem',
           paddingLeft: '0.5rem',
           duration: 0.25,
-          borderRadius: '1rem',
+          // borderRadius: '1rem',
           ease: 'power3.out',
         });
-        gsap.to(text, {
-          scale: 0.95,
-          duration: 0.25,
-          transformOrigin: 'center center',
-          ease: 'power3.out',
-        });
+        // gsap.to(text, {scale: 0.95, duration: 0.25, transformOrigin: 'center center', ease: 'power3.out'});
         gsap.to(icon, {
           x: '200%',
           y: '-100%',
@@ -274,12 +222,12 @@ window.Webflow.push(() => {
       }
 
       function handleMouseLeave() {
-        gsap.to(text, { scale: 1, duration: 0.2, ease: 'power3.out', overwrite: true });
+        // gsap.to(text, { scale: 1, duration: 0.2, ease: 'power3.out', overwrite: true });
         gsap.to(link, {
           backgroundColor: currentBackground,
           paddingRight: '1rem',
           paddingLeft: '0rem',
-          borderRadius: '0rem',
+          // borderRadius: '0rem',
           duration: 0.2,
           ease: 'power3.out',
           overwrite: true,
@@ -553,6 +501,9 @@ window.Webflow.push(() => {
             scale: 1.05,
             duration: 0.5,
             ease: 'back.out(1.7)',
+            onStart: () => {
+              cardToAnimate.closest('.products_swiper-item').style.zIndex = 2;
+            },
             onComplete: () => {
               // Schedule fade out
               gsap.delayedCall(Math.random() * 1.5 + 1.5, () => {
@@ -562,6 +513,7 @@ window.Webflow.push(() => {
                   duration: 0.5,
                   ease: 'back.in(1.7)',
                   onComplete: () => {
+                    cardToAnimate.closest('.products_swiper-item').style.zIndex = 'unset';
                     visibleCards = visibleCards.filter((card) => card !== cardToAnimate);
                   },
                 });
@@ -633,12 +585,12 @@ window.Webflow.push(() => {
     // Add CSS to prevent words from breaking
     splitText.words.forEach((word) => {
       word.style.display = 'inline-block';
-      word.style.whiteSpace = 'nowrap';
     });
 
     // Ensure lines stay together
     splitText.lines.forEach((line) => {
       line.style.display = 'block';
+      line.style.whiteSpace = 'nowrap';
     });
 
     // Create a timeline for the animation
@@ -670,6 +622,16 @@ window.Webflow.push(() => {
         },
         index * STAGGER_DELAY
       ); // Stagger the animations
+    });
+
+    let prevWidth = window.innerWidth;
+
+    window.addEventListener('resize', () => {
+      const currentWidth = window.innerWidth;
+      if (currentWidth !== prevWidth) {
+        splitText.revert();
+        prevWidth = currentWidth;
+      }
     });
   });
 
@@ -936,7 +898,6 @@ window.Webflow.push(() => {
 
   /// -- button animation --- ///
 
-  // Select all elements with the class 'button'
   const buttons = document.querySelectorAll('.button');
 
   buttons.forEach((button) => {
@@ -947,7 +908,7 @@ window.Webflow.push(() => {
 
     const createAnimation = (enter) => {
       const duration = enter ? 0.2 : 0.16;
-      const scale = enter ? (isHuge ? 1.05 : 1) : 1;
+      const scale = 1; // enter ? (isHuge ? 1.05 : 1) : 1;
       const textScale = enter ? (isHuge ? 1.05 : 1.075) : 1;
 
       return gsap
@@ -975,42 +936,42 @@ window.Webflow.push(() => {
 
   /// -- button animation --- ///
 
-  function setupPinning(selector, options = {}) {
-    const section = document.querySelector(selector);
-    let st;
+  // function setupPinning(selector, options = {}) {
+  //   const section = document.querySelector(selector);
+  //   let st;
 
-    function createScrollTrigger() {
-      if (st) st.kill();
+  //   function createScrollTrigger() {
+  //     if (st) st.kill();
 
-      const sectionHeight = section.offsetHeight;
-      const viewportHeight = window.innerHeight;
+  //     const sectionHeight = section.offsetHeight;
+  //     const viewportHeight = window.innerHeight;
 
-      st = ScrollTrigger.create({
-        trigger: selector,
-        pin: true,
-        pinSpacing: false,
-        start:
-          options.start ||
-          (() => {
-            if (sectionHeight < viewportHeight) {
-              return 'top top';
-            } else {
-              return `bottom bottom`;
-            }
-          }),
-        end: options.end || 'bottom top',
-        markers: false,
-        anticipatePin: 1,
-        ...options,
-      });
-    }
+  //     st = ScrollTrigger.create({
+  //       trigger: selector,
+  //       pin: true,
+  //       pinSpacing: false,
+  //       start:
+  //         options.start ||
+  //         (() => {
+  //           if (sectionHeight < viewportHeight) {
+  //             return 'top top';
+  //           } else {
+  //             return `bottom bottom`;
+  //           }
+  //         }),
+  //       end: options.end || 'bottom top',
+  //       markers: false,
+  //       anticipatePin: 1,
+  //       ...options,
+  //     });
+  //   }
 
-    createScrollTrigger();
+  //   createScrollTrigger();
 
-    window.addEventListener('resize', () => {
-      requestAnimationFrame(createScrollTrigger);
-    });
-  }
+  //   window.addEventListener('resize', () => {
+  //     requestAnimationFrame(createScrollTrigger);
+  //   });
+  // }
 
   // Setup for the top section (as we did before)
   // setupPinning('[gsap-pin-section=bottom]');

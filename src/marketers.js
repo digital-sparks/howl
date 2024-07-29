@@ -36,6 +36,7 @@ window.Webflow.push(() => {
     modules: [Keyboard, Mousewheel, Autoplay],
     direction: 'horizontal',
     grabCursor: true,
+    lazyPreloadPrevNext: 2,
     loop: true,
     keyboard: {
       enabled: true,
@@ -115,7 +116,7 @@ window.Webflow.push(() => {
             for (const slide of swiper.slides) {
               slide.removeEventListener('mouseenter', null);
               slide.removeEventListener('mouseleave', null);
-              gsap.set(image, { clearProps: 'all' });
+              gsap.set(slide.querySelector('img'), { clearProps: 'all' });
             }
             gsap.set(swiper.slides, { clearProps: 'all' });
           }

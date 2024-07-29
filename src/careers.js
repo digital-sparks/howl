@@ -23,6 +23,7 @@ window.Webflow.push(() => {
         modules: [Keyboard, Mousewheel],
         wrapperClass: careerCarouselClassNames.wrapper,
         slideClass: careerCarouselClassNames.slide,
+        lazyPreloadPrevNext: 2,
         direction: 'horizontal',
         spaceBetween: 8,
         slidesPerView: 'auto',
