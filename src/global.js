@@ -246,6 +246,11 @@ window.Webflow.push(() => {
 
   // —————  Hero Marquee ————— //
 
+  document.querySelectorAll('.products_image').forEach((image) => {
+    image.setAttribute('width', image.dataset.imageWidth);
+    image.setAttribute('height', image.dataset.imageHeight);
+  });
+
   const marqueeGroups = {};
 
   document.querySelectorAll('[marquee=component]').forEach((marqueeEl) => {
