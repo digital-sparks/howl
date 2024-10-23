@@ -1,9 +1,13 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   gsap:
-    specifier: npm:@gsap/shockingly@^3.12.5
-    version: /@gsap/shockingly@3.12.5
+    specifier: file:gsap-bonus.tgz
+    version: file:gsap-bonus.tgz
   swiper:
     specifier: ^11.1.4
     version: 11.1.4
@@ -509,10 +513,6 @@ packages:
     resolution: {integrity: sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
-
-  /@gsap/shockingly@3.12.5:
-    resolution: {integrity: sha512-JoZp6iYvOC+wkwl8zfXSqSrYCcuzTntaULCL08YMa1vonrYcr9D0K3EUe9PNpw7FYK1chjSwjjgcw3zS/O2SWg==}
-    dev: false
 
   /@humanwhocodes/config-array@0.11.13:
     resolution: {integrity: sha512-JSBDMiDKSzQVngfRjOdFXgFfklaXI4K9nLF49Auh21lmBWRLIK3+xTErTWD4KU54pb6coM6ESE7Awz/FNU3zgQ==}
@@ -2943,3 +2943,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  file:gsap-bonus.tgz:
+    resolution: {integrity: sha512-Q/GR6Bq13T9ulCSt3bIxHtYu5NbeBZwTi9DykpMFGsF1xUNmG5zNHr/B7TtECURU+N9JSFEPoFj9o77gXfVSRw==, tarball: file:gsap-bonus.tgz}
+    name: gsap
+    version: 3.12.5
+    dev: false

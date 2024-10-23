@@ -2,6 +2,7 @@
 logs
 *.log
 npm-debug.log*
+gsap-bonus.tgz
 
 # Credentials
 .npmrc

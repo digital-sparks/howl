@@ -178,61 +178,65 @@ window.Webflow.push(() => {
   // ————— Hero Notifications ————— //
 
   // ————— Updates - New on Howl Swiper ————— //
-  updatesCarousel = new Swiper(`.new_swiper-wrapper`, {
-    modules: [Keyboard, Mousewheel, Parallax],
-    wrapperClass: 'new_swiper-list',
-    slideClass: 'new_swiper-item',
-    direction: 'horizontal',
-    spaceBetween: 24,
-    lazyPreloadPrevNext: 2,
-    slidesPerView: 'auto',
-    grabCursor: true,
-    parallax: true,
-    speed: 400,
-    keyboard: {
-      enabled: true,
-      onlyInViewport: true,
-    },
-    mousewheel: {
-      enabled: true,
-      forceToAxis: true,
-      releaseOnEdges: true,
-    },
-    on: {
-      beforeInit: (swiper) => {
-        swiper.wrapperEl.style.gridColumnGap = 'unset';
+  if (document.querySelector('.new_swiper-wrapper')) {
+    updatesCarousel = new Swiper('.new_swiper-wrapper', {
+      modules: [Keyboard, Mousewheel, Parallax],
+      wrapperClass: 'new_swiper-list',
+      slideClass: 'new_swiper-item',
+      direction: 'horizontal',
+      spaceBetween: 24,
+      lazyPreloadPrevNext: 2,
+      slidesPerView: 'auto',
+      grabCursor: true,
+      parallax: true,
+      speed: 400,
+      keyboard: {
+        enabled: true,
+        onlyInViewport: true,
       },
-    },
-  });
+      mousewheel: {
+        enabled: true,
+        forceToAxis: true,
+        releaseOnEdges: true,
+      },
+      on: {
+        beforeInit: (swiper) => {
+          swiper.wrapperEl.style.gridColumnGap = 'unset';
+        },
+      },
+    });
+  }
   // ————— Updates - New on Howl Swiper ————— //
 
   // ————— Creator Spotlight Swiper ————— //
-  spotlightCarousel = new Swiper(`.spotlight_swiper-wrapper`, {
-    modules: [Keyboard, Mousewheel, Parallax],
-    wrapperClass: 'spotlight_swiper-list',
-    slideClass: 'spotlight_swiper-item',
-    direction: 'horizontal',
-    parallax: true,
-    lazyPreloadPrevNext: 2,
-    spaceBetween: 24,
-    slidesPerView: 'auto',
-    grabCursor: true,
-    speed: 400,
-    keyboard: {
-      enabled: true,
-      onlyInViewport: true,
-    },
-    mousewheel: {
-      enabled: true,
-      forceToAxis: true,
-      releaseOnEdges: true,
-    },
-    on: {
-      beforeInit: (swiper) => {
-        swiper.wrapperEl.style.gridColumnGap = 'unset';
+  if (document.querySelector('.spotlight_swiper-wrapper')) {
+    spotlightCarousel = new Swiper('.spotlight_swiper-wrapper', {
+      modules: [Keyboard, Mousewheel, Parallax],
+      wrapperClass: 'spotlight_swiper-list',
+      slideClass: 'spotlight_swiper-item',
+      direction: 'horizontal',
+      parallax: true,
+      lazyPreloadPrevNext: 2,
+      spaceBetween: 24,
+      slidesPerView: 'auto',
+      grabCursor: true,
+      speed: 400,
+      keyboard: {
+        enabled: true,
+        onlyInViewport: true,
       },
-    },
-  });
+      mousewheel: {
+        enabled: true,
+        forceToAxis: true,
+        releaseOnEdges: true,
+      },
+      on: {
+        beforeInit: (swiper) => {
+          swiper.wrapperEl.style.gridColumnGap = 'unset';
+        },
+      },
+    });
+  }
   // ————— Creator Spotlight Swiper ————— //
 
   // ————— Creators Wanted Text ————— //
@@ -359,136 +363,140 @@ window.Webflow.push(() => {
   // Start the animation
   showNextImage();
 
-  // document.querySelectorAll('.new_component, .spotlight_component').forEach((instance) => {
-  //   gsap.from(instance.querySelectorAll('.w-dyn-item'), {
-  //     scrollTrigger: {
-  //       trigger: instance.querySelector('.w-dyn-list'),
-  //       start: 'center bottom',
-  //       markers: true,
-  //     },
-  //     opacity: 0,
-  //     duration: 0.6,
-  //     // scale: 0.95,
-  //     x: '2rem',
-  //     // y: '.25rem',
-  //     transformOrigin: 'left top',
-  //     stagger: 0.025,
-  //     ease: 'power2.out',
-  //   });
-  // });
 
-  gsap.to('.spotlight_f1-brand-logo, .new_f3-logo', {
-    rotationY: -360,
-    duration: 1.1,
-    repeat: -1,
-    delay: 1.5,
-    repeatDelay: 2.5,
-    ease: 'power2.inOut',
-  });
+  if (document.querySelector('.new_swiper-wrapper')) {
 
-  // document
-  //   .querySelectorAll('.new_f1-link, .new_f2-link, .new_f3-link, .new_f4-link')
-  //   .forEach((item) => {
-  //     const imageNode = item.querySelector('.image-absolute');
-  //     const imageParentNode = imageNode.parentNode;
-  //     const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
+    // document.querySelectorAll('.new_component, .spotlight_component').forEach((instance) => {
+    //   gsap.from(instance.querySelectorAll('.w-dyn-item'), {
+    //     scrollTrigger: {
+    //       trigger: instance.querySelector('.w-dyn-list'),
+    //       start: 'center bottom',
+    //       markers: true,
+    //     },
+    //     opacity: 0,
+    //     duration: 0.6,
+    //     // scale: 0.95,
+    //     x: '2rem',
+    //     // y: '.25rem',
+    //     transformOrigin: 'left top',
+    //     stagger: 0.025,
+    //     ease: 'power2.out',
+    //   });
+    // });
 
-  //     item.addEventListener('mouseenter', () => {
-  //       gsap.to(imageParentNode, {
-  //         borderRadius: `${borderRadius * 3}rem`,
-  //         duration: 0.2,
-  //         ease: 'power2.out',
-  //       });
-  //       gsap.to(imageNode, {
-  //         scale: 1.025,
-  //         duration: 0.4,
-  //         ease: 'power2.out',
-  //       });
-  //     });
-
-  //     item.addEventListener('mouseleave', () => {
-  //       gsap.to(imageParentNode, {
-  //         borderRadius: `${borderRadius}rem`,
-  //         duration: 0.2,
-  //         ease: 'power2.out',
-  //       });
-  //       gsap.to(imageNode, {
-  //         scale: 1,
-  //         duration: 0.2,
-  //         ease: 'power2.out',
-  //       });
-  //     });
-  //   });
-
-  document
-    .querySelectorAll(
-      '.new_f1-link, .new_f2-link, .new_f4-link, .new_f5-link, .spotlight_f1-link, .spotlight_f2-link'
-    )
-    .forEach((item) => {
-      const imageNodes = item.querySelectorAll('.image-absolute');
-      // const imageParentNode = imageNodes[0].parentNode;
-      // const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
-      // const defaultScaleLarge = 1.05;
-      // if (borderRadius) gsap.set(imageNodes, { scale: defaultScaleLarge });
-
-      const animateHover = (isEntering) => {
-        // Kill any ongoing animations
-        gsap.killTweensOf([imageNodes]);
-
-        if (isEntering) {
-          // gsap.to(imageParentNode, {
-          //   borderRadius: borderRadius ? `${borderRadius * 1.5}rem` : `1.5rem`,
-          //   duration: 0.25,
-          //   ease: 'power3.out',
-          // });
-          gsap.to(imageNodes, {
-            delay: 0.05,
-            scale: 1.03, //borderRadius ? 1 : 1.04,
-            duration: 0.3,
-            ease: 'power2.out',
-          });
-        } else {
-          // gsap.to(imageParentNode, {
-          //   borderRadius: `${borderRadius}rem`,
-          //   duration: 0.2,
-          //   ease: 'power2.out',
-          // });
-          gsap.to(imageNodes, {
-            scale: 1, //borderRadius ? defaultScaleLarge : 1,
-            duration: 0.2,
-            ease: 'power1.out',
-          });
-        }
-      };
-
-      item.addEventListener('mouseenter', () => animateHover(true));
-      item.addEventListener('mouseleave', () => animateHover(false));
+    gsap.to('.spotlight_f1-brand-logo, .new_f3-logo', {
+      rotationY: -360,
+      duration: 1.1,
+      repeat: -1,
+      delay: 1.5,
+      repeatDelay: 2.5,
+      ease: 'power2.inOut',
     });
 
-  // document.querySelectorAll('.new_f3-link').forEach((item) => {
-  //   const borderRadius = gsap.getProperty(item, 'borderRadius') / 16;
+    // document
+    //   .querySelectorAll('.new_f1-link, .new_f2-link, .new_f3-link, .new_f4-link')
+    //   .forEach((item) => {
+    //     const imageNode = item.querySelector('.image-absolute');
+    //     const imageParentNode = imageNode.parentNode;
+    //     const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
 
-  //   const animateHover = (isEntering) => {
-  //     if (isEntering) {
-  //       gsap.to(item, {
-  //         borderRadius: `${borderRadius * 1.5}rem`,
-  //         scale: 0.985,
-  //         duration: 0.3,
-  //         ease: 'power2.out',
-  //       });
-  //     } else {
-  //       gsap.to(item, {
-  //         borderRadius: `${borderRadius}rem`,
-  //         duration: 0.25,
-  //         scale: 1,
-  //         ease: 'power2.out',
-  //       });
-  //     }
-  //   };
+    //     item.addEventListener('mouseenter', () => {
+    //       gsap.to(imageParentNode, {
+    //         borderRadius: `${borderRadius * 3}rem`,
+    //         duration: 0.2,
+    //         ease: 'power2.out',
+    //       });
+    //       gsap.to(imageNode, {
+    //         scale: 1.025,
+    //         duration: 0.4,
+    //         ease: 'power2.out',
+    //       });
+    //     });
 
-  //   item.addEventListener('mouseenter', () => animateHover(true));
-  //   item.addEventListener('mouseleave', () => animateHover(false));
-  // });
+    //     item.addEventListener('mouseleave', () => {
+    //       gsap.to(imageParentNode, {
+    //         borderRadius: `${borderRadius}rem`,
+    //         duration: 0.2,
+    //         ease: 'power2.out',
+    //       });
+    //       gsap.to(imageNode, {
+    //         scale: 1,
+    //         duration: 0.2,
+    //         ease: 'power2.out',
+    //       });
+    //     });
+    //   });
+
+    document
+      .querySelectorAll(
+        '.new_f1-link, .new_f2-link, .new_f4-link, .new_f5-link, .spotlight_f1-link, .spotlight_f2-link'
+      )
+      .forEach((item) => {
+        const imageNodes = item.querySelectorAll('.image-absolute');
+        // const imageParentNode = imageNodes[0].parentNode;
+        // const borderRadius = gsap.getProperty(imageParentNode, 'borderRadius') / 16;
+        // const defaultScaleLarge = 1.05;
+        // if (borderRadius) gsap.set(imageNodes, { scale: defaultScaleLarge });
+
+        const animateHover = (isEntering) => {
+          // Kill any ongoing animations
+          gsap.killTweensOf([imageNodes]);
+
+          if (isEntering) {
+            // gsap.to(imageParentNode, {
+            //   borderRadius: borderRadius ? `${borderRadius * 1.5}rem` : `1.5rem`,
+            //   duration: 0.25,
+            //   ease: 'power3.out',
+            // });
+            gsap.to(imageNodes, {
+              delay: 0.05,
+              scale: 1.03, //borderRadius ? 1 : 1.04,
+              duration: 0.3,
+              ease: 'power2.out',
+            });
+          } else {
+            // gsap.to(imageParentNode, {
+            //   borderRadius: `${borderRadius}rem`,
+            //   duration: 0.2,
+            //   ease: 'power2.out',
+            // });
+            gsap.to(imageNodes, {
+              scale: 1, //borderRadius ? defaultScaleLarge : 1,
+              duration: 0.2,
+              ease: 'power1.out',
+            });
+          }
+        };
+
+        item.addEventListener('mouseenter', () => animateHover(true));
+        item.addEventListener('mouseleave', () => animateHover(false));
+      });
+
+    // document.querySelectorAll('.new_f3-link').forEach((item) => {
+    //   const borderRadius = gsap.getProperty(item, 'borderRadius') / 16;
+
+    //   const animateHover = (isEntering) => {
+    //     if (isEntering) {
+    //       gsap.to(item, {
+    //         borderRadius: `${borderRadius * 1.5}rem`,
+    //         scale: 0.985,
+    //         duration: 0.3,
+    //         ease: 'power2.out',
+    //       });
+    //     } else {
+    //       gsap.to(item, {
+    //         borderRadius: `${borderRadius}rem`,
+    //         duration: 0.25,
+    //         scale: 1,
+    //         ease: 'power2.out',
+    //       });
+    //     }
+    //   };
+
+    //   item.addEventListener('mouseenter', () => animateHover(true));
+    //   item.addEventListener('mouseleave', () => animateHover(false));
+    // });
+  }
 
   // ————— How It Works Video ————— //
 
