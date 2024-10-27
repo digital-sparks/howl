@@ -121,24 +121,24 @@ window.Webflow.push(() => {
       if (video.readyState >= 4) {
         const playPromise = video.play();
 
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              console.log('Video playback started successfully');
-            })
-            .catch((error) => {
-              if (error.name === 'NotAllowedError') {
-                console.log('Playback prevented by browser policy. User interaction required.');
-                console.log(error);
-                // You might want to show a play button or instructions to the user here
-              } else {
-                console.error('Error attempting to play video:', error);
-              }
-            });
-        }
+        // if (playPromise !== undefined) {
+        //   playPromise
+        //     .then(() => {
+        //       // console.log('Video playback started successfully');
+        //     })
+        //     .catch((error) => {
+        //       if (error.name === 'NotAllowedError') {
+        //         // console.log('Playback prevented by browser policy. User interaction required.');
+        //         // console.log(error);
+        //         // You might want to show a play button or instructions to the user here
+        //       } else {
+        //         // console.error('Error attempting to play video:', error);
+        //       }
+        //     });
+        // }
       } else {
         // Video is not ready yet, check again in a short while
-        console.log('video did not start playback, checking again in 100 milliseconds');
+        // console.log('video did not start playback, checking again in 100 milliseconds');
         setTimeout(attemptPlay, 100);
       }
     }
@@ -147,34 +147,37 @@ window.Webflow.push(() => {
     attemptPlay();
 
     // Add event listener for iOS low-power mode
-    video.addEventListener('loadedmetadata', () => {
-      if (video.paused) {
-        console.log('Video loaded but paused. User interaction may be required to play.');
-        // You might want to show a play button or instructions to the user here
-      }
-    });
+    // video.addEventListener('loadedmetadata', () => {
+    //   if (video.paused) {
+    //     // console.log('Video loaded but paused. User interaction may be required to play.');
+    //     // You might want to show a play button or instructions to the user here
+    //   }
+    // });
   }
 
   // ————— Hero Animation ————— //
 
   // ————— Hero Notifications ————— //
   const notificationsWrap = document.querySelector('.home-hero_notifications-wrap');
-  const notifications = notificationsWrap.querySelectorAll('.home-hero_notification');
-  const notificationHeight = notifications[0].offsetHeight;
 
-  // Clone the first notification and append it to the end
-  notificationsWrap.appendChild(notifications[0].cloneNode(true));
+  if (notificationsWrap) {
+    const notifications = notificationsWrap.querySelectorAll('.home-hero_notification');
+    const notificationHeight = notifications[0].offsetHeight;
 
-  let heroNotificationsTl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
+    // Clone the first notification and append it to the end
+    notificationsWrap.appendChild(notifications[0].cloneNode(true));
 
-  notifications.forEach((notification, index) => {
-    heroNotificationsTl.to(document.querySelectorAll('.home-hero_notification'), {
-      y: `-=${notificationHeight}px`,
-      duration: 0.8,
-      ease: 'slow(0.7,0.7,false)',
-      delay: index === 0 ? 1 : 3,
+    let heroNotificationsTl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
+
+    notifications.forEach((notification, index) => {
+      heroNotificationsTl.to(document.querySelectorAll('.home-hero_notification'), {
+        y: `-=${notificationHeight}px`,
+        duration: 0.8,
+        ease: 'slow(0.7,0.7,false)',
+        delay: index === 0 ? 1 : 3,
+      });
     });
-  });
+  }
   // ————— Hero Notifications ————— //
 
   // ————— Updates - New on Howl Swiper ————— //
@@ -363,9 +366,7 @@ window.Webflow.push(() => {
   // Start the animation
   showNextImage();
 
-
   if (document.querySelector('.new_swiper-wrapper')) {
-
     // document.querySelectorAll('.new_component, .spotlight_component').forEach((instance) => {
     //   gsap.from(instance.querySelectorAll('.w-dyn-item'), {
     //     scrollTrigger: {
