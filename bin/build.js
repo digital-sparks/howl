@@ -9,7 +9,7 @@ const PRODUCTION = process.env.NODE_ENV === 'production';
 
 // Config entrypoint files
 // You can use both .js and .ts files as entry points
-const ENTRY_POINTS = ['src/index.js'];
+const ENTRY_POINTS = ['src/home-old.js', 'src/home-new.js'];
 
 // Config dev serving
 const LIVE_RELOAD = !PRODUCTION;
@@ -24,6 +24,7 @@ const context = await esbuild.context({
   minify: PRODUCTION,
   sourcemap: !PRODUCTION,
   target: PRODUCTION ? 'es2020' : 'esnext',
+  format: 'iife',
   inject: LIVE_RELOAD ? ['./bin/live-reload.js'] : undefined,
   define: {
     SERVE_ORIGIN: JSON.stringify(SERVE_ORIGIN),
