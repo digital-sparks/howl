@@ -102,36 +102,39 @@ window.Webflow.push(() => {
     const header = document.querySelector('.br__header_wr');
     if (!header) return;
 
-    const darkSections = document.querySelectorAll('[data-section="dark"]');
-    const linksDarkSections = document.querySelectorAll('[data-section-links="dark"]');
+    header.classList.add('is-dark');
+    header.classList.add('is-links-dark');
 
-    if (!darkSections.length && !linksDarkSections.length) return;
+    // const darkSections = document.querySelectorAll('[data-section="dark"]');
+    // const linksDarkSections = document.querySelectorAll('[data-section-links="dark"]');
 
-    let headerHeight = header.offsetHeight || 0;
+    // if (!darkSections.length && !linksDarkSections.length) return;
 
-    const updateHeaderState = () => {
-      headerHeight = header.offsetHeight || 0;
+    // // Create ScrollTriggers for dark sections
+    // darkSections.forEach((section) => {
+    //   ScrollTrigger.create({
+    //     trigger: section,
+    //     start: 'top top',
+    //     end: 'bottom top',
+    //     onEnter: () => header.classList.add('is-dark'),
+    //     onLeave: () => header.classList.remove('is-dark'),
+    //     onEnterBack: () => header.classList.add('is-dark'),
+    //     onLeaveBack: () => header.classList.remove('is-dark'),
+    //   });
+    // });
 
-      let shouldBeDark = false;
-      let shouldLinksBeDark = false;
-
-      darkSections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= 0 && rect.bottom > 0) shouldBeDark = true;
-      });
-
-      linksDarkSections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= headerHeight && rect.bottom > headerHeight) shouldLinksBeDark = true;
-      });
-
-      header.classList.toggle('is-dark', shouldBeDark);
-      header.classList.toggle('is-links-dark', shouldLinksBeDark);
-    };
-
-    window.addEventListener('scroll', updateHeaderState, { passive: true });
-    window.addEventListener('resize', updateHeaderState, { passive: true });
-    updateHeaderState();
+    // // Create ScrollTriggers for links dark sections
+    // linksDarkSections.forEach((section) => {
+    //   ScrollTrigger.create({
+    //     trigger: section,
+    //     start: () => `top ${header.offsetHeight}px`,
+    //     end: () => `bottom ${header.offsetHeight}px`,
+    //     onEnter: () => header.classList.add('is-links-dark'),
+    //     onLeave: () => header.classList.remove('is-links-dark'),
+    //     onEnterBack: () => header.classList.add('is-links-dark'),
+    //     onLeaveBack: () => header.classList.remove('is-links-dark'),
+    //   });
+    // });
   }
 
   function initNavSearch() {
@@ -140,18 +143,13 @@ window.Webflow.push(() => {
 
     if (!hero || !navSearch) return;
 
-    const observerNav = new window.IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-          navSearch.classList.add('is-active');
-        } else {
-          navSearch.classList.remove('is-active');
-        }
-      },
-      { threshold: 0 }
-    );
-
-    observerNav.observe(hero);
+    ScrollTrigger.create({
+      trigger: hero,
+      start: 'top top',
+      end: 'bottom top',
+      onLeave: () => navSearch.classList.add('is-active'),
+      onEnterBack: () => navSearch.classList.remove('is-active'),
+    });
   }
 
   // ===========================================================================
@@ -1085,12 +1083,20 @@ window.Webflow.push(() => {
 
     const { autoplay = true, startHighQuality = true } = options;
 
+    // Remove loop attribute to prevent re-fetching segments
+    const shouldLoop = videoElement.hasAttribute('loop');
+    if (shouldLoop) {
+      videoElement.removeAttribute('loop');
+    }
+
     // Check if HLS.js is supported
     if (Hls.isSupported()) {
       const hlsConfig = {
         enableWorker: true,
         lowLatencyMode: false,
         backBufferLength: 90,
+        maxBufferLength: 600, // Keep up to 10 minutes of video in buffer
+        maxMaxBufferLength: 600,
       };
 
       // Add high quality settings if requested
@@ -1121,6 +1127,16 @@ window.Webflow.push(() => {
         }
       });
 
+      // Handle looping without re-fetching segments
+      if (shouldLoop) {
+        videoElement.addEventListener('ended', () => {
+          videoElement.currentTime = 0;
+          videoElement.play().catch((e) => {
+            console.warn('Video loop replay prevented:', e);
+          });
+        });
+      }
+
       hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
           console.error('Fatal HLS error:', data);
@@ -1139,9 +1155,21 @@ window.Webflow.push(() => {
       });
 
       return hls;
-    } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+    }
+    if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
       // Native HLS support (Safari)
       videoElement.src = hlsSrc;
+
+      // Handle looping without re-fetching segments
+      if (shouldLoop) {
+        videoElement.addEventListener('ended', () => {
+          videoElement.currentTime = 0;
+          videoElement.play().catch((e) => {
+            console.warn('Video loop replay prevented:', e);
+          });
+        });
+      }
+
       if (autoplay) {
         videoElement.addEventListener('loadedmetadata', () => {
           videoElement.play().catch((e) => {
@@ -1202,25 +1230,86 @@ window.Webflow.push(() => {
         videosLoaded = true;
 
         videos.forEach((video) => {
-          const sources = video.querySelectorAll('source[data-src]');
+          const dataSrc = video.dataset.src;
+          if (!dataSrc) return;
 
-          if (sources.length) {
-            sources.forEach((source) => {
-              const realSrc = source.getAttribute('data-src');
-              if (realSrc && !source.getAttribute('src')) {
-                source.setAttribute('src', realSrc);
-              }
-            });
-            video.load();
+          // Check if this is an HLS video (m3u8 file)
+          if (dataSrc.includes('.m3u8')) {
+            // Remove loop attribute to prevent re-fetching
+            if (video.hasAttribute('loop')) {
+              video.removeAttribute('loop');
+            }
+
+            if (Hls.isSupported()) {
+              const hlsConfig = {
+                enableWorker: true,
+                lowLatencyMode: false,
+                backBufferLength: 90,
+                maxBufferLength: 600,
+                maxMaxBufferLength: 600,
+              };
+
+              const hls = new Hls(hlsConfig);
+              hls.loadSource(dataSrc);
+              hls.attachMedia(video);
+
+              hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play().catch(() => {});
+              });
+
+              // Handle looping
+              video.addEventListener('ended', () => {
+                video.currentTime = 0;
+                video.play().catch(() => {});
+              });
+
+              hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) {
+                  console.error('Fatal HLS error:', data);
+                  switch (data.type) {
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                      hls.startLoad();
+                      break;
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                      hls.recoverMediaError();
+                      break;
+                    default:
+                      hls.destroy();
+                      break;
+                  }
+                }
+              });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+              // Native HLS support (Safari)
+              video.src = dataSrc;
+              video.addEventListener('loadedmetadata', () => {
+                video.play().catch(() => {});
+              });
+
+              video.addEventListener('ended', () => {
+                video.currentTime = 0;
+                video.play().catch(() => {});
+              });
+            }
           } else {
-            const dataSrc = video.dataset.src;
-            if (dataSrc && !video.src) {
+            // Handle regular video sources (non-HLS)
+            const sources = video.querySelectorAll('source[data-src]');
+
+            if (sources.length) {
+              sources.forEach((source) => {
+                const realSrc = source.getAttribute('data-src');
+                if (realSrc && !source.getAttribute('src')) {
+                  source.setAttribute('src', realSrc);
+                }
+              });
+              video.load();
+            } else if (!video.src) {
               video.src = dataSrc;
               video.load();
             }
-          }
 
-          video.play().catch(() => {});
+            video.play().catch(() => {});
+          }
         });
       };
 
