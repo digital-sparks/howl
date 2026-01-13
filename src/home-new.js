@@ -190,7 +190,7 @@ window.Webflow.push(() => {
     duplicateSlides(blogEl, 2);
 
     new Swiper(blogEl, {
-      modules: [EffectCoverflow, Mousewheel, Keyboard],
+      modules: [Navigation, EffectCoverflow, Mousewheel, Keyboard],
       loop: true,
       initialSlide: 2,
       slidesPerView: 'auto',
@@ -208,6 +208,10 @@ window.Webflow.push(() => {
       keyboard: {
         enabled: true,
         onlyInViewport: true,
+      },
+      navigation: {
+        nextEl: '.br__blog-arrow.is-next',
+        prevEl: '.br__blog-arrow.is-back',
       },
       watchOverflow: true,
       longSwipesRatio: 0.2,
@@ -859,19 +863,19 @@ window.Webflow.push(() => {
       });
     }
 
-    // Lazy load mobile step animations
+    // Lazy load mobile step animations - play once when scrolled into view
     const mobileStep1Container = document.querySelector('.br__steps-asset-mobile-wr.is-01');
     if (mobileStep1Container) {
       ScrollTrigger.create({
         trigger: mobileStep1Container,
-        start: 'top bottom+=300px',
+        start: 'center bottom',
         once: true,
         onEnter: () => {
           if (!loadedLotties.mobileStep1) {
-            lottie.loadAnimation({
+            const mobileStep1Anim = lottie.loadAnimation({
               container: mobileStep1Container,
               renderer: 'svg',
-              loop: true,
+              loop: false,
               autoplay: true,
               path: LOTTIE_URLS.step1,
             });
@@ -885,14 +889,14 @@ window.Webflow.push(() => {
     if (mobileStep3Container) {
       ScrollTrigger.create({
         trigger: mobileStep3Container,
-        start: 'top bottom+=300px',
+        start: 'center bottom',
         once: true,
         onEnter: () => {
           if (!loadedLotties.mobileStep3) {
-            lottie.loadAnimation({
+            const mobileStep3Anim = lottie.loadAnimation({
               container: mobileStep3Container,
               renderer: 'svg',
-              loop: true,
+              loop: false,
               autoplay: true,
               path: LOTTIE_URLS.step3,
             });
