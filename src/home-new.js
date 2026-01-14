@@ -99,17 +99,13 @@ window.Webflow.push(() => {
   }
 
   function initHeaderDarkMode() {
-    const header = document.querySelector('.br__header_wr');
-    if (!header) return;
-
-    header.classList.add('is-dark');
-    header.classList.add('is-links-dark');
-
+    // const header = document.querySelector('.br__header_wr');
+    // if (!header) return;
+    // header.classList.add('is-dark');
+    // header.classList.add('is-links-dark');
     // const darkSections = document.querySelectorAll('[data-section="dark"]');
     // const linksDarkSections = document.querySelectorAll('[data-section-links="dark"]');
-
     // if (!darkSections.length && !linksDarkSections.length) return;
-
     // // Create ScrollTriggers for dark sections
     // darkSections.forEach((section) => {
     //   ScrollTrigger.create({
@@ -122,7 +118,6 @@ window.Webflow.push(() => {
     //     onLeaveBack: () => header.classList.remove('is-dark'),
     //   });
     // });
-
     // // Create ScrollTriggers for links dark sections
     // linksDarkSections.forEach((section) => {
     //   ScrollTrigger.create({
@@ -148,7 +143,10 @@ window.Webflow.push(() => {
       start: 'top top',
       end: 'bottom top',
       onLeave: () => navSearch.classList.add('is-active'),
-      onEnterBack: () => navSearch.classList.remove('is-active'),
+      onEnterBack: function () {
+        navSearch.classList.remove('is-active');
+        gsap.set('.pac-container.is-nav', { display: 'none' });
+      },
     });
   }
 
@@ -488,29 +486,51 @@ window.Webflow.push(() => {
       if (activeSlide) activeSlide.classList.remove('is-hover');
     });
 
-    // Click to open link
+    // Click to navigate or open link
     let didDrag = false;
     let pressX = 0;
 
-    function openActiveLink(e) {
+    function handleSlideClick(e) {
       if (didDrag) return;
 
-      const activeSlide = e.target.closest('.swiper-slide.is-br__profiles.is-active');
-      if (!activeSlide) return;
+      const clickedSlide = e.target.closest('.swiper-slide.is-br__profiles');
+      if (!clickedSlide) return;
 
+      // Don't intercept clicks on interactive elements
       if (e.target.closest('a, button, input, textarea, select, label')) return;
 
-      const a = activeSlide.querySelector('a[href]');
-      if (!a) return;
+      // If clicking active slide, open the link
+      if (clickedSlide.classList.contains('is-active')) {
+        const a = clickedSlide.querySelector('a[href]');
+        if (!a) return;
 
-      if (a.target === '_blank' || e.ctrlKey || e.metaKey) {
-        window.open(a.href, '_blank');
-      } else {
-        window.location.href = a.href;
+        if (a.target === '_blank' || e.ctrlKey || e.metaKey) {
+          window.open(a.href, '_blank');
+        } else {
+          window.location.href = a.href;
+        }
+        return;
       }
+
+      // If clicking non-active slide, navigate to it
+      const clickedIndex = slides.indexOf(clickedSlide);
+      if (clickedIndex === -1) return;
+
+      // Calculate direction to clicked slide
+      let offset = clickedIndex - currentIndex;
+      if (offset > slides.length / 2) offset -= slides.length;
+      if (offset < -slides.length / 2) offset += slides.length;
+
+      // Navigate to clicked slide
+      gsap.killTweensOf(proxy);
+      currentIndex = clickedIndex;
+      clearHover();
+      positionSlides();
+      baseIndex = currentIndex;
+      gsap.set(proxy, { x: 0 });
     }
 
-    container.addEventListener('click', openActiveLink, true);
+    container.addEventListener('click', handleSlideClick, true);
 
     // Navigation buttons
     function goToSlide(direction) {
@@ -638,12 +658,15 @@ window.Webflow.push(() => {
 
     container.addEventListener('wheel', onWheel, { passive: false, capture: true });
 
+    // Set cursor to pointer
+    container.style.cursor = 'pointer';
+
     // Draggable
     Draggable.create(proxy, {
       type: 'x',
       trigger: container,
       inertia: true,
-      dragClickables: true,
+      // dragClickables: true,
       maxDuration: 0.6,
       throwResistance: 4000,
 
@@ -653,6 +676,7 @@ window.Webflow.push(() => {
         didDrag = false;
         pressX = this.x;
         gsap.killTweensOf(proxy);
+        // container.style.cursor = 'grabbing';
       },
 
       onDrag() {
@@ -664,6 +688,7 @@ window.Webflow.push(() => {
 
       onRelease() {
         wrapSlides();
+        container.style.cursor = 'pointer';
         setTimeout(() => {
           didDrag = false;
           pauseByDrag = false;
@@ -777,6 +802,26 @@ window.Webflow.push(() => {
     // Track previous step to detect direction changes
     let previousStep = null;
 
+    const asset01 = document.querySelector('.br__steps-asset-wr.is-01');
+    const asset02 = document.querySelector('.br__steps-asset-wr.is-02');
+    const asset03 = document.querySelector('.br__steps-asset-wr.is-03');
+    const step2Videos = document.querySelectorAll('.step-02-video');
+
+    // Initialize HLS for all step 2 videos if they have an HLS source
+    const step2HlsInstances = [];
+    step2Videos.forEach((video) => {
+      const { src } = video.dataset;
+      if (src) {
+        const hlsInstance = initHlsVideo(video, src, {
+          autoplay: false,
+          startHighQuality: true,
+        });
+        if (hlsInstance) {
+          step2HlsInstances.push(hlsInstance);
+        }
+      }
+    });
+
     // Lazy load footer Lottie animations
     const footerDesktopContainer = document.querySelector('.br__footer-heading.is-des');
     if (footerDesktopContainer) {
@@ -825,7 +870,8 @@ window.Webflow.push(() => {
     if (step1Container) {
       ScrollTrigger.create({
         trigger: '.br__steps-wr',
-        start: 'top bottom+=400px',
+        start: 'top bottom',
+
         once: true,
         onEnter: () => {
           if (!loadedLotties.step1) {
@@ -846,7 +892,7 @@ window.Webflow.push(() => {
     if (step3Container) {
       ScrollTrigger.create({
         trigger: '.br__steps-wr',
-        start: 'top bottom+=400px',
+        start: 'top bottom',
         once: true,
         onEnter: () => {
           if (!loadedLotties.step3) {
@@ -885,6 +931,19 @@ window.Webflow.push(() => {
       });
     }
 
+    // Lazy load mobile step animations - play once when scrolled into view
+    const mobileStep2Container = document.querySelector('.br__steps-asset-mobile-wr.is-02');
+    if (mobileStep2Container) {
+      ScrollTrigger.create({
+        trigger: mobileStep2Container,
+        start: 'center bottom',
+        once: true,
+        onEnter: () => {
+          step2Videos[1].play();
+        },
+      });
+    }
+
     const mobileStep3Container = document.querySelector('.br__steps-asset-mobile-wr.is-03');
     if (mobileStep3Container) {
       ScrollTrigger.create({
@@ -906,23 +965,6 @@ window.Webflow.push(() => {
       });
     }
 
-    const asset01 = document.querySelector('.br__steps-asset-wr.is-01');
-    const asset02 = document.querySelector('.br__steps-asset-wr.is-02');
-    const asset03 = document.querySelector('.br__steps-asset-wr.is-03');
-    const step2Video = document.querySelector('.step-02-video');
-
-    // Initialize HLS for step 2 video if it has an HLS source
-    let step2Hls = null;
-    if (step2Video) {
-      const { src } = step2Video.dataset;
-      if (src) {
-        step2Hls = initHlsVideo(step2Video, src, {
-          autoplay: false,
-          startHighQuality: true,
-        });
-      }
-    }
-
     let activeStep = null;
     let stepsST = null;
 
@@ -938,14 +980,11 @@ window.Webflow.push(() => {
       killStepsST();
       if (window.innerWidth <= 767) return;
 
-      const vh = window.innerHeight;
-
-      // Don't set height - use Webflow's 300vh
-      // The br__steps-sticky element will naturally stick/unstick based on the 300vh container
+      let height = document.querySelector('.br__steps-asset-wr.is-01').clientHeight;
 
       stepsST = ScrollTrigger.create({
         trigger: '.br__steps-wr',
-        start: 'top top',
+        start: `${height / 2 + 160}px bottom`,
         end: 'bottom bottom',
         scrub: 1.5,
         markers: false,
@@ -960,12 +999,11 @@ window.Webflow.push(() => {
 
           let newStep;
 
-          // With 300vh: step 1 (0-30%), step 2 (30-60%), step 3 (60-90%), unstick (90-100%)
-          if (progress < 0.2) {
+          if (progress < 0.45) {
             newStep = 1;
             gsap.to('.bg-stes-video-tab-bg', { x: '-4rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(0);
-          } else if (progress < 0.7) {
+          } else if (progress < 0.9) {
             newStep = 2;
             gsap.to('.bg-stes-video-tab-bg', { x: '0rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(1);
@@ -983,10 +1021,9 @@ window.Webflow.push(() => {
             activeStep = newStep;
             followPointerToStep(activeStep, 300);
 
-            if (step2Video) {
-              step2Video.pause();
-              step2Video.currentTime = 0;
-            }
+            // Pause and reset all step 2 videos
+            step2Videos[0].pause();
+            step2Videos[0].currentTime = 0;
 
             // Stop all animations
             if (lottieStep1) lottieStep1.stop();
@@ -996,8 +1033,9 @@ window.Webflow.push(() => {
             if (activeStep === 1 && lottieStep1) {
               lottieStep1.goToAndPlay(0, true);
             }
-            if (activeStep === 2 && step2Video) {
-              step2Video.play();
+            if (activeStep === 2) {
+              // Play all step 2 videos
+              step2Videos[0].play();
             }
             if (activeStep === 3 && lottieStep3) {
               lottieStep3.goToAndPlay(0, true);
@@ -1204,6 +1242,9 @@ window.Webflow.push(() => {
       startHighQuality: true,
     });
 
+    document
+      .querySelectorAll('.br__embed-video-wr.is-load')
+      .forEach((el) => el.classList.remove('is-load'));
     state.inited.heroVideo = true;
   }
 
@@ -1526,11 +1567,92 @@ window.Webflow.push(() => {
   // ===========================================================================
   function removeLoadingClasses() {
     document
-      .querySelectorAll('.br__embed-video-wr.is-load')
-      .forEach((el) => el.classList.remove('is-load'));
-    document
       .querySelectorAll('.br__section.br__section.is-load')
       .forEach((el) => el.classList.remove('is-load'));
+  }
+
+  // ===========================================================================
+  // MARQUEE ANIMATION
+  // ===========================================================================
+  function initMarqueeAnimation() {
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // If user prefers reduced motion, don't animate
+    if (prefersReducedMotion) {
+      console.log('Marquee animation disabled: user prefers reduced motion');
+      return;
+    }
+
+    const PIXELS_PER_SECOND_DESKTOP = 50; // Desktop speed
+    const PIXELS_PER_SECOND_MOBILE = 25; // Mobile speed (slower)
+    const isMobile = window.innerWidth <= 991;
+
+    // Desktop marquee elements
+    const marqueeElements = document.querySelectorAll('.br_sp-loop-wr');
+
+    // Mobile marquee elements
+    const mobileMarqueeElements = document.querySelectorAll('.br_d-loop-wr');
+
+    // Animate desktop elements
+    if (marqueeElements.length) {
+      const speed = isMobile ? PIXELS_PER_SECOND_MOBILE : PIXELS_PER_SECOND_DESKTOP;
+
+      marqueeElements.forEach((element) => {
+        // Get the width of the element
+        const elementWidth = element.offsetWidth;
+
+        // Calculate duration based on width to maintain consistent speed
+        // We need to move -50% (half the width), so divide by 2
+        const distance = elementWidth / 2;
+        const duration = distance / speed;
+
+        // Create the animation
+        gsap.fromTo(
+          element,
+          { x: 0 },
+          {
+            x: -distance,
+            duration: duration,
+            ease: 'none',
+            repeat: -1,
+            paused: false,
+          }
+        );
+      });
+    }
+
+    // Animate mobile elements (only on mobile)
+    if (isMobile && mobileMarqueeElements.length) {
+      mobileMarqueeElements.forEach((container) => {
+        // Get all .br_sp-rich children within this container
+        const children = container.querySelectorAll('.br_sp-rich');
+
+        if (children.length === 0) return;
+
+        // Get the width of the first child (they should be identical)
+        const childWidth = children[0].offsetWidth;
+
+        // Calculate duration based on child width
+        const distance = childWidth;
+        const duration = distance / PIXELS_PER_SECOND_MOBILE;
+
+        // Animate each child
+        children.forEach((child) => {
+          gsap.fromTo(
+            child,
+            { x: 0 },
+            {
+              x: -distance,
+              duration: duration,
+              ease: 'none',
+              repeat: -1,
+              paused: false,
+            }
+          );
+        });
+      });
+    }
   }
 
   // ===========================================================================
@@ -1541,6 +1663,7 @@ window.Webflow.push(() => {
     initHeaderDarkMode();
     initStepPointers();
     initNavSearch();
+    initMarqueeAnimation();
   }
 
   async function initHeavyFeatures() {

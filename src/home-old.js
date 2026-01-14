@@ -473,7 +473,7 @@ window.Webflow.push(() => {
       if (
         selectedState.userLatLong !== undefined &&
         selectedState.userLatLong.lat !== undefined &&
-        selectedState.userLatLong.lng != undefined
+        selectedState.userLatLong.lng !== undefined
       ) {
         const userLatLong = `${selectedState.userLatLong.lat},${selectedState.userLatLong.lng}`;
         buildUrl.searchParams.set('location_coordinates', userLatLong);
@@ -725,10 +725,10 @@ window.Webflow.push(() => {
         }
 
         if (
-          locInput.id == 'locationInput' ||
-          locInput.id == 'locationInputNav' ||
-          locInput.id == 'inputTextMobile' ||
-          locInput.id == 'locationInputScroll'
+          locInput.id === 'locationInput' ||
+          locInput.id === 'locationInputNav' ||
+          locInput.id === 'inputTextMobile' ||
+          locInput.id === 'locationInputScroll'
         ) {
           locationInput.classList.add('is-active');
           locationInputNav.classList.add('is-active');
@@ -750,6 +750,15 @@ window.Webflow.push(() => {
         }
       });
     });
+
+    const observer = new window.MutationObserver(() => {
+      const pacContainer = document.querySelector('.pac-container');
+      if (pacContainer && !pacContainer.dataset.moved) {
+        pacContainer.classList.add('is-nav');
+      }
+    });
+
+    observer.observe(document.body, { childList: true });
   }
 
   // Function to fetch state from a ZIP code using Google Maps Geocoding API
