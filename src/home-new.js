@@ -1289,9 +1289,15 @@ window.Webflow.push(() => {
               const hlsConfig = {
                 enableWorker: true,
                 lowLatencyMode: false,
-                backBufferLength: 90,
-                maxBufferLength: 600,
-                maxMaxBufferLength: 600,
+                backBufferLength: 30, // Reduced from 90
+                maxBufferLength: 120, // Reduced from 600
+                maxMaxBufferLength: 180, // Reduced from 600
+                maxBufferSize: 30 * 1000 * 1000, // 30 MB max buffer
+                maxBufferHole: 0.5,
+                startLevel: 0, // Start with lowest quality
+                capLevelToPlayerSize: true, // Don't load higher quality than needed
+                startFragPrefetch: true, // Prefetch fragments
+                testBandwidth: false, // Skip bandwidth test on startup
               };
 
               const hls = new Hls(hlsConfig);
@@ -1388,7 +1394,7 @@ window.Webflow.push(() => {
       // Use ScrollTrigger to control everything
       ScrollTrigger.create({
         trigger: line,
-        start: 'top-=200px bottom', // Start when 200px before entering viewport
+        start: 'top-=800px bottom', // Start when 800px before entering viewport (early loading)
         end: 'bottom+=200px top', // End when 200px after leaving viewport
         // markers: false,
         onEnter: () => {

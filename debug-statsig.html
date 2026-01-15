@@ -1,0 +1,439 @@
+<!-- IMPROVED VERSION WITH DEBUGGING -->
+
+<!-- HEAD CODE -->
+<script async src="https://cdn.jsdelivr.net/npm/@statsig/js-client@3/build/statsig-js-client+session-replay+web-analytics.min.js" onload="initStatsig()"></script>
+
+<script>
+
+(function() {
+  const STORAGE_KEY = "STATSIG_LOCAL_STORAGE_STABLE_ID";
+  const TEST_PREFIX = "test_";
+
+  // Parse URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const statsigParam = urlParams.get('statsig');
+
+  if (statsigParam) {
+    if (statsigParam === 'clear') {
+      // Clear test ID and remove param from URL
+      localStorage.removeItem(STORAGE_KEY);
+      document.cookie = "statsiguuid=; Max-Age=0; Domain=." +
+        window.location.host.split('.').slice(-2).join('.') + "; Path=/";
+
+      // Remove statsig param from URL
+      urlParams.delete('statsig');
+      const newUrl = window.location.pathname +
+        (urlParams.toString() ? '?' + urlParams.toString() : '');
+      window.history.replaceState({}, '', newUrl);
+
+    } else {
+      // Set test stable ID
+      const testId = `test_${statsigParam.replace(/-/g, '_')}`;
+      localStorage.setItem(STORAGE_KEY, testId);
+
+      // Set cookie with test ID
+      const expires = new Date();
+      expires.setMonth(expires.getMonth() + 12);
+      const domain = "." + window.location.host.split('.').slice(-2).join('.');
+      document.cookie = `statsiguuid=${testId};Expires=${expires};Domain=${domain};Path=/;Secure`;
+    }
+  }
+
+  // If current ID is a test ID, ensure statsig param stays in URL
+  const currentId = localStorage.getItem(STORAGE_KEY);
+  if (currentId && currentId.startsWith(TEST_PREFIX) && !statsigParam) {
+    // Extract the test variant from the ID (e.g., "test-gate-pass" -> "gate-pass")
+    const variant = currentId.substring(TEST_PREFIX.length);
+    urlParams.set('statsig', variant);
+    const newUrl = window.location.pathname + '?' + urlParams.toString();
+    window.history.replaceState({}, '', newUrl);
+  }
+})();
+
+!function(){let t="STATSIG_LOCAL_STORAGE_STABLE_ID";function e(){if(crypto&&crypto.randomUUID)return crypto.randomUUID();let t=()=>Math.floor(65536*Math.random()).toString(16).padStart(4,"0");return`${t()}${t()}-${t()}-4${t().substring(1)}-${t()}-${t()}${t()}${t()}`}let i=null,n=localStorage.getItem(t)||null;if(document.cookie.match(/statsiguuid=([\w-]+);?/)&&([,i]=document.cookie.match(/statsiguuid=([\w-]+);?/)),i&&n&&i===n);else if(i&&n&&i!==n)localStorage.setItem(t,i);else if(i&&!n)localStorage.setItem(t,i);else{let o=e();localStorage.setItem(t,o),function t(i){let n=new Date;n.setMonth(n.getMonth()+12);let o=window.location.host.split(".");o.length>2&&o.shift();let s=`.${o.join(".")}`;document.cookie=`statsiguuid=${i||e()};Expires=${n};Domain=${s};Path=/;Secure`}(o)}}();
+
+
+// --- Timebox helper: resolves to { ok: true } or { ok: false, timeout: true }
+async function withTimeout(promise, ms) {
+  return Promise.race([
+    promise.then(() => ({ ok: true })),
+    new Promise((resolve) =>
+      setTimeout(() => resolve({ ok: false, timeout: true }), ms)
+    ),
+  ]);
+}
+
+// --- Retry logic for Statsig initialization
+async function waitForStatsig(timeout = 2000, retries = 100, delay = 100) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const { StatsigClient } = window.Statsig || {};
+
+    if (StatsigClient && !window.statsigClient) {
+      const userObj = {};
+      if (localStorage.getItem("STATSIG_LOCAL_STORAGE_STABLE_ID")) {
+        userObj.customIDs = {
+          stableID: localStorage.getItem("STATSIG_LOCAL_STORAGE_STABLE_ID"),
+        };
+      }
+
+      const client = new StatsigClient(
+        "client-eNg4fu7Fpe036cvkjwJk5AheQdNZUgFIWeSme9TRQMw",
+        userObj,
+        { environment: { tier: "production" } }
+      );
+
+      window.statsigClient = client;
+    }
+
+    if (
+      window.statsigClient &&
+      typeof window.statsigClient.initializeAsync === "function"
+    ) {
+      const result = await withTimeout(
+        window.statsigClient.initializeAsync(),
+        timeout
+      );
+      if (result.ok) {
+        return { ok: true };
+      }
+    }
+
+    if (attempt < retries) {
+      console.warn(
+        `Statsig not ready (attempt ${attempt}/${retries}). Retrying in ${delay}ms...`
+      );
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+
+  return { ok: false, timeout: true };
+}
+
+
+async function initStatsig() {
+  console.log('[DEBUG] initStatsig called');
+
+  // --- Global Statsig readiness promise (never rejects)
+  window.statsigReady = (async () => {
+    const result = await waitForStatsig();
+    console.log('[DEBUG] Statsig ready result:', result);
+    return result;
+  })();
+
+  const statsigStatus = await window.statsigReady;
+  console.log('[DEBUG] Statsig status:', statsigStatus);
+
+  // Check homepage redesign gate
+  const homepageRedesignGateOn = statsigStatus.ok
+    ? window.statsigClient.checkGate("website_homepage_redesign")
+    : false;
+
+  console.log('[DEBUG] homepageRedesignGateOn:', homepageRedesignGateOn);
+
+  // Store homepage redesign status for use in body script
+  window.homepageRedesignEnabled = homepageRedesignGateOn;
+
+  const quizGateOn = statsigStatus.ok
+    ? window.statsigClient.checkGate("quiz_flow_marketing_site")
+    : false;
+
+  console.log("quizGateOn:", quizGateOn, window.statsigClient?.checkGate("quiz_flow_marketing_site"));
+  console.log("homepageRedesignGateOn:", homepageRedesignGateOn);
+
+  document.querySelectorAll(".is-home-no-ab").forEach(el => el.classList.remove("hide"));
+  document.querySelectorAll(".is-home-ab").forEach(el => el.classList.add("hide"));
+  document.querySelectorAll(".is-home-ab-button").forEach(el => el.classList.add("hide"));
+
+  if (quizGateOn) {
+    localStorage.setItem("hasQuizFlow", true);
+    document.querySelectorAll(".find-dietitian-link").forEach(el => el.setAttribute("href", "https://signup.faynutrition.com/quiz"));
+  } else {
+    localStorage.removeItem("hasQuizFlow");
+  }
+}
+</script>
+
+<!-- BEFORE BODY CODE -->
+<script>
+	const adsUrlParams = new URLSearchParams(window.location.search);
+	const isAds = adsUrlParams.get("ads");
+  const customerId = adsUrlParams.get("customerId");
+  const sessionId = adsUrlParams.get("sessionId");
+  const referralToken = adsUrlParams.get("referralToken");
+  const withingsToken =
+    adsUrlParams.get("withings_token") ?? adsUrlParams.get("withingsToken");
+  const has_withings_plus = adsUrlParams.get("has_withings_plus");
+  const FayBookingCode = adsUrlParams.get("FayBookingCode");
+
+  if (withingsToken) {
+    localStorage.setItem("withingsToken", withingsToken);
+  }
+
+  // Timebox helper: resolves to { ok: true } or { ok: false, timeout: true }
+  async function withTimeout(promise, ms) {
+    return Promise.race([
+      promise.then(() => ({ ok: true })),
+      new Promise((resolve) =>
+        setTimeout(() => resolve({ ok: false, timeout: true }), ms)
+      ),
+    ]);
+  }
+
+  async function waitForMixpanel(timeout = 2000, retries = 100, delay = 100) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      if (window.mixpanel) {
+        const result = await withTimeout(
+          Promise.resolve(window.mixpanel),
+          timeout
+        );
+        if (result.ok) {
+          return { ok: true };
+        }
+      }
+
+      if (attempt < retries) {
+        console.warn(
+          `Mixpanel not ready (attempt ${attempt}/${retries}). Retrying in ${delay}ms...`
+        );
+
+        // wait before retrying
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
+    return { ok: false, timeout: true };
+  }
+
+  // Global promise that retries
+  window.mixpanelReady = (async () => {
+    const result = await waitForMixpanel();
+    console.log('[DEBUG] Mixpanel ready result:', result);
+    return result;
+  })();
+
+  // Helper function to ensure tracking completes before redirect
+  async function trackAndRedirect(eventName, properties, redirectUrl) {
+    console.log('[DEBUG] trackAndRedirect called');
+    console.log('[DEBUG] Event:', eventName);
+    console.log('[DEBUG] Properties:', properties);
+    console.log('[DEBUG] Redirect URL:', redirectUrl);
+    console.log('[DEBUG] window.mixpanel exists:', !!window.mixpanel);
+
+    return new Promise((resolve) => {
+      if (window.mixpanel && typeof window.mixpanel.track === 'function') {
+        console.log('[DEBUG] Calling mixpanel.track with callback');
+
+        let callbackFired = false;
+
+        // Use mixpanel's callback to ensure event is sent
+        window.mixpanel.track(eventName, properties, () => {
+          console.log('[DEBUG] Mixpanel callback fired for:', eventName);
+          callbackFired = true;
+          resolve();
+        });
+
+        // Fallback: redirect after 1000ms even if callback doesn't fire
+        setTimeout(() => {
+          if (!callbackFired) {
+            console.warn('[DEBUG] Mixpanel callback did not fire, proceeding anyway');
+          }
+          resolve();
+        }, 1000);
+      } else {
+        console.log('[DEBUG] No mixpanel available, resolving immediately');
+        // No mixpanel, redirect immediately
+        resolve();
+      }
+    }).then(() => {
+      console.log('[DEBUG] About to redirect to:', redirectUrl);
+      window.location.href = redirectUrl;
+    });
+  }
+
+  // MOVED OUTSIDE: Handle homepage redesign redirect immediately (doesn't need DOM)
+  (async function() {
+    console.log('[DEBUG] Redirect IIFE started');
+    console.log('[DEBUG] Current URL:', window.location.href);
+    console.log('[DEBUG] Current pathname:', window.location.pathname);
+
+    // Prevent redirect loop - check if we're already on the redesign page
+    if (window.location.pathname === '/re-design/home-ds' ||
+        window.location.pathname.includes('/re-design/home-ds')) {
+      console.log('[DEBUG] Already on redesign page, skipping redirect');
+      return;
+    }
+
+    console.log('[DEBUG] Waiting for statsigReady...');
+    const statsigStatus = await (window.statsigReady || Promise.resolve({ ok: false }));
+    console.log('[DEBUG] statsigStatus:', statsigStatus);
+
+    console.log('[DEBUG] Waiting for mixpanelReady...');
+    const mixpanelStatus = await (window.mixpanelReady || Promise.resolve({ ok: false }));
+    console.log('[DEBUG] mixpanelStatus:', mixpanelStatus);
+
+    const homepageRedesignGateOn = window.homepageRedesignEnabled || false;
+    console.log('[DEBUG] homepageRedesignGateOn from window:', homepageRedesignGateOn);
+
+    // Double check the gate if statsig is ready
+    if (statsigStatus.ok && window.statsigClient) {
+      const gateCheck = window.statsigClient.checkGate("website_homepage_redesign");
+      console.log('[DEBUG] Direct gate check result:', gateCheck);
+    }
+
+    if (homepageRedesignGateOn) {
+      console.log('[DEBUG] Gate is ON, calling trackAndRedirect');
+      // Track and redirect immediately - no need to wait for DOM
+      await trackAndRedirect(
+        "$experiment_started",
+        {
+          "Experiment name": "homepage_redesign",
+          "Variant name": "redesign",
+        },
+        "/re-design/home-ds"
+      );
+      console.log('[DEBUG] After trackAndRedirect - this should not be reached');
+      // Code stops here due to redirect
+    } else {
+      console.log('[DEBUG] Gate is OFF, no redirect will occur');
+    }
+  })();
+
+  // DOM-dependent code: Use Webflow's ready event
+  window.Webflow ||= [];
+  window.Webflow.push(async () => {
+    console.log('[DEBUG] Webflow ready');
+
+    const statsigStatus = await (window.statsigReady || Promise.resolve({ ok: false }));
+    const mixpanelStatus = await (window.mixpanelReady || Promise.resolve({ ok: false }));
+
+    const gateOn = statsigStatus.ok
+      ? window.statsigClient.checkGate("dietitian_profile_reviews_and_ratings")
+      : false;
+
+    const quizGateOn = statsigStatus.ok
+      ? window.statsigClient.checkGate("quiz_flow_marketing_site")
+      : false;
+
+    const homepageRedesignGateOn = window.homepageRedesignEnabled || false;
+
+    console.log("gateOn:", gateOn);
+
+    var userAgentBotTest = navigator.userAgent;
+    if (window.mixpanel) {
+      mixpanel.register({ "User Agent": userAgentBotTest });
+      if (/DatadogSynthetics/i.test(userAgentBotTest)) {
+        mixpanel.register({ $ignore: true });
+      }
+    }
+
+    console.log("mixpanel loaded");
+
+    // Track control group (if we're still here, no redirect happened)
+    if (!homepageRedesignGateOn) {
+      mixpanel?.track("$experiment_started", {
+        "Experiment name": "homepage_redesign",
+        "Variant name": "control",
+      });
+    }
+
+    // Track home page view
+    mixpanel?.track("home_page_viewed", {
+      RatingShown: gateOn,
+      QuizShown: quizGateOn,
+    });
+
+    if (quizGateOn) {
+      $(".find-dietitian-link").attr(
+        "href",
+        "https://signup.faynutrition.com/quiz"
+      );
+
+      mixpanel?.track("$experiment_started", {
+        "Experiment name": "quiz_flow",
+        "Variant name": "quiz_flow_v1",
+      });
+
+      setTimeout(() => {
+        addUtmParamsInLinks();
+      }, 1000);
+    } else {
+      mixpanel?.track("$experiment_started", {
+        "Experiment name": "quiz_flow",
+        "Variant name": "booking_flow",
+      });
+    }
+  });
+
+  if (isAds === "true") {
+    $(".nav-ads").hide();
+    $(".footer-full").hide();
+    $(".footer-ads-v").show();
+    $(".is-cities-home").remove();
+    $(".nav-ads-active").addClass("nav-ads-show");
+  }
+
+  function appendAdsParamOnLinks() {
+    const currentDomain = new URL(window.location.href);
+    document.querySelectorAll("a[href]").forEach((link) => {
+      try {
+        const href = link.getAttribute("href");
+        if (href.startsWith("/")) {
+          updatedUrl = new URL(href, window.location.origin);
+        } else if (href.startsWith("http")) {
+          const tempUrl = new URL(href);
+          if (
+            !tempUrl.hostname.endsWith(".faynutrition.com") &&
+            tempUrl.hostname !== "faynutrition.com"
+          ) {
+            return;
+          }
+          updatedUrl = tempUrl;
+        } else {
+          return;
+        }
+
+        const searchParams = new URLSearchParams(updatedUrl.search);
+        if (isAds == true || isAds == "true") {
+          searchParams.set("ads", "true");
+        }
+
+        if (customerId && sessionId) {
+          searchParams.set("customerId", customerId);
+          searchParams.set("sessionId", sessionId);
+        }
+
+        if (referralToken) {
+          searchParams.set("referralToken", referralToken);
+        }
+
+        if (withingsToken) {
+          searchParams.set("withingsToken", withingsToken);
+        }
+
+        if (has_withings_plus) {
+          searchParams.set("has_withings_plus", has_withings_plus);
+        }
+
+        if (FayBookingCode) {
+          searchParams.set("FayBookingCode", FayBookingCode);
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const insurance = urlParams.get("insurance");
+
+        if (insurance != null && insurance != "") {
+          searchParams.set("insurance", insurance);
+        }
+
+        updatedUrl.search = searchParams.toString();
+        link.href = updatedUrl.toString();
+      } catch (err) {
+        console.warn("Invalid link:", link.href);
+      }
+    });
+  }
+
+  window.Webflow ||= [];
+  window.Webflow.push(() => {
+    appendAdsParamOnLinks();
+  });
+</script>
