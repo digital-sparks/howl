@@ -380,6 +380,7 @@ window.Webflow.push(() => {
     popup.removeAttribute('inert');
     popup.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
 
     // Focus on the first focusable element inside the popup
     const focusableElements = popup.querySelectorAll('a, button, input, select, textarea');
@@ -397,6 +398,7 @@ window.Webflow.push(() => {
     popup.setAttribute('inert', '');
     popup.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    document.body.style.touchAction = '';
 
     // Return focus to the last trigger
     if (lastTrigger) {
