@@ -319,17 +319,17 @@ window.Webflow.push(() => {
   });
 
   //prevent scroll when popup is open
-  window.Webflow ||= [];
-  window.Webflow.push(function () {
-    $('.popup-trigger').click(function (e) {
-      e.preventDefault();
-      $('body').css('overflow', 'hidden');
-    });
-    $('.close').click(function (e) {
-      e.preventDefault();
-      $('body').css('overflow', 'auto');
-    });
-  });
+  // window.Webflow ||= [];
+  // window.Webflow.push(function () {
+  //   $('.popup-trigger').click(function (e) {
+  //     e.preventDefault();
+  //     $('body').css('overflow', 'hidden');
+  //   });
+  //   $('.close').click(function (e) {
+  //     e.preventDefault();
+  //     $('body').css('overflow', 'auto');
+  //   });
+  // });
 
   /////POPUPS
   const triggers = document.querySelectorAll('.popup-trigger');
@@ -572,24 +572,48 @@ window.Webflow.push(() => {
     locationInputNav.value = locationInput.value;
     locationInputMobile.value = locationInput.value;
     locationInputScroll.value = locationInput.value;
+
+    // Hide error messages when user starts typing
+    errorContainers.forEach((container) => container.classList.add('is-hidden'));
+    stateErrorMessages.forEach((msg) => msg.classList.add('is-hidden'));
+    locationInput.classList.remove('is-error');
+    locationInputNav.classList.remove('is-error');
   });
 
   locationInputNav.addEventListener('input', function () {
     locationInput.value = locationInputNav.value;
     locationInputMobile.value = locationInputNav.value;
     locationInputScroll.value = locationInputNav.value;
+
+    // Hide error messages when user starts typing
+    errorContainers.forEach((container) => container.classList.add('is-hidden'));
+    stateErrorMessages.forEach((msg) => msg.classList.add('is-hidden'));
+    locationInput.classList.remove('is-error');
+    locationInputNav.classList.remove('is-error');
   });
 
   locationInputMobile.addEventListener('input', function () {
     locationInput.value = locationInputMobile.value;
     locationInputNav.value = locationInputMobile.value;
     locationInputScroll.value = locationInputMobile.value;
+
+    // Hide error messages when user starts typing
+    errorContainers.forEach((container) => container.classList.add('is-hidden'));
+    stateErrorMessages.forEach((msg) => msg.classList.add('is-hidden'));
+    locationInput.classList.remove('is-error');
+    locationInputNav.classList.remove('is-error');
   });
 
   locationInputScroll.addEventListener('input', function () {
     locationInput.value = locationInputScroll.value;
     locationInputNav.value = locationInputScroll.value;
     locationInputMobile.value = locationInputScroll.value;
+
+    // Hide error messages when user starts typing
+    errorContainers.forEach((container) => container.classList.add('is-hidden'));
+    stateErrorMessages.forEach((msg) => msg.classList.add('is-hidden'));
+    locationInput.classList.remove('is-error');
+    locationInputNav.classList.remove('is-error');
   });
 
   function initAutocomplete() {
@@ -1113,6 +1137,12 @@ window.Webflow.push(() => {
         '#insurance-dropdown .br__insurance-search-input, #insurance-dropdown-nav .br__insurance-search-input, #insuranceSearchMobile'
       ).val(this.value.trim());
 
+      // Hide error messages when user starts typing
+      errorContainers.forEach((container) => container.classList.add('is-hidden'));
+      insuranceErrorMessages.forEach((msg) => msg.classList.add('is-hidden'));
+      if (insuranceLabelHero) insuranceLabelHero.classList.remove('is-error');
+      if (insuranceLabelNav) insuranceLabelNav.classList.remove('is-error');
+
       insuranceItems.forEach((item) => {
         const label = item.querySelector('.w-form-label');
         const originalText = label.getAttribute('original-text');
@@ -1333,9 +1363,13 @@ window.Webflow.push(() => {
         $('.br__hero-wr #insurance-tog .br__embed-icon').removeClass('is-active');
 
         if (selectedState?.state) {
-          $('.br__hero-wr .br__search-wr button').removeClass('is-disable');
+          $(
+            '.br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button'
+          ).removeClass('is-disable');
         } else {
-          $('.br__hero-wr .br__search-wr button').addClass('is-disable');
+          $(
+            '.br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button'
+          ).addClass('is-disable');
         }
       } else {
         $('.br__hero-wr .br__search-wr').removeClass('is-active');
@@ -1569,22 +1603,27 @@ window.Webflow.push(() => {
   function handleKeyboardResize() {
     if (!window.visualViewport) return;
 
-    const modals = document.querySelectorAll('.mobile-filter-modal');
+    const modals = document.querySelectorAll('.mobile-filter-modal .home-modal-form');
+    // const filter = document.querySelector('m-filter-footer.is-br__wr');
     const viewport = window.visualViewport;
     const keyboardHeight = window.innerHeight - viewport.height;
 
-    modals.forEach((modal) => {
-      if (keyboardHeight > 100) {
+    if (keyboardHeight > 100) {
+      const availableHeight = viewport.height;
+      modals.forEach((modal) => {
         // Keyboard is open
-        const availableHeight = viewport.height;
         modal.style.maxHeight = `${availableHeight}px`;
         modal.style.height = `${availableHeight}px`;
-      } else {
+      });
+      // filter.style.bottom = `${availableHeight}px`;
+    } else {
+      modals.forEach((modal) => {
         // Keyboard is closed - restore original height
         modal.style.maxHeight = '';
         modal.style.height = '';
-      }
-    });
+      });
+      // filter.style.bottom = '';
+    }
   }
 
   // Listen for viewport changes (keyboard open/close)
