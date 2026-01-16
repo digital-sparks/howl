@@ -216,7 +216,7 @@ window.Webflow.push(() => {
       slidesPerView: 'auto',
       centeredSlides: true,
       effect: 'coverflow',
-      touchEventsTarget: 'wrapper',
+      // touchEventsTarget: 'wrapper',
       grabCursor: false,
       loopAdditionalSlides: 6,
       mousewheel: {
@@ -265,7 +265,7 @@ window.Webflow.push(() => {
       loop: true,
       slidesPerView: 1,
       speed: 500,
-      touchEventsTarget: 'wrapper',
+      // touchEventsTarget: 'wrapper',
       spaceBetween: 100,
       grabCursor: true,
       mousewheel: {
@@ -316,7 +316,7 @@ window.Webflow.push(() => {
         },
         slidesPerView: 'auto',
         spaceBetween: 24,
-        touchEventsTarget: 'wrapper',
+        // touchEventsTarget: 'wrapper',
         grabCursor: true,
         centeredSlides: false,
         autoplay: {
@@ -369,7 +369,7 @@ window.Webflow.push(() => {
         loop: true,
         grabCursor: true,
         slidesPerView: 'auto',
-        touchEventsTarget: 'wrapper',
+        // touchEventsTarget: 'wrapper',
         initialSlide: 2,
         autoplay: {
           delay: 4000,
