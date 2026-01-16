@@ -104,7 +104,7 @@ window.osanoReady = (async () => {
 async function initTracking() {
   const statsigStatus = await window.statsigReady;
   const mixpanelStatus = await window.mixpanelReady;
-  const osanoStatus = await window.osanoReady;
+  // const osanoStatus = await window.osanoReady;
 
   // Check if Mixpanel loaded
   if (!mixpanelStatus.ok) {
@@ -113,12 +113,12 @@ async function initTracking() {
   }
 
   // Check consent
-  const hasAnalyticsConsent = osanoStatus.ok && window.Osano?.cm?.analytics;
+  // const hasAnalyticsConsent = osanoStatus.ok && window.Osano?.cm?.analytics;
 
-  if (!hasAnalyticsConsent) {
-    console.log('No analytics consent - skipping tracking');
-    return;
-  }
+  // if (!hasAnalyticsConsent) {
+  //   console.log('No analytics consent - skipping tracking');
+  //   return;
+  // }
 
   // Bot filtering
   const userAgentBotTest = window.navigator.userAgent;
