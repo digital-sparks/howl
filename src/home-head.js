@@ -14,7 +14,7 @@ import { Autoplay, EffectCoverflow, Keyboard, Mousewheel, Navigation } from 'swi
 // Lottie animation CDN URLs
 const LOTTIE_URLS = {
   step1:
-    'https://cdn.prod.website-files.com/60e33881a96433966407b814/694e52283d24c0d09542c619_Step-1.json',
+    'https://cdn.prod.website-files.com/60e33881a96433966407b814/694e4f5a4d8da777e4c6f6b3_Step-1.json',
   step3:
     'https://cdn.prod.website-files.com/60e33881a96433966407b814/6965142abfd7fc30f9716a42_Step-3.json',
   footerMobile:
@@ -1265,7 +1265,7 @@ window.Webflow.push(() => {
       const singleWidth = collections[0].offsetWidth;
       if (!singleWidth) return;
 
-      const direction = index === 0 ? 1 : -1;
+      const direction = index === 0 ? -1 : 1;
       let animation = null;
       let videosLoaded = false;
 
@@ -1395,7 +1395,7 @@ window.Webflow.push(() => {
       ScrollTrigger.create({
         trigger: line,
         start: 'top-=800px bottom', // Start when 800px before entering viewport (early loading)
-        end: 'bottom+=200px top', // End when 200px after leaving viewport
+        end: 'bottom+=400px top', // End when 400px after leaving viewport
         // markers: false,
         onEnter: () => {
           loadVideos();
