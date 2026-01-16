@@ -3,42 +3,50 @@
 // =============================================================================
 const EXPERIMENT_NAME = 'homepage_redesign';
 const EXPERIMENT_STORAGE_KEY = 'fay_homepage_experiment';
+const REDIRECT_PENDING_KEY = 'fay_redirect_pending';
 
 // =============================================================================
 // UTILITY FUNCTIONS
 // =============================================================================
 
-async function waitForService(checkFn, timeout = 5000, delay = 50) {
-  const startTime = Date.now();
-  while (Date.now() - startTime < timeout) {
-    if (checkFn()) return true;
-    await new Promise((r) => window.setTimeout(r, delay));
+async function withTimeout(promise, ms) {
+  return Promise.race([
+    promise.then(() => ({ ok: true })),
+    new Promise((resolve) => window.setTimeout(() => resolve({ ok: false, timeout: true }), ms)),
+  ]);
+}
+
+async function waitForMixpanel(timeout = 1000, retries = 100, delay = 100) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    if (window.mixpanel) {
+      const result = await withTimeout(Promise.resolve(window.mixpanel), timeout);
+      if (result.ok) {
+        return { ok: true };
+      }
+    }
+
+    if (attempt < retries) {
+      console.warn(`Mixpanel not ready (attempt ${attempt}/${retries}). Retrying in ${delay}ms...`);
+      await new Promise((r) => window.setTimeout(r, delay));
+    }
   }
-  return false;
+  return { ok: false, timeout: true };
 }
 
-async function waitForStatsigGates(timeout = 5000) {
-  return waitForService(() => window.statsigGates?.ready, timeout);
-}
+async function waitForOsano(timeout = 1000, retries = 100, delay = 100) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    if (window.Osano) {
+      const result = await withTimeout(Promise.resolve(window.Osano), timeout);
+      if (result.ok) {
+        return { ok: true };
+      }
+    }
 
-async function waitForMixpanel(timeout = 5000) {
-  return waitForService(() => window.mixpanel, timeout);
-}
-
-async function waitForOsano(timeout = 5000) {
-  return waitForService(() => window.Osano, timeout);
-}
-
-function hidePreloader() {
-  const preloader = document.querySelector('.statsig-loader');
-  if (preloader) {
-    preloader.style.display = 'none';
+    if (attempt < retries) {
+      await new Promise((r) => window.setTimeout(r, delay));
+    }
   }
-}
-
-function getExperimentAssignment() {
-  const stored = localStorage.getItem(EXPERIMENT_STORAGE_KEY);
-  return stored ? JSON.parse(stored) : null;
+  return { ok: false, timeout: true };
 }
 
 function isBot() {
@@ -65,150 +73,328 @@ if (withingsToken) {
 // =============================================================================
 // ADS MODE HANDLING
 // =============================================================================
-function handleAdsMode() {
-  if (isAds === 'true') {
-    document.querySelector('.br__nav_menu-list')?.classList.add('is-ads');
-    document.querySelector('.br__footer-wr')?.classList.add('is-ads-hide');
-    document.querySelector('.br__nav__menu-button')?.classList.add('is-ads');
-    document.querySelector('.br__footer-wr-ads')?.classList.remove('is-ads');
-  } else {
-    document.querySelector('.br__nav_menu-list')?.classList.remove('is-ads');
-    document.querySelector('.br__footer-wr')?.classList.remove('is-ads-hide');
-    document.querySelector('.br__nav__menu-button')?.classList.remove('is-ads');
-    document.querySelector('.br__footer-wr-ads')?.classList.add('is-ads');
-  }
+if (isAds === 'true') {
+  document.querySelector('.br__nav_menu-list')?.classList.add('is-ads');
+  document.querySelector('.br__footer-wr')?.classList.add('is-ads-hide');
+  document.querySelector('.br__nav__menu-button')?.classList.add('is-ads');
+  document.querySelector('.br__footer-wr-ads')?.classList.remove('is-ads');
+} else {
+  document.querySelector('.br__nav_menu-list')?.classList.remove('is-ads');
+  document.querySelector('.br__footer-wr')?.classList.remove('is-ads-hide');
+  document.querySelector('.br__nav__menu-button')?.classList.remove('is-ads');
+  document.querySelector('.br__footer-wr-ads')?.classList.add('is-ads');
 }
 
 // =============================================================================
-// FALLBACK (when services don't load)
+// GLOBAL PROMISES
 // =============================================================================
-function handleFallback() {
-  window.Webflow ||= [];
-  window.Webflow.push(async () => {
-    hidePreloader();
-    handleAdsMode();
+window.mixpanelReady = (async () => {
+  const result = await waitForMixpanel();
+  return result;
+})();
 
-    // Still handle quiz flow links even without tracking
-    const quizGateOn = window.statsigGates?.quizFlow || false;
-    if (quizGateOn) {
-      window.localStorage.setItem('hasQuizFlow', 'true');
-      $('.find-dietitian-link').attr('href', 'https://signup.faynutrition.com/quiz');
-      setTimeout(() => {
-        if (typeof addUtmParamsInLinks === 'function') {
-          addUtmParamsInLinks();
-        }
-      }, 1000);
-    } else {
-      window.localStorage.removeItem('hasQuizFlow');
-    }
-  });
-}
+window.osanoReady = (async () => {
+  const result = await waitForOsano();
+  return result;
+})();
 
 // =============================================================================
-// MAIN INITIALIZATION
+// MAIN TRACKING LOGIC
 // =============================================================================
-(async function () {
-  const mixpanelReady = await waitForMixpanel(1000);
-  const statsigReady = await waitForStatsigGates(1000);
-  const osanoReady = await waitForOsano(1000);
+async function initTracking() {
+  const statsigStatus = await window.statsigReady;
+  const mixpanelStatus = await window.mixpanelReady;
+  const osanoStatus = await window.osanoReady;
 
-  console.log(mixpanelReady, statsigReady, osanoReady);
-
-  const servicesReady =
-    mixpanelReady &&
-    statsigReady &&
-    window.mixpanel &&
-    window.statsigGates &&
-    osanoReady &&
-    window.Osano;
-
-  if (!servicesReady) {
-    console.log('Timeout waiting for services - skipping tracking');
-    handleFallback();
+  // Check if Mixpanel loaded
+  if (!mixpanelStatus.ok) {
+    console.log('Mixpanel not loaded - skipping tracking');
     return;
   }
 
-  console.log('Statsig, Mixpanel and Osano loaded');
+  // Check consent
+  const hasAnalyticsConsent = osanoStatus.ok && window.Osano?.cm?.analytics;
 
-  // Set up bot filtering
-  window.mixpanel.register({ 'User Agent': window.navigator.userAgent });
+  if (!hasAnalyticsConsent) {
+    console.log('No analytics consent - skipping tracking');
+    return;
+  }
+
+  // Bot filtering
+  const userAgentBotTest = window.navigator.userAgent;
+  window.mixpanel.register({ 'User Agent': userAgentBotTest });
   if (isBot()) {
     window.mixpanel.register({ $ignore: true });
   }
 
-  // =============================================================================
-  // CONSENT CHECK
-  // =============================================================================
-  const hasAnalyticsConsent = window.Osano.cm.analytics;
+  // Feature gates
+  const ratingsGateOn = statsigStatus.ok
+    ? window.statsigClient.checkGate('dietitian_profile_reviews_and_ratings')
+    : false;
 
-  if (!hasAnalyticsConsent) {
-    console.log('No analytics consent - skipping tracking');
-    handleFallback();
-    return;
+  const quizGateOn = statsigStatus.ok
+    ? window.statsigClient.checkGate('quiz_flow_marketing_site')
+    : false;
+
+  console.log('Feature gates:', { ratingsGateOn, quizGateOn });
+
+  // Check if user arrived via redirect (one-time flag)
+  const arrivedViaRedirect = window.localStorage.getItem(REDIRECT_PENDING_KEY) === 'true';
+
+  if (arrivedViaRedirect) {
+    window.localStorage.removeItem(REDIRECT_PENDING_KEY);
   }
 
-  // =============================================================================
-  // USER HAS CONSENT - Initialize tracking and page
-  // =============================================================================
-  window.Webflow ||= [];
-  window.Webflow.push(async () => {
-    hidePreloader();
-    handleAdsMode();
+  console.log('homepage_track');
+  // Track page view
+  window.mixpanel.track('home_page_viewed', {
+    ...(arrivedViaRedirect && { arrived_via_redirect: true }),
+    RatingShown: ratingsGateOn,
+    QuizShown: quizGateOn,
+  });
 
-    // Initialize Mixpanel session recording
-    window.mixpanel.init('b244137ebd6eaed06ec25cc81bec6ad0', {
-      record_sessions_percent: 100,
-      record_mask_text_selector: '',
-    });
+  // Initialize session recording
+  window.mixpanel.init('b244137ebd6eaed06ec25cc81bec6ad0', {
+    record_sessions_percent: 100,
+    record_mask_text_selector: '',
+  });
 
-    // Get feature gates
-    const quizGateOn = window.statsigClient?.checkGate('quiz_flow_marketing_site') || false;
-    const ratingsGateOn =
-      window.statsigClient?.checkGate('dietitian_profile_reviews_and_ratings') || false;
+  // Quiz flow experiment
+  if (quizGateOn) {
+    window.localStorage.setItem('hasQuizFlow', 'true');
+    $('.find-dietitian-link').attr('href', 'https://signup.faynutrition.com/quiz');
 
-    console.log('Feature gates:', { quizGateOn, ratingsGateOn });
-
-    // Handle quiz flow
-    if (quizGateOn) {
-      window.localStorage.setItem('hasQuizFlow', 'true');
-      document
-        .querySelectorAll('.find-dietitian-link')
-        .forEach((el) => el.setAttribute('href', 'https://signup.faynutrition.com/quiz'));
-      $('.find-dietitian-link').attr('href', 'https://signup.faynutrition.com/quiz');
-    } else {
-      window.localStorage.removeItem('hasQuizFlow');
-    }
-
-    // Check if user just arrived via redirect
-    const arrivedViaRedirect = window.sessionStorage.getItem('fay_redirect_pending') === 'true';
-
-    // Clear the flag immediately (so it doesn't fire again)
-    if (arrivedViaRedirect) {
-      window.sessionStorage.removeItem('fay_redirect_pending');
-    }
-
-    window.mixpanel.track('home_page_viewed', {
-      ...(arrivedViaRedirect && { ArrivedViaRedirect: true }),
-      RatingShown: ratingsGateOn,
-      QuizShown: quizGateOn,
-    });
-
-    // Track quiz flow experiment
     window.mixpanel.track('$experiment_started', {
       'Experiment name': 'quiz_flow',
-      'Variant name': quizGateOn ? 'quiz_flow_v1' : 'booking_flow',
+      'Variant name': 'quiz_flow_v1',
     });
 
-    // Update links with UTM params
-    if (quizGateOn) {
-      setTimeout(() => {
-        if (typeof addUtmParamsInLinks === 'function') {
-          addUtmParamsInLinks();
-        }
-      }, 1000);
-    }
-  });
-})();
+    setTimeout(() => {
+      if (typeof addUtmParamsInLinks === 'function') {
+        window.addUtmParamsInLinks();
+      }
+    }, 1000);
+  } else {
+    window.localStorage.removeItem('hasQuizFlow');
+    window.mixpanel.track('$experiment_started', {
+      'Experiment name': 'quiz_flow',
+      'Variant name': 'booking_flow',
+    });
+  }
+}
+
+initTracking();
+// // =============================================================================
+// // EXPERIMENT CONFIGURATION
+// // =============================================================================
+// const EXPERIMENT_NAME = 'homepage_redesign';
+// const EXPERIMENT_STORAGE_KEY = 'fay_homepage_experiment';
+
+// // =============================================================================
+// // UTILITY FUNCTIONS
+// // =============================================================================
+
+// async function waitForService(checkFn, timeout = 5000, delay = 50) {
+//   const startTime = Date.now();
+//   while (Date.now() - startTime < timeout) {
+//     if (checkFn()) return true;
+//     await new Promise((r) => window.setTimeout(r, delay));
+//   }
+//   return false;
+// }
+
+// async function waitForStatsigGates(timeout = 2000) {
+//   return waitForService(() => window.statsigGates?.ready, timeout);
+// }
+
+// async function waitForMixpanel(timeout = 2000) {
+//   return waitForService(() => window.mixpanel, timeout);
+// }
+
+// async function waitForOsano(timeout = 2000) {
+//   return waitForService(() => window.Osano, timeout);
+// }
+
+// function hidePreloader() {
+//   const preloader = document.querySelector('.statsig-loader');
+//   if (preloader) {
+//     preloader.style.display = 'none';
+//   }
+// }
+
+// function getExperimentAssignment() {
+//   const stored = localStorage.getItem(EXPERIMENT_STORAGE_KEY);
+//   return stored ? JSON.parse(stored) : null;
+// }
+
+// function isBot() {
+//   const botPattern = /DatadogSynthetics/i;
+//   return botPattern.test(window.navigator.userAgent);
+// }
+
+// // =============================================================================
+// // URL PARAMETERS
+// // =============================================================================
+// const adsUrlParams = new window.URLSearchParams(window.location.search);
+// const isAds = adsUrlParams.get('ads');
+// const customerId = adsUrlParams.get('customerId');
+// const sessionId = adsUrlParams.get('sessionId');
+// const referralToken = adsUrlParams.get('referralToken');
+// const withingsToken = adsUrlParams.get('withings_token') ?? adsUrlParams.get('withingsToken');
+// const has_withings_plus = adsUrlParams.get('has_withings_plus');
+// const FayBookingCode = adsUrlParams.get('FayBookingCode');
+
+// if (withingsToken) {
+//   window.localStorage.setItem('withingsToken', withingsToken);
+// }
+
+// // =============================================================================
+// // ADS MODE HANDLING
+// // =============================================================================
+// function handleAdsMode() {
+//   if (isAds === 'true') {
+//     document.querySelector('.br__nav_menu-list')?.classList.add('is-ads');
+//     document.querySelector('.br__footer-wr')?.classList.add('is-ads-hide');
+//     document.querySelector('.br__nav__menu-button')?.classList.add('is-ads');
+//     document.querySelector('.br__footer-wr-ads')?.classList.remove('is-ads');
+//   } else {
+//     document.querySelector('.br__nav_menu-list')?.classList.remove('is-ads');
+//     document.querySelector('.br__footer-wr')?.classList.remove('is-ads-hide');
+//     document.querySelector('.br__nav__menu-button')?.classList.remove('is-ads');
+//     document.querySelector('.br__footer-wr-ads')?.classList.add('is-ads');
+//   }
+// }
+
+// // =============================================================================
+// // FALLBACK (when services don't load)
+// // =============================================================================
+// function handleFallback() {
+//   window.Webflow ||= [];
+//   window.Webflow.push(async () => {
+//     hidePreloader();
+//     handleAdsMode();
+
+//     // Still handle quiz flow links even without tracking
+//     const quizGateOn = window.statsigGates?.quizFlow || false;
+//     if (quizGateOn) {
+//       window.localStorage.setItem('hasQuizFlow', 'true');
+//       $('.find-dietitian-link').attr('href', 'https://signup.faynutrition.com/quiz');
+//       setTimeout(() => {
+//         if (typeof addUtmParamsInLinks === 'function') {
+//           addUtmParamsInLinks();
+//         }
+//       }, 1000);
+//     } else {
+//       window.localStorage.removeItem('hasQuizFlow');
+//     }
+//   });
+// }
+
+// // =============================================================================
+// // MAIN INITIALIZATION
+// // =============================================================================
+// (async function () {
+//   const mixpanelReady = await waitForMixpanel(5000);
+//   const statsigReady = await waitForStatsigGates(5000);
+//   const osanoReady = await waitForOsano(5000);
+
+//   console.log(mixpanelReady, statsigReady, osanoReady);
+
+//   const servicesReady =
+//     mixpanelReady &&
+//     statsigReady &&
+//     window.mixpanel &&
+//     window.statsigGates &&
+//     osanoReady &&
+//     window.Osano;
+
+//   if (!servicesReady) {
+//     console.log('Timeout waiting for services - skipping tracking');
+//     handleFallback();
+//     return;
+//   }
+
+//   console.log('Statsig, Mixpanel and Osano loaded');
+
+//   // Set up bot filtering
+//   window.mixpanel.register({ 'User Agent': window.navigator.userAgent });
+//   if (isBot()) {
+//     window.mixpanel.register({ $ignore: true });
+//   }
+
+//   // =============================================================================
+//   // CONSENT CHECK
+//   // =============================================================================
+//   const hasAnalyticsConsent = window.Osano.cm.analytics;
+
+//   if (!hasAnalyticsConsent) {
+//     console.log('No analytics consent - skipping tracking');
+//     handleFallback();
+//     return;
+//   }
+
+//   // =============================================================================
+//   // USER HAS CONSENT - Initialize tracking and page
+//   // =============================================================================
+//   window.Webflow ||= [];
+//   window.Webflow.push(async () => {
+//     hidePreloader();
+//     handleAdsMode();
+
+//     // Initialize Mixpanel session recording
+//     window.mixpanel.init('b244137ebd6eaed06ec25cc81bec6ad0', {
+//       record_sessions_percent: 100,
+//       record_mask_text_selector: '',
+//     });
+
+//     // Get feature gates
+//     const quizGateOn = window.statsigClient?.checkGate('quiz_flow_marketing_site') || false;
+//     const ratingsGateOn =
+//       window.statsigClient?.checkGate('dietitian_profile_reviews_and_ratings') || false;
+
+//     console.log('Feature gates:', { quizGateOn, ratingsGateOn });
+
+//     // Handle quiz flow
+//     if (quizGateOn) {
+//       window.localStorage.setItem('hasQuizFlow', 'true');
+//       document
+//         .querySelectorAll('.find-dietitian-link')
+//         .forEach((el) => el.setAttribute('href', 'https://signup.faynutrition.com/quiz'));
+//       $('.find-dietitian-link').attr('href', 'https://signup.faynutrition.com/quiz');
+//     } else {
+//       window.localStorage.removeItem('hasQuizFlow');
+//     }
+
+//     // Check if user just arrived via redirect
+//     const arrivedViaRedirect = window.sessionStorage.getItem('fay_redirect_pending') === 'true';
+
+//     // Clear the flag immediately (so it doesn't fire again)
+//     if (arrivedViaRedirect) {
+//       window.sessionStorage.removeItem('fay_redirect_pending');
+//     }
+
+//     window.mixpanel.track('home_page_viewed', {
+//       ...(arrivedViaRedirect && { ArrivedViaRedirect: true }),
+//       RatingShown: ratingsGateOn,
+//       QuizShown: quizGateOn,
+//     });
+
+//     // Track quiz flow experiment
+//     window.mixpanel.track('$experiment_started', {
+//       'Experiment name': 'quiz_flow',
+//       'Variant name': quizGateOn ? 'quiz_flow_v1' : 'booking_flow',
+//     });
+
+//     // Update links with UTM params
+//     if (quizGateOn) {
+//       setTimeout(() => {
+//         if (typeof addUtmParamsInLinks === 'function') {
+//           addUtmParamsInLinks();
+//         }
+//       }, 1000);
+//     }
+//   });
+// })();
 
 window.Webflow ||= [];
 window.Webflow.push(() => {

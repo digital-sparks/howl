@@ -1,3 +1,25 @@
+/**
+ * Rive Canvas Runtime v2.33.3
+ * Source: https://github.com/rive-app/rive-wasm
+ * NPM: https://www.npmjs.com/package/@rive-app/canvas
+ * License: MIT
+ */
+
+/**
+ * HLS.js v1.6.15
+ * Source: https://github.com/video-dev/hls.js
+ * NPM: https://www.npmjs.com/package/hls.js
+ * License: Apache-2.0
+ */
+
+/**
+ * Swiper v12.0.3
+ * Includes: Core, Autoplay, EffectCoverflow, Keyboard, Mousewheel, Navigation
+ * Source: https://github.com/nolimits4web/swiper
+ * NPM: https://www.npmjs.com/package/swiper
+ * License: MIT
+ */
+
 // =============================================================================
 // IMPORTS
 // =============================================================================
@@ -194,6 +216,7 @@ window.Webflow.push(() => {
       slidesPerView: 'auto',
       centeredSlides: true,
       effect: 'coverflow',
+      touchEventsTarget: 'wrapper',
       grabCursor: false,
       loopAdditionalSlides: 6,
       mousewheel: {
@@ -242,6 +265,7 @@ window.Webflow.push(() => {
       loop: true,
       slidesPerView: 1,
       speed: 500,
+      touchEventsTarget: 'wrapper',
       spaceBetween: 100,
       grabCursor: true,
       mousewheel: {
@@ -292,6 +316,7 @@ window.Webflow.push(() => {
         },
         slidesPerView: 'auto',
         spaceBetween: 24,
+        touchEventsTarget: 'wrapper',
         grabCursor: true,
         centeredSlides: false,
         autoplay: {
@@ -344,6 +369,7 @@ window.Webflow.push(() => {
         loop: true,
         grabCursor: true,
         slidesPerView: 'auto',
+        touchEventsTarget: 'wrapper',
         initialSlide: 2,
         autoplay: {
           delay: 4000,
