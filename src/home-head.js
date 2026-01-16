@@ -14,9 +14,9 @@ import { Autoplay, EffectCoverflow, Keyboard, Mousewheel, Navigation } from 'swi
 // Lottie animation CDN URLs
 const LOTTIE_URLS = {
   step1:
-    'https://cdn.prod.website-files.com/60e33881a96433966407b814/694e4f5a4d8da777e4c6f6b3_Step-1.json',
+    'https://cdn.prod.website-files.com/60e33881a96433966407b814/696a67282aa5a1196999ca71_Step-1%20(1).json',
   step3:
-    'https://cdn.prod.website-files.com/60e33881a96433966407b814/6965142abfd7fc30f9716a42_Step-3.json',
+    'https://cdn.prod.website-files.com/60e33881a96433966407b814/696a6cda7bd3a67c0a84ec6d_fay-step-3.json',
   footerMobile:
     'https://cdn.prod.website-files.com/60e33881a96433966407b814/6965142a20216e5f817a2f39_footer-text-mobile.json',
   footerDesktop:
