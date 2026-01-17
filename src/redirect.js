@@ -88,8 +88,8 @@ function hasSeenWithoutConsent() {
 // =============================================================================
 // URL PARAMETERS
 // =============================================================================
-const adsUrlParams = new window.URLSearchParams(window.location.search);
-const isAds = adsUrlParams.get('ads');
+// const adsUrlParams = new window.URLSearchParams(window.location.search);
+// const isAds = adsUrlParams.get('ads');
 const customerId = adsUrlParams.get('customerId');
 const sessionId = adsUrlParams.get('sessionId');
 const referralToken = adsUrlParams.get('referralToken');

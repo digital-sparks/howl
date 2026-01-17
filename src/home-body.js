@@ -100,11 +100,17 @@ window.osanoReady = (async () => {
   return result;
 })();
 
+window.statsigReady = (async () => {
+  const result = await waitForStatsig();
+  return result;
+})();
+
 // =============================================================================
 // MAIN TRACKING LOGIC
 // =============================================================================
 async function initTracking() {
   const statsigStatus = await window.statsigReady;
+
   await window.mixpanelReady;
   // const osanoStatus = await window.osanoReady;
 
@@ -124,11 +130,11 @@ async function initTracking() {
   }
 
   // Feature gates
-  const ratingsGateOn = statsigStatus.ok
+  const ratingsGateOn = statsigStatus?.ok
     ? window.statsigClient.checkGate('dietitian_profile_reviews_and_ratings')
     : false;
 
-  const quizGateOn = statsigStatus.ok
+  const quizGateOn = statsigStatus?.ok
     ? window.statsigClient.checkGate('quiz_flow_marketing_site')
     : false;
 
