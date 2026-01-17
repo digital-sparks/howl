@@ -9,7 +9,7 @@ const PRODUCTION = process.env.NODE_ENV === 'production';
 
 // Config entrypoint files
 // You can use both .js and .ts files as entry points
-const ENTRY_POINTS = ['src/home-head.js', 'src/home-body.js', 'src/redirect.js', 'src/swiper.js'];
+const ENTRY_POINTS = ['src/home-head.js', 'src/home-body.js', 'src/redirect.js'];
 
 // Config dev serving
 const LIVE_RELOAD = !PRODUCTION;

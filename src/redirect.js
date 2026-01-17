@@ -54,6 +54,7 @@ function getExperimentAssignment(statsigReady) {
   }
 
   const shouldRedirect = statsigReady && window.statsigGates?.homepageRedesign;
+
   const assignment = {
     variant: shouldRedirect ? 'redesign' : 'control',
     assignedAt: Date.now(),
