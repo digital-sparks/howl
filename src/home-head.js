@@ -120,39 +120,39 @@ window.Webflow.push(() => {
     }
   }
 
-  function initHeaderDarkMode() {
-    // const header = document.querySelector('.br__header_wr');
-    // if (!header) return;
-    // header.classList.add('is-dark');
-    // header.classList.add('is-links-dark');
-    // const darkSections = document.querySelectorAll('[data-section="dark"]');
-    // const linksDarkSections = document.querySelectorAll('[data-section-links="dark"]');
-    // if (!darkSections.length && !linksDarkSections.length) return;
-    // // Create ScrollTriggers for dark sections
-    // darkSections.forEach((section) => {
-    //   ScrollTrigger.create({
-    //     trigger: section,
-    //     start: 'top top',
-    //     end: 'bottom top',
-    //     onEnter: () => header.classList.add('is-dark'),
-    //     onLeave: () => header.classList.remove('is-dark'),
-    //     onEnterBack: () => header.classList.add('is-dark'),
-    //     onLeaveBack: () => header.classList.remove('is-dark'),
-    //   });
-    // });
-    // // Create ScrollTriggers for links dark sections
-    // linksDarkSections.forEach((section) => {
-    //   ScrollTrigger.create({
-    //     trigger: section,
-    //     start: () => `top ${header.offsetHeight}px`,
-    //     end: () => `bottom ${header.offsetHeight}px`,
-    //     onEnter: () => header.classList.add('is-links-dark'),
-    //     onLeave: () => header.classList.remove('is-links-dark'),
-    //     onEnterBack: () => header.classList.add('is-links-dark'),
-    //     onLeaveBack: () => header.classList.remove('is-links-dark'),
-    //   });
-    // });
-  }
+  // function initHeaderDarkMode() {
+  // const header = document.querySelector('.br__header_wr');
+  // if (!header) return;
+  // header.classList.add('is-dark');
+  // header.classList.add('is-links-dark');
+  // const darkSections = document.querySelectorAll('[data-section="dark"]');
+  // const linksDarkSections = document.querySelectorAll('[data-section-links="dark"]');
+  // if (!darkSections.length && !linksDarkSections.length) return;
+  // // Create ScrollTriggers for dark sections
+  // darkSections.forEach((section) => {
+  //   ScrollTrigger.create({
+  //     trigger: section,
+  //     start: 'top top',
+  //     end: 'bottom top',
+  //     onEnter: () => header.classList.add('is-dark'),
+  //     onLeave: () => header.classList.remove('is-dark'),
+  //     onEnterBack: () => header.classList.add('is-dark'),
+  //     onLeaveBack: () => header.classList.remove('is-dark'),
+  //   });
+  // });
+  // // Create ScrollTriggers for links dark sections
+  // linksDarkSections.forEach((section) => {
+  //   ScrollTrigger.create({
+  //     trigger: section,
+  //     start: () => `top ${header.offsetHeight}px`,
+  //     end: () => `bottom ${header.offsetHeight}px`,
+  //     onEnter: () => header.classList.add('is-links-dark'),
+  //     onLeave: () => header.classList.remove('is-links-dark'),
+  //     onEnterBack: () => header.classList.add('is-links-dark'),
+  //     onLeaveBack: () => header.classList.remove('is-links-dark'),
+  //   });
+  // });
+  // }
 
   function initNavSearch() {
     const hero = document.querySelector('.br__section.is-home_hero');
@@ -216,7 +216,7 @@ window.Webflow.push(() => {
       slidesPerView: 'auto',
       centeredSlides: true,
       effect: 'coverflow',
-      // touchEventsTarget: 'wrapper',
+      touchEventsTarget: 'container',
       grabCursor: false,
       loopAdditionalSlides: 6,
       mousewheel: {
@@ -265,7 +265,7 @@ window.Webflow.push(() => {
       loop: true,
       slidesPerView: 1,
       speed: 500,
-      // touchEventsTarget: 'wrapper',
+      touchEventsTarget: 'container',
       spaceBetween: 100,
       grabCursor: true,
       mousewheel: {
@@ -315,8 +315,8 @@ window.Webflow.push(() => {
           onlyInViewport: true,
         },
         slidesPerView: 'auto',
-        spaceBetween: 24,
-        // touchEventsTarget: 'wrapper',
+        spaceBetween: 0,
+        touchEventsTarget: 'container',
         grabCursor: true,
         centeredSlides: false,
         autoplay: {
@@ -369,7 +369,7 @@ window.Webflow.push(() => {
         loop: true,
         grabCursor: true,
         slidesPerView: 'auto',
-        // touchEventsTarget: 'wrapper',
+        touchEventsTarget: 'container',
         initialSlide: 2,
         autoplay: {
           delay: 4000,
@@ -1162,9 +1162,9 @@ window.Webflow.push(() => {
       const hlsConfig = {
         enableWorker: true,
         lowLatencyMode: false,
-        backBufferLength: 90,
-        maxBufferLength: 600, // Keep up to 10 minutes of video in buffer
-        maxMaxBufferLength: 600,
+        backBufferLength: 10,
+        maxBufferLength: 60, // Keep up to 10 minutes of video in buffer
+        maxMaxBufferLength: 60,
       };
 
       // Add high quality settings if requested
@@ -1315,15 +1315,15 @@ window.Webflow.push(() => {
               const hlsConfig = {
                 enableWorker: true,
                 lowLatencyMode: false,
-                backBufferLength: 30, // Reduced from 90
-                maxBufferLength: 120, // Reduced from 600
-                maxMaxBufferLength: 180, // Reduced from 600
-                maxBufferSize: 30 * 1000 * 1000, // 30 MB max buffer
+                backBufferLength: 8,
+                maxBufferLength: 8,
+                maxMaxBufferLength: 8,
+                maxBufferSize: 8 * 1000 * 1000,
                 maxBufferHole: 0.5,
                 startLevel: 0, // Start with lowest quality
                 capLevelToPlayerSize: true, // Don't load higher quality than needed
-                startFragPrefetch: true, // Prefetch fragments
-                testBandwidth: false, // Skip bandwidth test on startup
+                startFragPrefetch: false, // Prefetch fragments
+                testBandwidth: true, // Skip bandwidth test on startup
               };
 
               const hls = new Hls(hlsConfig);
@@ -1692,7 +1692,7 @@ window.Webflow.push(() => {
   // ===========================================================================
   function initLightweightFeatures() {
     initMenu();
-    initHeaderDarkMode();
+    // initHeaderDarkMode();
     initStepPointers();
     initNavSearch();
     initMarqueeAnimation();
