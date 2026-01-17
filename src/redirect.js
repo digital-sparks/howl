@@ -88,8 +88,8 @@ function hasSeenWithoutConsent() {
 // =============================================================================
 // URL PARAMETERS
 // =============================================================================
-const adsUrlParams = new window.URLSearchParams(window.location.search);
-const isAds = adsUrlParams.get('ads');
+// const adsUrlParams = new window.URLSearchParams(window.location.search);
+// const isAds = adsUrlParams.get('ads');
 const customerId = adsUrlParams.get('customerId');
 const sessionId = adsUrlParams.get('sessionId');
 const referralToken = adsUrlParams.get('referralToken');
@@ -138,8 +138,21 @@ function handleDefaultHomepage(reason) {
 // =============================================================================
 // FALLBACK (when services don't load)
 // =============================================================================
+
 function handleFallback() {
-  // Mark as seen without consent since we can't verify consent status
+  // Check if user was already assigned to redesign variant
+  const stored = localStorage.getItem(EXPERIMENT_STORAGE_KEY);
+  if (stored) {
+    const assignment = JSON.parse(stored);
+    if (assignment.variant === 'redesign') {
+      console.log('Services unavailable but user already assigned to redesign - redirecting');
+      window.location.href = getRedirectUrl(NEW_HOMEPAGE_PATH);
+      return;
+    }
+  }
+
+  // Only mark as seen without consent for users not already in experiment
+  // (since we can't verify consent status and they're seeing the default homepage)
   markSeenWithoutConsent();
 
   window.Webflow ||= [];
