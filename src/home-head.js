@@ -1006,9 +1006,11 @@ window.Webflow.push(() => {
       killStepsST();
       if (window.innerWidth <= 767) return;
 
+      let height = document.querySelector('.br__steps-asset-wr.is-01').clientHeight;
+
       stepsST = ScrollTrigger.create({
         trigger: '.br__steps-wr',
-        start: 'top 128px',
+        start: `${height / 2 + 160}px bottom`,
         end: 'bottom bottom',
         scrub: 1.5,
         // markers: true,
@@ -1023,13 +1025,11 @@ window.Webflow.push(() => {
 
           let newStep;
 
-          console.log(progress);
-
-          if (progress < 0.4) {
+          if (progress < 0.45) {
             newStep = 1;
             gsap.to('.bg-stes-video-tab-bg', { x: '-4rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(0);
-          } else if (progress < 0.8) {
+          } else if (progress < 0.9) {
             newStep = 2;
             gsap.to('.bg-stes-video-tab-bg', { x: '0rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(1);
@@ -1038,7 +1038,7 @@ window.Webflow.push(() => {
             gsap.to('.bg-stes-video-tab-bg', { x: '4rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(2);
           } else {
-            // After 80%, keep step 3 active but allow natural unsticking
+            // After 90%, keep step 3 active but allow natural unsticking
             newStep = 3;
           }
 
