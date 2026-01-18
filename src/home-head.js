@@ -1006,14 +1006,12 @@ window.Webflow.push(() => {
       killStepsST();
       if (window.innerWidth <= 767) return;
 
-      let height = document.querySelector('.br__steps-asset-wr.is-01').clientHeight;
-
       stepsST = ScrollTrigger.create({
         trigger: '.br__steps-wr',
-        start: `${height / 2 + 160}px bottom`,
+        start: 'top 128px',
         end: 'bottom bottom',
         scrub: 1.5,
-        markers: false,
+        // markers: true,
         onUpdate: (self) => {
           const { progress } = self;
           const items = document.querySelectorAll('.br__step-item_desckription-wr');
@@ -1025,11 +1023,13 @@ window.Webflow.push(() => {
 
           let newStep;
 
-          if (progress < 0.45) {
+          console.log(progress);
+
+          if (progress < 0.4) {
             newStep = 1;
             gsap.to('.bg-stes-video-tab-bg', { x: '-4rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(0);
-          } else if (progress < 0.9) {
+          } else if (progress < 0.8) {
             newStep = 2;
             gsap.to('.bg-stes-video-tab-bg', { x: '0rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(1);
@@ -1038,7 +1038,7 @@ window.Webflow.push(() => {
             gsap.to('.bg-stes-video-tab-bg', { x: '4rem', duration: 0.4, ease: 'power2.out' });
             setActiveDesc(2);
           } else {
-            // After 90%, keep step 3 active but allow natural unsticking
+            // After 80%, keep step 3 active but allow natural unsticking
             newStep = 3;
           }
 
@@ -1450,6 +1450,60 @@ window.Webflow.push(() => {
     if (!items.length) return;
 
     const riveInstances = new Map();
+    const canvases = document.querySelectorAll('.rive-animation');
+    let loadedCount = 0;
+    const totalCanvases = canvases.length;
+
+    const createScrollTriggers = () => {
+      // Use ScrollTrigger to control Rive playback and animate grid items
+      items.forEach((item) => {
+        const canvas = item.querySelector('.rive-animation');
+        if (!canvas) return;
+
+        // Set initial state
+        gsap.set(item, { opacity: 0, y: 40 });
+
+        ScrollTrigger.create({
+          trigger: item,
+          start: 'center bottom',
+          end: 'center top',
+          markers: false,
+          onEnter: () => {
+            gsap.to(item, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: 'power3.out',
+            });
+
+            const inst = riveInstances.get(canvas);
+            if (inst) inst.play();
+          },
+          onEnterBack: () => {
+            gsap.to(item, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: 'power3.out',
+            });
+
+            const inst = riveInstances.get(canvas);
+            if (inst) inst.play();
+          },
+          onRefresh: (self) => {
+            // Check if item is already in view on page load
+            if (self.isActive) {
+              gsap.set(item, { opacity: 1, y: 0 });
+              const inst = riveInstances.get(canvas);
+              if (inst) inst.play();
+            }
+          },
+        });
+      });
+
+      // Refresh ScrollTrigger to check initial positions
+      ScrollTrigger.refresh();
+    };
 
     const loadCanvas = (canvas) => {
       if (riveInstances.has(canvas)) return;
@@ -1458,7 +1512,6 @@ window.Webflow.push(() => {
       if (!src) return;
 
       const smName = canvas.dataset.riveStateMachine;
-
       const opts = {
         src,
         canvas,
@@ -1470,6 +1523,14 @@ window.Webflow.push(() => {
         onLoad: () => {
           inst.resizeDrawingSurfaceToCanvas();
           inst.pause();
+
+          // Increment loaded count
+          loadedCount++;
+
+          // Create ScrollTriggers only after all Rive instances are loaded
+          if (loadedCount === totalCanvases) {
+            createScrollTriggers();
+          }
         },
       };
 
@@ -1483,65 +1544,15 @@ window.Webflow.push(() => {
         riveInstances.set(canvas, inst);
       } catch (error) {
         console.error('Error loading Rive animation:', error);
+        // Still increment count on error to prevent hanging
+        loadedCount++;
+        if (loadedCount === totalCanvases) {
+          createScrollTriggers();
+        }
       }
     };
 
-    document.querySelectorAll('.rive-animation').forEach(loadCanvas);
-
-    // Use ScrollTrigger to control Rive playback and animate grid items
-    items.forEach((item) => {
-      const canvas = item.querySelector('.rive-animation');
-      if (!canvas) return;
-
-      // Set initial state
-      gsap.set(item, { opacity: 0, y: 40 });
-
-      ScrollTrigger.create({
-        trigger: item,
-        start: 'center bottom',
-        end: 'center top',
-        markers: false,
-        onEnter: () => {
-          // Animate item in
-          gsap.to(item, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-          });
-
-          // Play Rive animation
-          const inst = riveInstances.get(canvas);
-          if (inst) inst.play();
-        },
-        onEnterBack: () => {
-          // Animate item in
-          gsap.to(item, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-          });
-
-          // Play Rive animation
-          const inst = riveInstances.get(canvas);
-          if (inst) inst.play();
-          //   // Play Rive animation when scrolling back
-          //   const inst = riveInstances.get(canvas);
-          //   if (inst) inst.play();
-        },
-        // onLeave: () => {
-        //   // Pause Rive animation when leaving viewport
-        //   const inst = riveInstances.get(canvas);
-        //   if (inst) inst.pause();
-        // },
-        // onLeaveBack: () => {
-        //   // Pause Rive animation when scrolling up past
-        //   const inst = riveInstances.get(canvas);
-        //   if (inst) inst.pause();
-        // },
-      });
-    });
+    canvases.forEach(loadCanvas);
   }
 
   // ===========================================================================
@@ -1761,17 +1772,6 @@ window.Webflow.push(() => {
       }, 1500);
     }
 
-    // Initialize Hero Video
-    if (hasHeroVideo) {
-      onIdle(() => {
-        try {
-          initHeroVideo();
-        } catch (e) {
-          console.error(e);
-        }
-      }, 300);
-    }
-
     // Initialize Video Lines
     if (hasVideoLines) {
       onIdle(() => {
@@ -1788,6 +1788,7 @@ window.Webflow.push(() => {
   // BOOT SEQUENCE
   // ===========================================================================
   initLightweightFeatures();
+  initHeroVideo();
   initHeavyFeatures();
 
   initRiveAnimations();
