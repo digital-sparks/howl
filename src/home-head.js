@@ -568,8 +568,8 @@ window.Webflow.push(() => {
       gsap.set(proxy, { x: 0 });
     }
 
-    prevBtn?.addEventListener('click', () => goToSlide(-1));
-    nextBtn?.addEventListener('click', () => goToSlide(1));
+    prevBtn?.addEventListener('click', () => goToSlide(1));
+    nextBtn?.addEventListener('click', () => goToSlide(-1));
 
     // Autoplay functionality
     const AUTOPLAY_DELAY = 4000;
@@ -588,7 +588,7 @@ window.Webflow.push(() => {
 
       autoplayTimer = setInterval(() => {
         if (document.hidden || pauseByHover || pauseByDrag) return;
-        goToSlide(1);
+        goToSlide(-1);
       }, AUTOPLAY_DELAY);
     }
 
