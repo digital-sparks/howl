@@ -215,7 +215,7 @@ window.Webflow.push(() => {
   var dropdownElements = document.getElementsByClassName('hero_dropdown-wrap');
   var saveElements = document.getElementsByClassName('save');
 
-  const herofilterSection = document.querySelector('.br__h-hero-wr');
+  const herofilterSection = document.querySelector('.hero-video_content-wrapper');
   const herofilterFieldElements = herofilterSection.querySelectorAll('.br__search-field-wr');
 
   const navfilterSection = document.querySelector('.br__header_container');
@@ -839,7 +839,7 @@ window.Webflow.push(() => {
           }, 100);
 
           createURL();
-          resizeFilterButton();
+          // resizeFilterButton();
           validateStateField();
         }
       });
@@ -906,7 +906,7 @@ window.Webflow.push(() => {
       closePopup($('#insurance.mobile-filter-modal')[0]);
       createURL();
       validateInsuranceField();
-      resizeFilterButton();
+      // resizeFilterButton();
 
       if (selectedState.state !== undefined) {
         herofilterFieldElements?.[1]?.classList.add('is-active');
@@ -961,11 +961,11 @@ window.Webflow.push(() => {
 
       $('#specialties-label-nav').text(selectedValues.join(', ')).addClass('is-active');
     } else {
-      $('#specialties-label').text('Needs').removeClass('is-active');
+      $('#specialties-label').text('Needs (optional)').removeClass('is-active');
 
-      $('#specialties-label-scroll').text('Needs').removeClass('is-active');
+      $('#specialties-label-scroll').text('Needs (optional)').removeClass('is-active');
 
-      $('#specialties-label-nav').text('Needs').removeClass('is-active');
+      $('#specialties-label-nav').text('Needs (optional)').removeClass('is-active');
     }
 
     resetSpecialtiesInputSearch();
@@ -1022,11 +1022,11 @@ window.Webflow.push(() => {
 
       $('#specialties-label-nav').text(selectedValues.join(', ')).addClass('is-active');
     } else {
-      $('#specialties-label').text('Needs').removeClass('is-active');
+      $('#specialties-label').text('Needs (optional)').removeClass('is-active');
 
-      $('#specialties-label-scroll').text('Needs').removeClass('is-active');
+      $('#specialties-label-scroll').text('Needs (optional)').removeClass('is-active');
 
-      $('#specialties-label-nav').text('Needs').removeClass('is-active');
+      $('#specialties-label-nav').text('Needs (optional)').removeClass('is-active');
     }
     resetSpecialtiesInputSearch();
 
@@ -1082,11 +1082,11 @@ window.Webflow.push(() => {
 
       $('#specialties-label-nav').text(selectedValues.join(', ')).addClass('is-active');
     } else {
-      $('#specialties-label').text('Needs').removeClass('is-active');
+      $('#specialties-label').text('Needs (optional)').removeClass('is-active');
 
-      $('#specialties-label-scroll').text('Needs').removeClass('is-active');
+      $('#specialties-label-scroll').text('Needs (optional)').removeClass('is-active');
 
-      $('#specialties-label-nav').text('Needs').removeClass('is-active');
+      $('#specialties-label-nav').text('Needs (optional)').removeClass('is-active');
     }
 
     $(
@@ -1366,11 +1366,11 @@ window.Webflow.push(() => {
       item.querySelector('.w-checkbox-input')?.classList.remove('w--redirected-checked');
     });
     selectedSpecialties = null;
-    $('#specialties-label').text('Needs').removeClass('is-active');
+    $('#specialties-label').text('Needs (optional)').removeClass('is-active');
 
-    $('#specialties-label-scroll').text('Needs').removeClass('is-active');
+    $('#specialties-label-scroll').text('Needs (optional)').removeClass('is-active');
 
-    $('#specialties-label-nav').text('Needs').removeClass('is-active');
+    $('#specialties-label-nav').text('Needs (optional)').removeClass('is-active');
     setTimeout(() => {
       createURL();
     }, 200);
@@ -1413,37 +1413,37 @@ window.Webflow.push(() => {
       $('#specialties-label-nav').text(Object.values(selectedSpecialtiesText).join(', '));
       $('#specialties-label-nav').addClass('is-active');
     } else {
-      $('#specialties-label').text('Needs');
+      $('#specialties-label').text('Needs (optional)');
       $('#specialties-label').removeClass('is-active');
 
-      $('#specialties-label-scroll').text('Needs');
+      $('#specialties-label-scroll').text('Needs (optional)');
       $('#specialties-label-scroll').removeClass('is-active');
 
-      $('#specialties-label-nav').text('Needs');
+      $('#specialties-label-nav').text('Needs (optional)');
       $('#specialties-label-nav').removeClass('is-active');
     }
   }
 
   function resizeFilterButton() {
     if (window.innerWidth > 991) {
-      $('.br__hero-wr .br__search-wr').addClass('is-active');
+      $('.hero-video_content-wrapper .br__search-wr').addClass('is-active');
     } else {
       if (selectedInsurance) {
-        $('.br__hero-wr .br__search-wr').addClass('is-active');
-        $('.br__hero-wr #insurance-tog .br__embed-icon').removeClass('is-active');
+        $('.hero-video_content-wrapper .br__search-wr').addClass('is-active');
+        $('.hero-video_content-wrapper #insurance-tog .br__embed-icon').removeClass('is-active');
 
         if (selectedState?.state) {
           $(
-            '.br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button'
+            '.hero-video_content-wrapper .br__search-wr button, .br__hero-search-wr .br__search-wr button'
           ).removeClass('is-disable');
         } else {
           $(
-            '.br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button'
+            '.hero-video_content-wrapper .br__search-wr button, .br__hero-search-wr .br__search-wr button'
           ).addClass('is-disable');
         }
       } else {
-        $('.br__hero-wr .br__search-wr').removeClass('is-active');
-        $('.br__hero-wr #insurance-tog .br__embed-icon').addClass('is-active');
+        // $('.hero-video_content-wrapper .br__search-wr').removeClass('is-active');
+        // $('.hero-video_content-wrapper #insurance-tog .br__embed-icon').addClass('is-active');
       }
     }
   }
@@ -1601,7 +1601,7 @@ window.Webflow.push(() => {
       console.log('error', error);
     }
 
-    resizeFilterButton();
+    // resizeFilterButton();
     createURL();
   }
 

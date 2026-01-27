@@ -155,22 +155,143 @@ window.Webflow.push(() => {
   // }
 
   function initNavSearch() {
-    const hero = document.querySelector('.br__section.is-home_hero');
+    const hero = document.querySelector('.hero-video_wrapper');
     const navSearch = document.querySelector('.br__hero-search-wr.is-nav');
+    const nav = document.querySelector('[data-anim-el="navbar"]');
+    const mm = gsap.matchMedia();
+    const navMenuList = document.querySelector('[data-anim-el="nav-menu-list"]');
+    const navDropdownToggle = document.querySelector('[data-anim-el="nav-dropdown-toggle"]');
+    const navDropdownMenu = document.querySelector('[data-anim-el="nav-dropdown-menu"');
+    const getStartedButtonNav = document.querySelector(
+      '[data-anim-el="get-started-navbar"]'
+    ).parentElement;
+    const getStartedButtonDropdown = document.querySelector(
+      '[data-anim-el="get-started-dropdown"]'
+    );
+    const dropdownMenu = document.querySelector('.br__dd-list');
+    const toggle = document.querySelector('.br__dd.w-dropdown');
+
+    const offset = getStartedButtonNav.clientWidth;
 
     if (!hero || !navSearch) return;
 
-    ScrollTrigger.create({
-      trigger: hero,
-      start: 'top top',
-      end: 'bottom top',
-      onLeave: () => navSearch.classList.add('is-active'),
-      onEnterBack: function () {
-        navSearch.classList.remove('is-active');
-        gsap.set('.pac-container.is-nav', { display: 'none' });
-      },
+    mm.add('(min-width: 992px)', () => {
+      gsap.set(nav, { padding: '3rem 3.5rem 1rem' });
+
+      ScrollTrigger.create({
+        trigger: hero,
+        start: 'top 76px',
+        end: 'bottom 76px',
+        markers: true,
+        onLeave: function () {
+          mm.add('(min-width: 1279px)', () => {
+            navSearch.classList.add('is-active');
+            gsap.to(navMenuList, { x: offset, marginLeft: -offset });
+            gsap.to(getStartedButtonNav, {
+              duration: 0.2,
+              ease: 'power2.out',
+              autoAlpha: 0,
+            });
+            gsap.set(getStartedButtonDropdown, { display: 'block' });
+            // if (navDropdownToggle.getAttribute('aria-expanded') === 'true') {
+            //   // navDropdownToggle.parentElement.trigger('click');
+            // }
+            navDropdownMenu.classList.add('is-right');
+          });
+
+          mm.add('(max-width: 1512px)', () => {
+            gsap.to(nav, {
+              duration: 0.4,
+              ease: 'power2.out',
+              paddingLeft: '2rem ',
+              paddingRight: '2rem ',
+            });
+          });
+        },
+        onEnterBack: function () {
+          mm.add('(min-width: 1279px)', () => {
+            navSearch.classList.remove('is-active');
+            gsap.to(navMenuList, { x: 0, marginLeft: 0 });
+            gsap.to(getStartedButtonNav, { autoAlpha: 1 });
+            gsap.set(getStartedButtonDropdown, { display: 'none' });
+            navDropdownMenu.classList.remove('is-right');
+            gsap.set('.pac-container.is-nav', { display: 'none' });
+          });
+
+          mm.add('(max-width: 1512px)', () => {
+            gsap.to(nav, {
+              duration: 0.4,
+              ease: 'power2.out',
+              paddingLeft: '3.5rem ',
+              paddingRight: '3.5rem ',
+            });
+          });
+        },
+      });
     });
   }
+
+  // function initNavSearch() {
+  //   const hero = document.querySelector('.hero-video_wrapper');
+  //   const navSearch = document.querySelector('.br__hero-search-wr.is-nav');
+  //   const nav = document.querySelector('[data-anim-el="navbar"]');
+  //   const mm = gsap.matchMedia();
+  //   const navMenuList = document.querySelector('[data-anim-el="nav-menu-list"]');
+  //   const navDropdownToggle = document.querySelector('[data-anim-el="nav-dropdown-toggle"]');
+  //   const getStartedButtonNav = document.querySelector('[data-anim-el="get-started-navbar"]');
+  //   const getStartedButtonDropdown = document.querySelector(
+  //     '[data-anim-el="get-started-dropdown"]'
+  //   );
+  //   const dropdownMenu = document.querySelector('.br__dd-list');
+  //   const toggle = document.querySelector('.br__dd.w-dropdown');
+
+  //   if (!hero || !navSearch) return;
+
+  //   mm.add('(min-width: 992px)', () => {
+  //     gsap.set(nav, { padding: '3rem 3.5rem 1rem' });
+
+  //     ScrollTrigger.create({
+  //       trigger: hero,
+  //       start: 'top 76px',
+  //       end: 'bottom 76px',
+  //       markers: true,
+  //       onLeave: function () {
+  //         console.log(toggle.querySelector('.w-dropdown-toggle').getAttribute('aria-expanded'));
+  //         if (toggle.querySelector('.w-dropdown-toggle').getAttribute('aria-expanded') === 'true') {
+  //           toggle.querySelector('.w-dropdown-toggle').click();
+  //         }
+
+  //         window.setTimeout(() => {
+  //           navSearch.classList.add('is-active');
+  //           // gsap.set(getStartedButtonNav, { autoAlpha: 0, display: 'none' });
+  //           gsap.set(getStartedButtonNav, { autoAlpha: 0 });
+  //           gsap.to([getStartedButtonNav, toggle], { x: 133 });
+  //           gsap.to(getStartedButtonDropdown, { autoAlpha: 1, display: 'block' });
+  //           dropdownMenu.classList.add('is-right');
+
+  //           gsap.to(nav, { padding: '2rem 2rem 1rem' });
+  //         }, 50);
+  //       },
+  //       onEnterBack: function () {
+  //         if (toggle.querySelector('.w-dropdown-toggle').getAttribute('aria-expanded') === 'true') {
+  //           toggle.querySelector('.w-dropdown-toggle').click();
+  //         }
+  //         navSearch.classList.remove('is-active');
+  //         gsap.set('.pac-container.is-nav', { display: 'none' });
+  //         window.setTimeout(() => {
+  //           gsap.to(getStartedButtonNav, { autoAlpha: 1, display: 'block' });
+  //           gsap.set(getStartedButtonDropdown, { autoAlpha: 0, display: 'none' });
+  //           gsap.to(getStartedButtonDropdown, { autoAlpha: 0, delay: 0.2 });
+  //           gsap.to([getStartedButtonNav, toggle], { x: 0 });
+
+  //           dropdownMenu.classList.remove('is-right');
+
+  //           gsap.to(nav, { padding: '3rem 3.5rem 1rem' });
+  //         }, 250);
+  //       },
+  //     });
+  //   });
+  // }
 
   // ===========================================================================
   // STEP POINTERS
@@ -1561,7 +1682,7 @@ window.Webflow.push(() => {
   function initMobileSearch() {
     const cta = document.querySelector('.mobile-cta-wr');
     const searchWr = document.querySelector('.mobile-search-wr');
-    const hero = document.querySelector('.br__section.is-home_hero');
+    const hero = document.querySelector('.section_home-hero');
     const openBtn = document.querySelector('#find-mobile');
     const closeBtn = document.querySelector('.mobile-search-close');
 
