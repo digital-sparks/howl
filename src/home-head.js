@@ -154,13 +154,14 @@ window.Webflow.push(() => {
   // });
   // }
 
-  function initNavSearch() {
+  function initNavScroll() {
+    const adsUrlParams = new window.URLSearchParams(window.location.search);
+    const isAds = adsUrlParams.get('ads');
     const hero = document.querySelector('.hero-video_wrapper');
     const navSearch = document.querySelector('.br__hero-search-wr.is-nav');
     const nav = document.querySelector('[data-anim-el="navbar"]');
     const mm = gsap.matchMedia();
     const navMenuList = document.querySelector('[data-anim-el="nav-menu-list"]');
-    const navDropdownToggle = document.querySelector('[data-anim-el="nav-dropdown-toggle"]');
     const navDropdownMenu = document.querySelector('[data-anim-el="nav-dropdown-menu"');
     const getStartedButtonNav = document.querySelector(
       '[data-anim-el="get-started-navbar"]'
@@ -168,8 +169,6 @@ window.Webflow.push(() => {
     const getStartedButtonDropdown = document.querySelector(
       '[data-anim-el="get-started-dropdown"]'
     );
-    const dropdownMenu = document.querySelector('.br__dd-list');
-    const toggle = document.querySelector('.br__dd.w-dropdown');
 
     const offset = getStartedButtonNav.clientWidth;
 
@@ -182,21 +181,32 @@ window.Webflow.push(() => {
         trigger: hero,
         start: 'top 76px',
         end: 'bottom 76px',
-        markers: true,
+        // markers: true,
         onLeave: function () {
           mm.add('(min-width: 1279px)', () => {
+            if (!isAds) {
+              gsap.to(navMenuList, {
+                x: offset,
+                duration: 0.35,
+                ease: 'power2.out',
+              });
+              gsap.set(navMenuList, {
+                marginLeft: -offset,
+              });
+              gsap.to(getStartedButtonNav, {
+                duration: 0.35,
+                ease: 'power2.out',
+                autoAlpha: 0,
+              });
+              gsap.set(getStartedButtonDropdown, { display: 'block' });
+              navDropdownMenu.classList.add('is-right');
+            }
             navSearch.classList.add('is-active');
-            gsap.to(navMenuList, { x: offset, marginLeft: -offset });
-            gsap.to(getStartedButtonNav, {
-              duration: 0.2,
-              ease: 'power2.out',
-              autoAlpha: 0,
-            });
-            gsap.set(getStartedButtonDropdown, { display: 'block' });
-            // if (navDropdownToggle.getAttribute('aria-expanded') === 'true') {
-            //   // navDropdownToggle.parentElement.trigger('click');
-            // }
-            navDropdownMenu.classList.add('is-right');
+
+            return () => {
+              gsap.set([nav, navMenuList, getStartedButtonNav], { clearProps: 'all' });
+              navDropdownMenu.classList.remove('is-right');
+            };
           });
 
           mm.add('(max-width: 1512px)', () => {
@@ -206,16 +216,33 @@ window.Webflow.push(() => {
               paddingLeft: '2rem ',
               paddingRight: '2rem ',
             });
+            return () => {
+              gsap.set([nav], { clearProps: 'all' });
+            };
           });
         },
         onEnterBack: function () {
           mm.add('(min-width: 1279px)', () => {
+            if (!isAds) {
+              gsap.to(navMenuList, {
+                x: 0,
+                duration: 0.35,
+                ease: 'power2.out',
+                onComplete: () => {
+                  gsap.set(navMenuList, { marginLeft: 0, delay: 0.15 });
+                },
+              });
+              gsap.to(getStartedButtonNav, { autoAlpha: 1, duration: 0.35, ease: 'power2.out' });
+              gsap.set(getStartedButtonDropdown, { display: 'none' });
+              navDropdownMenu.classList.remove('is-right');
+            }
             navSearch.classList.remove('is-active');
-            gsap.to(navMenuList, { x: 0, marginLeft: 0 });
-            gsap.to(getStartedButtonNav, { autoAlpha: 1 });
-            gsap.set(getStartedButtonDropdown, { display: 'none' });
-            navDropdownMenu.classList.remove('is-right');
             gsap.set('.pac-container.is-nav', { display: 'none' });
+
+            return () => {
+              gsap.set([nav, navMenuList, getStartedButtonNav], { clearProps: 'all' });
+              navDropdownMenu.classList.remove('is-right');
+            };
           });
 
           mm.add('(max-width: 1512px)', () => {
@@ -225,73 +252,18 @@ window.Webflow.push(() => {
               paddingLeft: '3.5rem ',
               paddingRight: '3.5rem ',
             });
+            return () => {
+              gsap.set([nav], { clearProps: 'all' });
+            };
           });
         },
       });
+      return () => {
+        gsap.set([nav, navMenuList, getStartedButtonNav], { clearProps: 'all' });
+        navDropdownMenu.classList.remove('is-right');
+      };
     });
   }
-
-  // function initNavSearch() {
-  //   const hero = document.querySelector('.hero-video_wrapper');
-  //   const navSearch = document.querySelector('.br__hero-search-wr.is-nav');
-  //   const nav = document.querySelector('[data-anim-el="navbar"]');
-  //   const mm = gsap.matchMedia();
-  //   const navMenuList = document.querySelector('[data-anim-el="nav-menu-list"]');
-  //   const navDropdownToggle = document.querySelector('[data-anim-el="nav-dropdown-toggle"]');
-  //   const getStartedButtonNav = document.querySelector('[data-anim-el="get-started-navbar"]');
-  //   const getStartedButtonDropdown = document.querySelector(
-  //     '[data-anim-el="get-started-dropdown"]'
-  //   );
-  //   const dropdownMenu = document.querySelector('.br__dd-list');
-  //   const toggle = document.querySelector('.br__dd.w-dropdown');
-
-  //   if (!hero || !navSearch) return;
-
-  //   mm.add('(min-width: 992px)', () => {
-  //     gsap.set(nav, { padding: '3rem 3.5rem 1rem' });
-
-  //     ScrollTrigger.create({
-  //       trigger: hero,
-  //       start: 'top 76px',
-  //       end: 'bottom 76px',
-  //       markers: true,
-  //       onLeave: function () {
-  //         console.log(toggle.querySelector('.w-dropdown-toggle').getAttribute('aria-expanded'));
-  //         if (toggle.querySelector('.w-dropdown-toggle').getAttribute('aria-expanded') === 'true') {
-  //           toggle.querySelector('.w-dropdown-toggle').click();
-  //         }
-
-  //         window.setTimeout(() => {
-  //           navSearch.classList.add('is-active');
-  //           // gsap.set(getStartedButtonNav, { autoAlpha: 0, display: 'none' });
-  //           gsap.set(getStartedButtonNav, { autoAlpha: 0 });
-  //           gsap.to([getStartedButtonNav, toggle], { x: 133 });
-  //           gsap.to(getStartedButtonDropdown, { autoAlpha: 1, display: 'block' });
-  //           dropdownMenu.classList.add('is-right');
-
-  //           gsap.to(nav, { padding: '2rem 2rem 1rem' });
-  //         }, 50);
-  //       },
-  //       onEnterBack: function () {
-  //         if (toggle.querySelector('.w-dropdown-toggle').getAttribute('aria-expanded') === 'true') {
-  //           toggle.querySelector('.w-dropdown-toggle').click();
-  //         }
-  //         navSearch.classList.remove('is-active');
-  //         gsap.set('.pac-container.is-nav', { display: 'none' });
-  //         window.setTimeout(() => {
-  //           gsap.to(getStartedButtonNav, { autoAlpha: 1, display: 'block' });
-  //           gsap.set(getStartedButtonDropdown, { autoAlpha: 0, display: 'none' });
-  //           gsap.to(getStartedButtonDropdown, { autoAlpha: 0, delay: 0.2 });
-  //           gsap.to([getStartedButtonNav, toggle], { x: 0 });
-
-  //           dropdownMenu.classList.remove('is-right');
-
-  //           gsap.to(nav, { padding: '3rem 3.5rem 1rem' });
-  //         }, 250);
-  //       },
-  //     });
-  //   });
-  // }
 
   // ===========================================================================
   // STEP POINTERS
@@ -1826,7 +1798,7 @@ window.Webflow.push(() => {
     initMenu();
     // initHeaderDarkMode();
     initStepPointers();
-    initNavSearch();
+    initNavScroll();
     initMarqueeAnimation();
   }
 
