@@ -1448,11 +1448,11 @@ window.Webflow.push(() => {
     }
   }
 
-  resizeFilterButton();
+  // resizeFilterButton();
 
-  window.addEventListener('resize', () => {
-    resizeFilterButton();
-  });
+  // window.addEventListener('resize', () => {
+  //   resizeFilterButton();
+  // });
 
   let userLocation = {};
 
