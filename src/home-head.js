@@ -183,7 +183,7 @@ window.Webflow.push(() => {
         end: 'bottom 76px',
         // markers: true,
         onLeave: function () {
-          mm.add('(min-width: 1279px)', () => {
+          mm.add('(min-width: 1378px)', () => {
             if (!isAds) {
               gsap.to(navMenuList, {
                 x: offset,
@@ -222,7 +222,7 @@ window.Webflow.push(() => {
           });
         },
         onEnterBack: function () {
-          mm.add('(min-width: 1279px)', () => {
+          mm.add('(min-width: 1378px)', () => {
             if (!isAds) {
               gsap.to(navMenuList, {
                 x: 0,
