@@ -1,3 +1,25 @@
+/**
+ * Rive Canvas Runtime v2.33.3
+ * Source: https://github.com/rive-app/rive-wasm
+ * NPM: https://www.npmjs.com/package/@rive-app/canvas
+ * License: MIT
+ */
+
+/**
+ * HLS.js v1.6.15
+ * Source: https://github.com/video-dev/hls.js
+ * NPM: https://www.npmjs.com/package/hls.js
+ * License: Apache-2.0
+ */
+
+/**
+ * Swiper v12.0.3
+ * Includes: Core, Autoplay, EffectCoverflow, Keyboard, Mousewheel, Navigation
+ * Source: https://github.com/nolimits4web/swiper
+ * NPM: https://www.npmjs.com/package/swiper
+ * License: MIT
+ */
+
 // =============================================================================
 // IMPORTS
 // =============================================================================
@@ -14,9 +36,9 @@ import { Autoplay, EffectCoverflow, Keyboard, Mousewheel, Navigation } from 'swi
 // Lottie animation CDN URLs
 const LOTTIE_URLS = {
   step1:
-    'https://cdn.prod.website-files.com/60e33881a96433966407b814/694e4f5a4d8da777e4c6f6b3_Step-1.json',
+    'https://cdn.prod.website-files.com/60e33881a96433966407b814/696a67282aa5a1196999ca71_Step-1%20(1).json',
   step3:
-    'https://cdn.prod.website-files.com/60e33881a96433966407b814/6965142abfd7fc30f9716a42_Step-3.json',
+    'https://cdn.prod.website-files.com/60e33881a96433966407b814/696a6cda7bd3a67c0a84ec6d_fay-step-3.json',
   footerMobile:
     'https://cdn.prod.website-files.com/60e33881a96433966407b814/6965142a20216e5f817a2f39_footer-text-mobile.json',
   footerDesktop:
@@ -98,39 +120,39 @@ window.Webflow.push(() => {
     }
   }
 
-  function initHeaderDarkMode() {
-    // const header = document.querySelector('.br__header_wr');
-    // if (!header) return;
-    // header.classList.add('is-dark');
-    // header.classList.add('is-links-dark');
-    // const darkSections = document.querySelectorAll('[data-section="dark"]');
-    // const linksDarkSections = document.querySelectorAll('[data-section-links="dark"]');
-    // if (!darkSections.length && !linksDarkSections.length) return;
-    // // Create ScrollTriggers for dark sections
-    // darkSections.forEach((section) => {
-    //   ScrollTrigger.create({
-    //     trigger: section,
-    //     start: 'top top',
-    //     end: 'bottom top',
-    //     onEnter: () => header.classList.add('is-dark'),
-    //     onLeave: () => header.classList.remove('is-dark'),
-    //     onEnterBack: () => header.classList.add('is-dark'),
-    //     onLeaveBack: () => header.classList.remove('is-dark'),
-    //   });
-    // });
-    // // Create ScrollTriggers for links dark sections
-    // linksDarkSections.forEach((section) => {
-    //   ScrollTrigger.create({
-    //     trigger: section,
-    //     start: () => `top ${header.offsetHeight}px`,
-    //     end: () => `bottom ${header.offsetHeight}px`,
-    //     onEnter: () => header.classList.add('is-links-dark'),
-    //     onLeave: () => header.classList.remove('is-links-dark'),
-    //     onEnterBack: () => header.classList.add('is-links-dark'),
-    //     onLeaveBack: () => header.classList.remove('is-links-dark'),
-    //   });
-    // });
-  }
+  // function initHeaderDarkMode() {
+  // const header = document.querySelector('.br__header_wr');
+  // if (!header) return;
+  // header.classList.add('is-dark');
+  // header.classList.add('is-links-dark');
+  // const darkSections = document.querySelectorAll('[data-section="dark"]');
+  // const linksDarkSections = document.querySelectorAll('[data-section-links="dark"]');
+  // if (!darkSections.length && !linksDarkSections.length) return;
+  // // Create ScrollTriggers for dark sections
+  // darkSections.forEach((section) => {
+  //   ScrollTrigger.create({
+  //     trigger: section,
+  //     start: 'top top',
+  //     end: 'bottom top',
+  //     onEnter: () => header.classList.add('is-dark'),
+  //     onLeave: () => header.classList.remove('is-dark'),
+  //     onEnterBack: () => header.classList.add('is-dark'),
+  //     onLeaveBack: () => header.classList.remove('is-dark'),
+  //   });
+  // });
+  // // Create ScrollTriggers for links dark sections
+  // linksDarkSections.forEach((section) => {
+  //   ScrollTrigger.create({
+  //     trigger: section,
+  //     start: () => `top ${header.offsetHeight}px`,
+  //     end: () => `bottom ${header.offsetHeight}px`,
+  //     onEnter: () => header.classList.add('is-links-dark'),
+  //     onLeave: () => header.classList.remove('is-links-dark'),
+  //     onEnterBack: () => header.classList.add('is-links-dark'),
+  //     onLeaveBack: () => header.classList.remove('is-links-dark'),
+  //   });
+  // });
+  // }
 
   function initNavSearch() {
     const hero = document.querySelector('.br__section.is-home_hero');
@@ -194,6 +216,7 @@ window.Webflow.push(() => {
       slidesPerView: 'auto',
       centeredSlides: true,
       effect: 'coverflow',
+      touchEventsTarget: 'container',
       grabCursor: false,
       loopAdditionalSlides: 6,
       mousewheel: {
@@ -242,6 +265,7 @@ window.Webflow.push(() => {
       loop: true,
       slidesPerView: 1,
       speed: 500,
+      touchEventsTarget: 'container',
       spaceBetween: 100,
       grabCursor: true,
       mousewheel: {
@@ -291,7 +315,8 @@ window.Webflow.push(() => {
           onlyInViewport: true,
         },
         slidesPerView: 'auto',
-        spaceBetween: 24,
+        spaceBetween: 0,
+        touchEventsTarget: 'container',
         grabCursor: true,
         centeredSlides: false,
         autoplay: {
@@ -344,6 +369,7 @@ window.Webflow.push(() => {
         loop: true,
         grabCursor: true,
         slidesPerView: 'auto',
+        touchEventsTarget: 'container',
         initialSlide: 2,
         autoplay: {
           delay: 4000,
@@ -542,8 +568,8 @@ window.Webflow.push(() => {
       gsap.set(proxy, { x: 0 });
     }
 
-    prevBtn?.addEventListener('click', () => goToSlide(-1));
-    nextBtn?.addEventListener('click', () => goToSlide(1));
+    prevBtn?.addEventListener('click', () => goToSlide(1));
+    nextBtn?.addEventListener('click', () => goToSlide(-1));
 
     // Autoplay functionality
     const AUTOPLAY_DELAY = 4000;
@@ -562,7 +588,7 @@ window.Webflow.push(() => {
 
       autoplayTimer = setInterval(() => {
         if (document.hidden || pauseByHover || pauseByDrag) return;
-        goToSlide(1);
+        goToSlide(-1);
       }, AUTOPLAY_DELAY);
     }
 
@@ -987,7 +1013,7 @@ window.Webflow.push(() => {
         start: `${height / 2 + 160}px bottom`,
         end: 'bottom bottom',
         scrub: 1.5,
-        markers: false,
+        // markers: true,
         onUpdate: (self) => {
           const { progress } = self;
           const items = document.querySelectorAll('.br__step-item_desckription-wr');
@@ -1136,9 +1162,9 @@ window.Webflow.push(() => {
       const hlsConfig = {
         enableWorker: true,
         lowLatencyMode: false,
-        backBufferLength: 90,
-        maxBufferLength: 600, // Keep up to 10 minutes of video in buffer
-        maxMaxBufferLength: 600,
+        backBufferLength: 10,
+        maxBufferLength: 60, // Keep up to 10 minutes of video in buffer
+        maxMaxBufferLength: 60,
       };
 
       // Add high quality settings if requested
@@ -1289,15 +1315,15 @@ window.Webflow.push(() => {
               const hlsConfig = {
                 enableWorker: true,
                 lowLatencyMode: false,
-                backBufferLength: 30, // Reduced from 90
-                maxBufferLength: 120, // Reduced from 600
-                maxMaxBufferLength: 180, // Reduced from 600
-                maxBufferSize: 30 * 1000 * 1000, // 30 MB max buffer
+                backBufferLength: 8,
+                maxBufferLength: 8,
+                maxMaxBufferLength: 8,
+                maxBufferSize: 8 * 1000 * 1000,
                 maxBufferHole: 0.5,
                 startLevel: 0, // Start with lowest quality
                 capLevelToPlayerSize: true, // Don't load higher quality than needed
-                startFragPrefetch: true, // Prefetch fragments
-                testBandwidth: false, // Skip bandwidth test on startup
+                startFragPrefetch: false, // Prefetch fragments
+                testBandwidth: true, // Skip bandwidth test on startup
               };
 
               const hls = new Hls(hlsConfig);
@@ -1424,6 +1450,60 @@ window.Webflow.push(() => {
     if (!items.length) return;
 
     const riveInstances = new Map();
+    const canvases = document.querySelectorAll('.rive-animation');
+    let loadedCount = 0;
+    const totalCanvases = canvases.length;
+
+    const createScrollTriggers = () => {
+      // Use ScrollTrigger to control Rive playback and animate grid items
+      items.forEach((item) => {
+        const canvas = item.querySelector('.rive-animation');
+        if (!canvas) return;
+
+        // Set initial state
+        gsap.set(item, { opacity: 0, y: 40 });
+
+        ScrollTrigger.create({
+          trigger: item,
+          start: 'center bottom',
+          end: 'center top',
+          markers: false,
+          onEnter: () => {
+            gsap.to(item, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: 'power3.out',
+            });
+
+            const inst = riveInstances.get(canvas);
+            if (inst) inst.play();
+          },
+          onEnterBack: () => {
+            gsap.to(item, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: 'power3.out',
+            });
+
+            const inst = riveInstances.get(canvas);
+            if (inst) inst.play();
+          },
+          onRefresh: (self) => {
+            // Check if item is already in view on page load
+            if (self.isActive) {
+              gsap.set(item, { opacity: 1, y: 0 });
+              const inst = riveInstances.get(canvas);
+              if (inst) inst.play();
+            }
+          },
+        });
+      });
+
+      // Refresh ScrollTrigger to check initial positions
+      ScrollTrigger.refresh();
+    };
 
     const loadCanvas = (canvas) => {
       if (riveInstances.has(canvas)) return;
@@ -1432,7 +1512,6 @@ window.Webflow.push(() => {
       if (!src) return;
 
       const smName = canvas.dataset.riveStateMachine;
-
       const opts = {
         src,
         canvas,
@@ -1444,6 +1523,14 @@ window.Webflow.push(() => {
         onLoad: () => {
           inst.resizeDrawingSurfaceToCanvas();
           inst.pause();
+
+          // Increment loaded count
+          loadedCount++;
+
+          // Create ScrollTriggers only after all Rive instances are loaded
+          if (loadedCount === totalCanvases) {
+            createScrollTriggers();
+          }
         },
       };
 
@@ -1457,65 +1544,15 @@ window.Webflow.push(() => {
         riveInstances.set(canvas, inst);
       } catch (error) {
         console.error('Error loading Rive animation:', error);
+        // Still increment count on error to prevent hanging
+        loadedCount++;
+        if (loadedCount === totalCanvases) {
+          createScrollTriggers();
+        }
       }
     };
 
-    document.querySelectorAll('.rive-animation').forEach(loadCanvas);
-
-    // Use ScrollTrigger to control Rive playback and animate grid items
-    items.forEach((item) => {
-      const canvas = item.querySelector('.rive-animation');
-      if (!canvas) return;
-
-      // Set initial state
-      gsap.set(item, { opacity: 0, y: 40 });
-
-      ScrollTrigger.create({
-        trigger: item,
-        start: 'center bottom',
-        end: 'center top',
-        markers: false,
-        onEnter: () => {
-          // Animate item in
-          gsap.to(item, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-          });
-
-          // Play Rive animation
-          const inst = riveInstances.get(canvas);
-          if (inst) inst.play();
-        },
-        onEnterBack: () => {
-          // Animate item in
-          gsap.to(item, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-          });
-
-          // Play Rive animation
-          const inst = riveInstances.get(canvas);
-          if (inst) inst.play();
-          //   // Play Rive animation when scrolling back
-          //   const inst = riveInstances.get(canvas);
-          //   if (inst) inst.play();
-        },
-        // onLeave: () => {
-        //   // Pause Rive animation when leaving viewport
-        //   const inst = riveInstances.get(canvas);
-        //   if (inst) inst.pause();
-        // },
-        // onLeaveBack: () => {
-        //   // Pause Rive animation when scrolling up past
-        //   const inst = riveInstances.get(canvas);
-        //   if (inst) inst.pause();
-        // },
-      });
-    });
+    canvases.forEach(loadCanvas);
   }
 
   // ===========================================================================
@@ -1666,7 +1703,7 @@ window.Webflow.push(() => {
   // ===========================================================================
   function initLightweightFeatures() {
     initMenu();
-    initHeaderDarkMode();
+    // initHeaderDarkMode();
     initStepPointers();
     initNavSearch();
     initMarqueeAnimation();
@@ -1735,17 +1772,6 @@ window.Webflow.push(() => {
       }, 1500);
     }
 
-    // Initialize Hero Video
-    if (hasHeroVideo) {
-      onIdle(() => {
-        try {
-          initHeroVideo();
-        } catch (e) {
-          console.error(e);
-        }
-      }, 300);
-    }
-
     // Initialize Video Lines
     if (hasVideoLines) {
       onIdle(() => {
@@ -1762,6 +1788,7 @@ window.Webflow.push(() => {
   // BOOT SEQUENCE
   // ===========================================================================
   initLightweightFeatures();
+  initHeroVideo();
   initHeavyFeatures();
 
   initRiveAnimations();

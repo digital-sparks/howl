@@ -1,1 +1,1225 @@
-"use strict";(()=>{async function Z(v,A=5e3,r=50){let f=Date.now();for(;Date.now()-f<A;){if(v())return!0;await new Promise(l=>window.setTimeout(l,r))}return!1}async function Oe(v=5e3){return Z(()=>window.statsigGates?.ready,v)}async function Re(v=5e3){return Z(()=>window.mixpanel,v)}async function ze(v=5e3){return Z(()=>window.Osano,v)}function ve(){let v=document.querySelector(".statsig-loader");v&&(v.style.display="none")}function De(){return/DatadogSynthetics/i.test(window.navigator.userAgent)}var q=new window.URLSearchParams(window.location.search),Fe=q.get("ads"),ce=q.get("customerId"),oe=q.get("sessionId"),le=q.get("referralToken"),j=q.get("withings_token")??q.get("withingsToken"),de=q.get("has_withings_plus"),ue=q.get("FayBookingCode");j&&window.localStorage.setItem("withingsToken",j);function fe(){Fe==="true"?(document.querySelector(".br__nav_menu-list")?.classList.add("is-ads"),document.querySelector(".br__footer-wr")?.classList.add("is-ads-hide"),document.querySelector(".br__nav__menu-button")?.classList.add("is-ads"),document.querySelector(".br__footer-wr-ads")?.classList.remove("is-ads")):(document.querySelector(".br__nav_menu-list")?.classList.remove("is-ads"),document.querySelector(".br__footer-wr")?.classList.remove("is-ads-hide"),document.querySelector(".br__nav__menu-button")?.classList.remove("is-ads"),document.querySelector(".br__footer-wr-ads")?.classList.add("is-ads"))}function pe(){window.Webflow||(window.Webflow=[]),window.Webflow.push(async()=>{ve(),fe(),window.statsigGates?.quizFlow||!1?(window.localStorage.setItem("hasQuizFlow","true"),$(".find-dietitian-link").attr("href","https://signup.faynutrition.com/quiz"),setTimeout(()=>{typeof addUtmParamsInLinks=="function"&&addUtmParamsInLinks()},1e3)):window.localStorage.removeItem("hasQuizFlow")})}(async function(){let v=await Re(1e3),A=await Oe(1e3),r=await ze(1e3);if(console.log(v,A,r),!(v&&A&&window.mixpanel&&window.statsigGates&&r&&window.Osano)){console.log("Timeout waiting for services - skipping tracking"),pe();return}if(console.log("Statsig, Mixpanel and Osano loaded"),window.mixpanel.register({"User Agent":window.navigator.userAgent}),De()&&window.mixpanel.register({$ignore:!0}),!window.Osano.cm.analytics){console.log("No analytics consent - skipping tracking"),pe();return}window.Webflow||(window.Webflow=[]),window.Webflow.push(async()=>{ve(),fe(),window.mixpanel.init("b244137ebd6eaed06ec25cc81bec6ad0",{record_sessions_percent:100,record_mask_text_selector:""});let u=window.statsigClient?.checkGate("quiz_flow_marketing_site")||!1,h=window.statsigClient?.checkGate("dietitian_profile_reviews_and_ratings")||!1;console.log("Feature gates:",{quizGateOn:u,ratingsGateOn:h}),u?(window.localStorage.setItem("hasQuizFlow","true"),document.querySelectorAll(".find-dietitian-link").forEach(x=>x.setAttribute("href","https://signup.faynutrition.com/quiz")),$(".find-dietitian-link").attr("href","https://signup.faynutrition.com/quiz")):window.localStorage.removeItem("hasQuizFlow");let L=window.sessionStorage.getItem("fay_redirect_pending")==="true";L&&window.sessionStorage.removeItem("fay_redirect_pending"),window.mixpanel.track("home_page_viewed",{...L&&{ArrivedViaRedirect:!0},RatingShown:h,QuizShown:u}),window.mixpanel.track("$experiment_started",{"Experiment name":"quiz_flow","Variant name":u?"quiz_flow_v1":"booking_flow"}),u&&setTimeout(()=>{typeof addUtmParamsInLinks=="function"&&addUtmParamsInLinks()},1e3)})})();window.Webflow||(window.Webflow=[]);window.Webflow.push(()=>{var v,A=0;let r=null,f=null,l={},u=-1,h=document.querySelectorAll('[data-search-error="container"]'),L=document.querySelectorAll('[data-search-error="location"]'),x=document.querySelectorAll('[data-search-error="insurance"]'),_=document.getElementById("insurance-label"),w=document.getElementById("insurance-label-nav"),Ve=document.getElementById("specialties-label"),He=document.getElementById("specialties-label-nav"),c=document.getElementById("locationInput"),d=document.getElementById("locationInputNav"),E=document.getElementById("inputTextMobile"),g=document.getElementById("locationInputScroll");var me=document.getElementById("clear-specialties"),he=document.getElementById("clear-specialties-nav"),we=document.getElementById("clear-specialties-m"),Y=document.getElementsByClassName("hero-form_field-wrap"),p=document.getElementsByClassName("hero_dropdown-wrap"),ee=document.getElementsByClassName("save");let T=document.querySelector(".br__h-hero-wr").querySelectorAll(".br__search-field-wr"),B=document.querySelector(".br__header_container").querySelectorAll(".br__search-field-wr");function ge(e,i=16){if(!e)return;let s=e.getBoundingClientRect(),t=window.innerHeight||document.documentElement.clientHeight,n=0;s.bottom>t&&(n=s.bottom-t+i),s.top<0&&(n=s.top-i),n!==0&&window.scrollBy({top:n,behavior:"smooth"})}function ye(e){var i=e.currentTarget.parentElement.querySelector(".hero_dropdown-wrap");console.log("clickedDropdown",i);for(var s=0;s<p.length;s++)p[s].id=="specialty-dropdown"&&p[s].classList.contains("is-active")?$("#save-specialty").trigger("click"):p[s].id=="specialty-dropdown-nav"&&p[s].classList.contains("is-active")&&$("#save-specialty-nav").trigger("click"),i&&["insurance-dropdown","insurance-dropdown-nav","specialty-dropdown","specialty-dropdown-nav"].includes(i.id)&&requestAnimationFrame(()=>{ge(i)}),p[s]!==i&&(p[s].classList.remove("is-active"),p[s].removeAttribute("aria-expanded"),p[s].setAttribute("aria-expanded","false"));i?.classList.toggle("is-active"),i?.setAttribute("aria-expanded","true"),u=-1,setTimeout(()=>{C(i?.querySelectorAll(".w-dyn-item")??[])},10)}function te(e){var i=e?.currentTarget?.closest(".hero_dropdown-wrap");i&&(i.classList.remove("is-active"),i.removeAttribute("aria-expanded"),i.setAttribute("aria-expanded","false"),u=-1,setTimeout(()=>{C(i.querySelectorAll(".w-dyn-item"))},10))}function z(e){var i=e.target,s=i.closest(".br__search-field-wr")!==null||i.closest(".cc_step-wr")!==null;if(!s){u=-1;for(var t=0;t<p.length;t++){p[t].id=="specialty-dropdown"&&p[t].classList.contains("is-active")&&($("#save-specialty").trigger("click"),O()),p[t].id=="specialty-dropdown-nav"&&p[t].classList.contains("is-active")&&($("#save-specialty-nav").trigger("click"),O()),(p[t].id=="insurance-dropdown"||p[t].id=="insurance-dropdown-nav")&&p[t].classList.contains("is-active")&&Q(),p[t].classList.remove("is-active"),p[t].removeAttribute("aria-expanded"),p[t].setAttribute("aria-expanded","false");let n=p[t]?.querySelectorAll(".w-dyn-item");setTimeout(()=>{C(n)},10)}}}for(var M=0;M<Y.length;M++)Y[M].addEventListener("click",ye);for(var M=0;M<ee.length;M++)ee[M].addEventListener("click",te);document.addEventListener("click",z),c.addEventListener("click",z),d.addEventListener("click",z),g.addEventListener("click",z);let ie=document.getElementById("wf-form-Select-your-needs-optional");ie.addEventListener("keypress",function(){event.key==="Enter"&&event.preventDefault()}),ie.addEventListener("submit",function(){return event.preventDefault(),!1});let be=document.querySelectorAll(".popup-trigger"),U=document.querySelectorAll(".mobile-filter-modal"),D=null;be.forEach(e=>{e.addEventListener("click",i=>{let s=i.currentTarget.getAttribute("data-popup"),t=document.getElementById(s);t&&Le(t,e)})}),U.forEach(e=>{let i=e.querySelectorAll(".close");i&&i.length>0&&i.forEach(s=>{s.addEventListener("click",()=>N(e))}),e.addEventListener("click",s=>{s.target===e&&N(e)})});function Le(e,i){U.forEach(t=>{t!==e&&(t.classList.remove("is-visible"),t.setAttribute("inert",""),t.setAttribute("aria-hidden","true"))}),e.classList.add("is-visible"),e.removeAttribute("inert"),e.setAttribute("aria-hidden","false"),document.body.style.overflow="hidden",document.body.style.touchAction="none";let s=e.querySelectorAll("a, button, input, select, textarea");s.length>0&&s[0].focus(),D=i}function N(e){e.classList.remove("is-visible"),e.setAttribute("inert",""),e.setAttribute("aria-hidden","true"),document.body.style.overflow="",document.body.style.touchAction="",D&&(D.focus(),D=null),e.id=="insurance"&&Q(),e.id=="specialties"&&O()}document.addEventListener("keydown",e=>{e.key==="Escape"&&U.forEach(i=>{i.classList.contains("is-visible")&&(N(i),i.id=="specialties"&&$("#specialties .save").trigger("click"))})});let _e=document.querySelectorAll("#locationInput, #locationInputNav, #inputTextMobile, #locationInputScroll"),se=document.getElementById("insurance-label"),ae=document.getElementById("insurance-label-scroll"),Se=document.querySelectorAll('#insurance .insurance-wrapper input[type="radio"], #insurance-dropdown .insurance-wrapper input[type="radio"], #insurance-dropdown-nav .insurance-wrapper input[type="radio"]'),Ee=$("#insurance-dropdown"),$e=$("#insurance-dropdown-nav"),F=$("#specialty-dropdown"),V=$("#specialty-dropdown-nav"),ne="";async function k(){let e=await window.statsigReady,i="https://www.faynutrition.com/find";(window.statsigClient?.checkGate("quiz_flow_marketing_site")||!1)&&(i="https://signup.faynutrition.com/quiz");let t=new URL(i),n,a,o;if(l.state!==void 0&&(n=l.state.replace(/\s+/g,"+"),t.searchParams.set("state",n),c.value&&t.searchParams.set("stateText",c.value),l.userLatLong!==void 0&&l.userLatLong.lat!==void 0&&l.userLatLong.lng!==void 0)){let m=`${l.userLatLong.lat},${l.userLatLong.lng}`;t.searchParams.set("location_coordinates",m)}f!=null&&(a=f.replace(/\s+/g,"+"),t.searchParams.set("insurance",a)),r&&r.length>0&&r.forEach((m,I)=>{t.searchParams.append("specialties",m)}),shouldPersistParams.forEach(m=>{let I=localStorage.getItem(m);I&&t.searchParams.append(m,I)}),new URLSearchParams(window.location.search).get("ads")=="true"&&t.searchParams.set("ads","true"),ce&&t.searchParams.set("customerId",ce),oe&&t.searchParams.set("sessionId",oe),le&&t.searchParams.set("referralToken",le),j&&t.searchParams.set("withingsToken",j),de&&t.searchParams.set("has_withings_plus",de),ue&&t.searchParams.set("FayBookingCode",ue),ne=t.toString()}function G(){console.log("selectedState:",l),l.state!==void 0?(h.forEach(e=>e.classList.add("is-hidden")),L.forEach(e=>e.classList.add("is-hidden")),c.classList.remove("is-error"),d.classList.remove("is-error")):(h.forEach(e=>e.classList.remove("is-hidden")),L.forEach(e=>e.classList.remove("is-hidden")),c.classList.add("is-error"),d.classList.add("is-error"))}function ke(){f!=null?(h.forEach(e=>e.classList.add("is-hidden")),x.forEach(e=>e.classList.add("is-hidden")),_&&_.classList.remove("is-error"),w&&w.classList.remove("is-error")):(h.forEach(e=>e.classList.remove("is-hidden")),x.forEach(e=>e.classList.remove("is-hidden")),_&&_.classList.add("is-error"),w&&w.classList.add("is-error"))}c.addEventListener("input",function(){d.value=c.value,E.value=c.value,g.value=c.value,h.forEach(e=>e.classList.add("is-hidden")),L.forEach(e=>e.classList.add("is-hidden")),c.classList.remove("is-error"),d.classList.remove("is-error")}),d.addEventListener("input",function(){c.value=d.value,E.value=d.value,g.value=d.value,h.forEach(e=>e.classList.add("is-hidden")),L.forEach(e=>e.classList.add("is-hidden")),c.classList.remove("is-error"),d.classList.remove("is-error")}),E.addEventListener("input",function(){c.value=E.value,d.value=E.value,g.value=E.value,h.forEach(e=>e.classList.add("is-hidden")),L.forEach(e=>e.classList.add("is-hidden")),c.classList.remove("is-error"),d.classList.remove("is-error")}),g.addEventListener("input",function(){c.value=g.value,d.value=g.value,E.value=g.value,h.forEach(e=>e.classList.add("is-hidden")),L.forEach(e=>e.classList.add("is-hidden")),c.classList.remove("is-error"),d.classList.remove("is-error")});function xe(){var e={types:["(regions)"],componentRestrictions:{country:"us"}};_e.forEach(s=>{var t=new google.maps.places.Autocomplete(s,e);s.addEventListener("input",function(){clearTimeout(v);var a=s.value.trim();if(a===""){(s.id==="locationInput"||s.id==="locationInputNav"||s.id==="inputTextMobile"||s.id==="locationInputScroll")&&(c.classList.remove("is-active"),E.classList.remove("is-active"),d.classList.remove("is-active"),g.classList.remove("is-active"),l={},window.setTimeout(()=>{k(),G()},100));return}if(/^\d{5}$/.test(a)){Ce(a).then(o=>{o?(s.id=="locationInput"||s.id=="locationInputNav"||s.id=="inputTextMobile"||s.id=="locationInputScroll")&&(l=o,k(),c.classList.add("is-active"),d.classList.add("is-active"),E.classList.add("is-active"),g.classList.add("is-active"),T?.[2]?.classList.add("is-active"),B?.[2]?.classList.add("is-active"),window.innerWidth>991&&(s.blur(),G())):console.log("Invalid ZIP code")}).catch(o=>console.error("Error fetching state:",o));return}v=setTimeout(function(){a!==""&&(t.getPlace(),A++,console.log("calls:",A))},500)});let n=a=>{if(!a||!a.address_components)return!1;let o=a.address_components,b=o.some(m=>m.types.includes("administrative_area_level_1")),S=o.some(m=>m.types.includes("locality")||m.types.includes("administrative_area_level_2"));return b&&!S};t.addListener("place_changed",function(){var a=t.getPlace();if(!a.geometry){console.log("error");return}var o="",b="",S="";let m=n(a),I={};m||(I={lat:a.geometry.location.lat(),lng:a.geometry.location.lng()});for(var X=0;X<a.address_components.length;X++){var P=a.address_components[X];P.types.includes("postal_code")&&(o=P.long_name),P.types.includes("locality")&&(b=P.long_name),P.types.includes("administrative_area_level_1")&&(b==="Washington, D.C."?S="District of Columbia":S=P.short_name)}if(s.id==="locationInput"||s.id==="locationInputNav"||s.id==="inputTextMobile"||s.id==="locationInputScroll"){c.classList.add("is-active"),d.classList.add("is-active"),E.classList.add("is-active"),g.classList.add("is-active"),l={userLatLong:I,state:S};var Pe=new Event("input",{bubbles:!0});s.dispatchEvent(Pe),T?.[2]?.classList.add("is-active"),B?.[2]?.classList.add("is-active"),setTimeout(()=>{N($("#location")[0])},100),k(),R(),G()}})}),new window.MutationObserver(()=>{let s=document.querySelector(".pac-container");s&&!s.dataset.moved&&s.classList.add("is-nav")}).observe(document.body,{childList:!0})}function Ce(e){return new Promise((i,s)=>{var t=new google.maps.Geocoder;t.geocode({address:e,componentRestrictions:{country:"us"}},function(n,a){if(a==="OK"&&n[0]){var o=n[0].address_components;let m={lat:n[0].geometry.location.lat(),lng:n[0].geometry.location.lng()};for(var b=0;b<o.length;b++){var S=o[b];if(S.types.includes("administrative_area_level_1")){i({state:S.short_name,userLatLong:m});return}}i(null)}else s(`Geocoding failed: ${a}`)})})}Se.forEach(function(e){e.addEventListener("change",function(){let i=this.nextElementSibling;f=e.getAttribute("data-value"),se.textContent=i.textContent,se.classList.add("is-active"),w.textContent=i.textContent,w.classList.add("is-active"),ae.textContent=i.textContent,ae.classList.add("is-active"),Ee.removeClass("is-active"),$e.removeClass("is-active"),Q(),N($("#insurance.mobile-filter-modal")[0]),k(),ke(),R(),l.state!==void 0?(T?.[1]?.classList.add("is-active"),B?.[1]?.classList.add("is-active"),T?.[2]?.classList.add("is-active"),B?.[2]?.classList.add("is-active")):(T?.[1]?.classList.add("is-active"),B?.[1]?.classList.add("is-active")),$('#insurance .insurance-wrapper input[type="radio"], #insurance-dropdown .insurance-wrapper input[type="radio"], #insurance-dropdown-nav .insurance-wrapper input[type="radio"]').each(function(){f==$(this).attr("data-value")?$(this).prop("checked",!0).closest(".w-radio").find(".w-radio-input").addClass("w--redirected-checked"):$(this).prop("checked",!1).closest(".w-radio").find(".w-radio-input").removeClass("w--redirected-checked")})})}),$("#save-specialty").click(function(){var e=$('#specialty-dropdown .filter-item input[type="checkbox"]');r=[];var i=[];e.each((s,t)=>{if($(t).prop("checked")){r.push(t.getAttribute("data-value"));let a=$(t).closest(".filter-item").find(".checkbox-label").text().trim();i.push(a)}}),r&&r.length>0?($("#specialties-label").text(i.join(", ")).addClass("is-active"),$("#specialties-label-scroll").text(i.join(", ")).addClass("is-active"),$("#specialties-label-nav").text(i.join(", ")).addClass("is-active")):($("#specialties-label").text("Needs").removeClass("is-active"),$("#specialties-label-scroll").text("Specialties (Optional)").removeClass("is-active"),$("#specialties-label-nav").text("Needs").removeClass("is-active")),O(),$('#specialty-dropdown .filter-item input[type="checkbox"], #specialty-dropdown-nav .filter-item input[type="checkbox"], #specialty-collection-mobile .filter-item input[type="checkbox"]').each((s,t)=>{let n=$(t).attr("data-value");r.includes(n)?($(t).prop("checked",!0),$(t).closest(".specialties-field").find(".w-checkbox-input").addClass("w--redirected-checked")):($(t).prop("checked",!1),$(t).closest(".specialties-field").find(".w-checkbox-input").removeClass("w--redirected-checked"))}),setTimeout(()=>{F.hasClass("is-active")&&F.removeClass("is-active"),V.hasClass("is-active")&&V.removeClass("is-active")},100),k()}),$("#save-specialty-nav").click(function(){var e=$('#specialty-dropdown-nav .filter-item input[type="checkbox"]');r=[];var i=[];e.each((s,t)=>{if($(t).prop("checked")){r.push(t.getAttribute("data-value"));let a=$(t).closest(".filter-item").find(".checkbox-label").text().trim();i.push(a)}}),r&&r.length>0?($("#specialties-label").text(i.join(", ")).addClass("is-active"),$("#specialties-label-scroll").text(i.join(", ")).addClass("is-active"),$("#specialties-label-nav").text(i.join(", ")).addClass("is-active")):($("#specialties-label").text("Needs").removeClass("is-active"),$("#specialties-label-scroll").text("Specialties (Optional)").removeClass("is-active"),$("#specialties-label-nav").text("Needs").removeClass("is-active")),O(),$('#specialty-dropdown .filter-item input[type="checkbox"], #specialty-dropdown-nav .filter-item input[type="checkbox"], #specialty-collection-mobile .filter-item input[type="checkbox"]').each((s,t)=>{let n=$(t).attr("data-value");r.includes(n)?($(t).prop("checked",!0),$(t).closest(".specialties-field").find(".w-checkbox-input").addClass("w--redirected-checked")):($(t).prop("checked",!1),$(t).closest(".specialties-field").find(".w-checkbox-input").removeClass("w--redirected-checked"))}),setTimeout(()=>{F.hasClass("is-active")&&F.removeClass("is-active"),V.hasClass("is-active")&&V.removeClass("is-active")},100),k()}),$("#specialties .save").click(function(){var e=$('#specialty-collection-mobile .filter-item input[type="checkbox"]');r=[];var i=[];e.each((s,t)=>{if($(t).prop("checked")){r.push(t.getAttribute("data-value"));let a=$(t).closest(".filter-item").find(".checkbox-label").text().trim();i.push(a)}}),r&&r.length>0?($("#specialties-label").text(i.join(", ")).addClass("is-active"),$("#specialties-label-scroll").text(i.join(", ")).addClass("is-active"),$("#specialties-label-nav").text(i.join(", ")).addClass("is-active")):($("#specialties-label").text("Needs").removeClass("is-active"),$("#specialties-label-scroll").text("Specialties (Optional)").removeClass("is-active"),$("#specialties-label-nav").text("Needs").removeClass("is-active")),$('#specialty-dropdown .filter-item input[type="checkbox"], #specialty-dropdown-nav .filter-item input[type="checkbox"]').each((s,t)=>{let n=$(t).attr("data-value");r.includes(n)?($(t).prop("checked",!0),$(t).closest(".specialties-field").find(".w-checkbox-input").addClass("w--redirected-checked")):($(t).prop("checked",!1),$(t).closest(".specialties-field").find(".w-checkbox-input").removeClass("w--redirected-checked"))}),k(),N($("#specialties.mobile-filter-modal")[0])}),$("#specialties .close").click(function(){$("#specialties .save").trigger("click")}),$("form").submit(function(e){return e.preventDefault(),!1});function Ie(){return f==null||l.state===void 0?(h.forEach(e=>e.classList.remove("is-hidden")),f==null?(L.forEach(e=>e.classList.add("is-hidden")),x.forEach(e=>e.classList.remove("is-hidden")),c.classList.remove("is-error"),d.classList.remove("is-error"),_&&_.classList.add("is-error"),w&&w.classList.add("is-error")):f!=null&&l.state===void 0&&(x.forEach(e=>e.classList.add("is-hidden")),L.forEach(e=>e.classList.remove("is-hidden")),_&&_.classList.remove("is-error"),w&&w.classList.remove("is-error"),c.classList.add("is-error"),d.classList.add("is-error"))):(h.forEach(e=>e.classList.add("is-hidden")),x.forEach(e=>e.classList.add("is-hidden")),L.forEach(e=>e.classList.add("is-hidden")),c.classList.remove("is-error"),d.classList.remove("is-error"),_&&_.classList.remove("is-error"),w&&w.classList.remove("is-error"),setTimeout(()=>{let e=c.value;sessionStorage.setItem("stateInputText",e),sessionStorage.setItem("filterValue",JSON.stringify({selectedSpecialties:r,selectedInsurance:f,selectedState:{...l,location:$("#locationInput").val()}})),window.location.href=ne},50)),!1}let qe=document.querySelectorAll("#insurance-dropdown .br__insurance-search-input, #insurance-dropdown-nav .br__insurance-search-input, #insuranceSearchMobile"),Ae=document.querySelectorAll("#specialty-dropdown .br__insurance-search-input, #specialty-dropdown-nav .br__insurance-search-input, #specialitiesSearchMobile"),W=document.querySelectorAll(".insurance-wrapper .insurance-item"),H=document.querySelectorAll("#specialty-dropdown .filter-item, #specialty-dropdown-nav .filter-item, #specialty-collection-mobile.specialtity-collection .filter-item");qe.forEach(e=>{e.addEventListener("input",function(){u=-1;let i=this.value.trim().toLowerCase();document.getElementById("insurance")?.querySelector(".insurance-wrapper").classList.toggle("is-searching-active",i),$("#insurance-dropdown .br__insurance-search-input, #insurance-dropdown-nav .br__insurance-search-input, #insuranceSearchMobile").val(this.value.trim()),h.forEach(s=>s.classList.add("is-hidden")),x.forEach(s=>s.classList.add("is-hidden")),_&&_.classList.remove("is-error"),w&&w.classList.remove("is-error"),W.forEach(s=>{let t=s.querySelector(".w-form-label"),n=t.getAttribute("original-text"),a=n.toLowerCase();if(!i||a.includes(i)?s.classList.remove("hide"):s.classList.add("hide"),i){let o=new RegExp(`(${i})`,"gi");t.innerHTML=n.replace(o,'<span class="pac-matched">$1</span>')}else t.innerHTML=n})})});function Q(){let e=document.getElementById("insurance-dropdown")?.querySelector(".br__insurance-search-input");e&&(e.value="");let i=document.getElementById("insurance-dropdown-nav")?.querySelector(".br__insurance-search-input");i&&(i.value="");let s=document.getElementById("insuranceSearchMobile");s&&(s.value="");let t=document.getElementById("insurance")?.querySelector(".insurance-wrapper");t&&t.classList.remove("is-searching-active"),W.forEach(n=>{let a=n.querySelector(".w-form-label");if(!a)return;let o=a.getAttribute("original-text");o&&(a.innerHTML=o),n.classList.remove("hide")}),u=-1,setTimeout(()=>{C(W)},10)}Ae.forEach(e=>{e.addEventListener("input",function(){let i=this.value.trim().toLowerCase(),s=document.getElementById("specialty-dropdown").querySelector(".br__insurance-search-input");s&&(s.valaue=this.value.trim());let t=document.getElementById("specialty-dropdown-nav").querySelector(".br__insurance-search-input");t&&(t.valaue=this.value.trim());let n=document.getElementById("specialitiesSearchMobile");n&&(n.valaue=this.value.trim()),document.getElementById("specialties")?.querySelector(".specialties-wrapper").classList.toggle("is-searching-active",i),H.forEach(a=>{let o=a.querySelector(".w-form-label"),b=o.getAttribute("original-text"),S=b.toLowerCase();!i||S.includes(i)?a.classList.remove("hide"):a.classList.add("hide");let m=this.value.trim();if(i){let I=new RegExp(`(${i})`,"gi");o.innerHTML=b.replace(I,'<span class="pac-matched">$1</span>')}else o.innerHTML=b})})});function O(){let e=document.getElementById("specialty-dropdown")?.querySelector(".br__insurance-search-input");e&&(e.value="");let i=document.getElementById("specialty-dropdown-nav")?.querySelector(".br__insurance-search-input");i&&(i.value="");let s=document.getElementById("specialitiesSearchMobile");s&&(s.value="");let t=document.getElementById("specialties")?.querySelector(".specialties-wrapper");t&&t.classList.remove("is-searching-active"),H.forEach(n=>{let a=n.querySelector(".w-form-label");if(!a)return;let o=a.getAttribute("original-text");o&&(a.innerHTML=o),n.classList.remove("hide")}),u=-1,setTimeout(()=>{C(H)},10)}function J(e){H.forEach(i=>{i.querySelector("input[type=checkbox]").checked=!1,i.querySelector(".w-checkbox-input")?.classList.remove("w--redirected-checked")}),r=null,$("#specialties-label").text("Needs").removeClass("is-active"),$("#specialties-label-scroll").text("Specialties (Optional)").removeClass("is-active"),$("#specialties-label-nav").text("Needs").removeClass("is-active"),setTimeout(()=>{k()},200),te(e),N($("#specialties.mobile-filter-modal")[0])}me.addEventListener("click",J),he.addEventListener("click",J),we.addEventListener("click",J);function Te(){let e=[];$("#specialty-dropdown .filter-item, #specialty-dropdown-nav .filter-item, #specialty-collection-mobile .filter-item").each((i,s)=>{let t=$(s).find('input[type="checkbox"]'),n=t.attr("data-value");if(r&&r.includes(n)){t.prop("checked",!0);let a=$(s).find(".w-form-label").text().trim();e[n]=a,$(s).find(".w-checkbox-input").addClass("w--redirected-checked")}else t.prop("checked",!1),$(s).find(".w-checkbox-input").removeClass("w--redirected-checked")}),r&&r.length>0?($("#specialties-label").text(Object.values(e).join(", ")),$("#specialties-label").addClass("is-active"),$("#specialties-label-scroll").text(Object.values(e).join(", ")),$("#specialties-label-scroll").addClass("is-active"),$("#specialties-label-nav").text(Object.values(e).join(", ")),$("#specialties-label-nav").addClass("is-active")):($("#specialties-label").text("Needs"),$("#specialties-label").removeClass("is-active"),$("#specialties-label-scroll").text("Specialties (Optional)"),$("#specialties-label-scroll").removeClass("is-active"),$("#specialties-label-nav").text("Needs"),$("#specialties-label-nav").removeClass("is-active"))}function R(){window.innerWidth>991?$(".br__hero-wr .br__search-wr").addClass("is-active"):f?($(".br__hero-wr .br__search-wr").addClass("is-active"),$(".br__hero-wr #insurance-tog .br__embed-icon").removeClass("is-active"),l?.state?$(".br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button").removeClass("is-disable"):$(".br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button").addClass("is-disable")):($(".br__hero-wr .br__search-wr").removeClass("is-active"),$(".br__hero-wr #insurance-tog .br__embed-icon").addClass("is-active"))}R(),window.addEventListener("resize",()=>{R()});let y={};async function Be(){try{let i=await(await fetch("https://marketing-site.cdn.faynutrition.com/_geo")).json();if(i?.country?.toLowerCase()=="us"){y={userLatLong:{lat:i.latitude,lng:i.longitude},state:i.state,location:i.stateName};try{JSON.parse(sessionStorage.getItem("filterValue"))?.selectedState?.location||($("#locationInput").val(y?.location),$("#locationInputNav").val(y?.location),$("#inputTextMobile").val(y?.location),$("#locationInputScroll").val(y?.location),d.classList.add("is-active"),c.classList.add("is-active"),inputTextMobile.classList.add("is-active"),g.classList.add("is-active"),l=y)}catch{}}}catch{y={}}}(async()=>Be())(),window.addEventListener("pageshow",function(e){$("#loading-div").hide(),setTimeout(()=>{Me()},300)});function Me(){try{let e=JSON.parse(sessionStorage.getItem("filterValue"));e?.selectedInsurance?(f&&(e.selectedInsurance=f),$("#insurance-dropdown .insurance-item, #insurance-dropdown-nav .insurance-item").each((i,s)=>{let t=$(s).find('input[type="radio"]'),n=t.attr("data-value"),a=$(s).find(".radio-dropdwn-label").text().trim();n===e.selectedInsurance?(t.prop("checked",!0),$("#insurance-label").text(a).addClass("is-active"),$("#insurance-label-scroll").text(a).addClass("is-active"),$("#insurance-label-nav").text(a).addClass("is-active"),$("#insurance .insurance-item").find('input[data-value="'+e.selectedInsurance+'"]').closest(".filter-item-radio").find(".w-form-formradioinput").addClass("w--redirected-checked"),$(s).find(".w-form-formradioinput").addClass("w--redirected-checked")):(t.prop("checked",!1),$("#insurance .insurance-item").find('input[data-value="'+e.selectedInsurance+'"]').closest(".filter-item-radio").find(".w-form-formradioinput").removeClass("w--redirected-checked"),$(s).find(".w-form-formradioinput").removeClass("w--redirected-checked"))}),f=e?.selectedInsurance,T?.[1]?.classList.add("is-active"),B?.[1]?.classList.add("is-active"),window.innerWidth<992&&$(".br__search-wr").addClass("is-active")):f||($("#insurance-label").text("Select your insurance*").removeClass("is-active"),$("#insurance-label-scroll").text("Select your insurance*").removeClass("is-active"),$("#insurance-label-nav").text("Select your insurance*").removeClass("is-active")),e?.selectedState?.location?($("#locationInput").val(e?.selectedState?.location),$("#locationInputNav").val(e?.selectedState?.location),$("#inputTextMobile").val(e?.selectedState?.location),$("#locationInputScroll").val(e?.selectedState?.location),delete e?.selectedState.location,l=e?.selectedState,T?.[2]?.classList.add("is-active"),B?.[2]?.classList.add("is-active"),d.classList.add("is-active"),c.classList.add("is-active"),inputTextMobile.classList.add("is-active"),g.classList.add("is-active")):y&&y?.location&&($("#locationInput").val(y?.location),$("#locationInputNav").val(y?.location),$("#inputTextMobile").val(y?.location),$("#locationInputScroll").val(y?.location),d.classList.add("is-active"),c.classList.add("is-active"),inputTextMobile.classList.add("is-active"),g.classList.add("is-active"),l=y),e?.selectedSpecialties&&(r?e.selectedSpecialties=r:r=e?.selectedSpecialties),setTimeout(()=>{Te()},10)}catch(e){console.log("error",e)}R(),k()}document.querySelectorAll(".br__insurance-search-input, .input-search-popups").forEach(e=>{e.addEventListener("keydown",function(i){let s=e.closest(".hero_dropdown-wrap").querySelectorAll(".w-dyn-item:not(.hide)");if(s.length!==0&&(i.key==="ArrowDown"&&(i.preventDefault(),u=(u+1)%s.length,C(s)),i.key==="ArrowUp"&&(i.preventDefault(),u=(u-1+s.length)%s.length,C(s)),i.key==="Enter"&&(i.preventDefault(),u>=0))){let t=s[u];t.querySelector("input[type='checkbox'], input[type='radio']").click(),t.querySelector("input[type='checkbox'], input[type='radio']").type==="radio"&&(u=-1,C(s))}})});function C(e){e.forEach((i,s)=>{s===u?i.classList.add("keyboard-highlight"):i.classList.remove("keyboard-highlight")}),u>-1&&e[u].scrollIntoView({block:"nearest"})}function re(){if(!window.visualViewport)return;let e=document.querySelectorAll(".mobile-filter-modal .home-modal-form"),i=window.visualViewport;if(window.innerHeight-i.height>100){let t=i.height;e.forEach(n=>{n.style.maxHeight=`${t}px`,n.style.height=`${t}px`})}else e.forEach(t=>{t.style.maxHeight="",t.style.height=""})}window.visualViewport&&(window.visualViewport.addEventListener("resize",re),window.visualViewport.addEventListener("scroll",re)),window.initMap=Ne,window.storeInputText=Ie;function Ne(){xe()}let K=document.createElement("script");K.src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCoibblXX0z3Zr5fSF9V0enYBD5_EZIgiA&callback=initMap&loading=async&libraries=places&v=weekly&region=us",K.async=!0,document.head.appendChild(K)});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/home-body.js
+  var REDIRECT_PENDING_KEY = "fay_redirect_pending";
+  async function withTimeout(promise, ms) {
+    return Promise.race([
+      promise.then(() => ({ ok: true })),
+      new Promise((resolve) => window.setTimeout(() => resolve({ ok: false, timeout: true }), ms))
+    ]);
+  }
+  async function waitForMixpanel(timeout = 1e3, retries = 100, delay = 100) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      if (window.mixpanel) {
+        const result = await withTimeout(Promise.resolve(window.mixpanel), timeout);
+        if (result.ok) {
+          return { ok: true };
+        }
+      }
+      if (attempt < retries) {
+        console.warn(`Mixpanel not ready (attempt ${attempt}/${retries}). Retrying in ${delay}ms...`);
+        await new Promise((r) => window.setTimeout(r, delay));
+      }
+    }
+    return { ok: false, timeout: true };
+  }
+  async function waitForOsano(timeout = 1e3, retries = 100, delay = 100) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      if (window.Osano) {
+        const result = await withTimeout(Promise.resolve(window.Osano), timeout);
+        if (result.ok) {
+          return { ok: true };
+        }
+      }
+      if (attempt < retries) {
+        await new Promise((r) => window.setTimeout(r, delay));
+      }
+    }
+    return { ok: false, timeout: true };
+  }
+  function isBot() {
+    const botPattern = /DatadogSynthetics/i;
+    return botPattern.test(window.navigator.userAgent);
+  }
+  var adsUrlParams = new window.URLSearchParams(window.location.search);
+  var isAds = adsUrlParams.get("ads");
+  var customerId = adsUrlParams.get("customerId");
+  var sessionId = adsUrlParams.get("sessionId");
+  var referralToken = adsUrlParams.get("referralToken");
+  var withingsToken = adsUrlParams.get("withings_token") ?? adsUrlParams.get("withingsToken");
+  var has_withings_plus = adsUrlParams.get("has_withings_plus");
+  var FayBookingCode = adsUrlParams.get("FayBookingCode");
+  if (withingsToken) {
+    window.localStorage.setItem("withingsToken", withingsToken);
+  }
+  window.Webflow ||= [];
+  window.Webflow.push(() => {
+    if (isAds === "true") {
+      document.querySelector(".br__nav_menu-list")?.classList.add("is-ads");
+      document.querySelector(".br__footer-wr")?.classList.add("is-ads-hide");
+      document.querySelector(".br__nav__menu-button")?.classList.add("is-ads");
+      document.querySelector(".br__footer-wr-ads")?.classList.remove("is-ads");
+    } else {
+      document.querySelector(".br__nav_menu-list")?.classList.remove("is-ads");
+      document.querySelector(".br__footer-wr")?.classList.remove("is-ads-hide");
+      document.querySelector(".br__nav__menu-button")?.classList.remove("is-ads");
+      document.querySelector(".br__footer-wr-ads")?.classList.add("is-ads");
+    }
+  });
+  window.mixpanelReady = (async () => {
+    const result = await waitForMixpanel();
+    return result;
+  })();
+  window.osanoReady = (async () => {
+    const result = await waitForOsano();
+    return result;
+  })();
+  window.statsigReady = (async () => {
+    const result = await waitForStatsig();
+    return result;
+  })();
+  async function initTracking() {
+    const statsigStatus = await window.statsigReady;
+    await window.mixpanelReady;
+    const userAgentBotTest = window.navigator.userAgent;
+    window.mixpanel.register({ "User Agent": userAgentBotTest });
+    if (isBot()) {
+      window.mixpanel.register({ $ignore: true });
+    }
+    const ratingsGateOn = statsigStatus?.ok ? window.statsigClient.checkGate("dietitian_profile_reviews_and_ratings") : false;
+    const quizGateOn = statsigStatus?.ok ? window.statsigClient.checkGate("quiz_flow_marketing_site") : false;
+    const arrivedViaRedirect = window.localStorage.getItem(REDIRECT_PENDING_KEY) === "true";
+    if (arrivedViaRedirect) {
+      window.localStorage.removeItem(REDIRECT_PENDING_KEY);
+    }
+    console.log("fire mixpanel tracking events");
+    window.mixpanel.track("home_page_viewed", {
+      ...arrivedViaRedirect && { arrived_via_redirect: true },
+      RatingShown: ratingsGateOn,
+      QuizShown: quizGateOn
+    });
+    window.mixpanel.init("b244137ebd6eaed06ec25cc81bec6ad0", {
+      record_sessions_percent: 100,
+      record_mask_text_selector: ""
+    });
+    window.Webflow ||= [];
+    window.Webflow.push(() => {
+      if (quizGateOn) {
+        window.localStorage.setItem("hasQuizFlow", "true");
+        $(".find-dietitian-link").attr("href", "https://signup.faynutrition.com/quiz");
+        window.mixpanel.track("$experiment_started", {
+          "Experiment name": "quiz_flow",
+          "Variant name": "quiz_flow_v1"
+        });
+        window.setTimeout(() => {
+          if (typeof addUtmParamsInLinks === "function") {
+            window.addUtmParamsInLinks();
+          }
+        }, 1e3);
+      } else {
+        window.localStorage.removeItem("hasQuizFlow");
+        window.mixpanel.track("$experiment_started", {
+          "Experiment name": "quiz_flow",
+          "Variant name": "booking_flow"
+        });
+      }
+    });
+  }
+  initTracking();
+  window.Webflow ||= [];
+  window.Webflow.push(() => {
+    var autocompleteTimer;
+    var requestCounter = 0;
+    let selectedSpecialties = null;
+    let selectedInsurance = null;
+    let selectedState = {};
+    let inputSearchListActiveIndex = -1;
+    let errorContainers = document.querySelectorAll('[data-search-error="container"]');
+    let stateErrorMessages = document.querySelectorAll('[data-search-error="location"]');
+    let insuranceErrorMessages = document.querySelectorAll('[data-search-error="insurance"]');
+    let insuranceLabelHero = document.getElementById("insurance-label");
+    let insuranceLabelNav = document.getElementById("insurance-label-nav");
+    let specialtiesLabelHero = document.getElementById("specialties-label");
+    let specialtiesLabelNav = document.getElementById("specialties-label-nav");
+    const locationInput = document.getElementById("locationInput");
+    const locationInputNav = document.getElementById("locationInputNav");
+    const locationInputMobile = document.getElementById("inputTextMobile");
+    const locationInputScroll = document.getElementById("locationInputScroll");
+    var clearSpecialtiesLinkD = document.getElementById("clear-specialties");
+    var clearSpecialtiesLinkNavD = document.getElementById("clear-specialties-nav");
+    var clearSpecialtiesLinkM = document.getElementById("clear-specialties-m");
+    var togElements = document.getElementsByClassName("hero-form_field-wrap");
+    var dropdownElements = document.getElementsByClassName("hero_dropdown-wrap");
+    var saveElements = document.getElementsByClassName("save");
+    const herofilterSection = document.querySelector(".br__h-hero-wr");
+    const herofilterFieldElements = herofilterSection.querySelectorAll(".br__search-field-wr");
+    const navfilterSection = document.querySelector(".br__header_container");
+    const navFilterFieldElements = navfilterSection.querySelectorAll(".br__search-field-wr");
+    function ensureDropdownInViewport(dropdownEl, offset = 16) {
+      if (!dropdownEl) return;
+      const rect = dropdownEl.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      let scrollAmount = 0;
+      if (rect.bottom > viewportHeight) {
+        scrollAmount = rect.bottom - viewportHeight + offset;
+      }
+      if (rect.top < 0) {
+        scrollAmount = rect.top - offset;
+      }
+      if (scrollAmount !== 0) {
+        window.scrollBy({
+          top: scrollAmount,
+          behavior: "smooth"
+        });
+      }
+    }
+    function toggleDropdown(event2) {
+      var clickedDropdown = event2.currentTarget.parentElement.querySelector(".hero_dropdown-wrap");
+      console.log("clickedDropdown", clickedDropdown);
+      for (var i2 = 0; i2 < dropdownElements.length; i2++) {
+        if (dropdownElements[i2].id == "specialty-dropdown" && dropdownElements[i2].classList.contains("is-active")) {
+          $("#save-specialty").trigger("click");
+        } else if (dropdownElements[i2].id == "specialty-dropdown-nav" && dropdownElements[i2].classList.contains("is-active")) {
+          $("#save-specialty-nav").trigger("click");
+        }
+        if (clickedDropdown && [
+          "insurance-dropdown",
+          "insurance-dropdown-nav",
+          "specialty-dropdown",
+          "specialty-dropdown-nav"
+        ].includes(clickedDropdown.id)) {
+          requestAnimationFrame(() => {
+            ensureDropdownInViewport(clickedDropdown);
+          });
+        }
+        if (dropdownElements[i2] !== clickedDropdown) {
+          dropdownElements[i2].classList.remove("is-active");
+          dropdownElements[i2].removeAttribute("aria-expanded");
+          dropdownElements[i2].setAttribute("aria-expanded", "false");
+        }
+      }
+      clickedDropdown?.classList.toggle("is-active");
+      clickedDropdown?.setAttribute("aria-expanded", "true");
+      inputSearchListActiveIndex = -1;
+      setTimeout(() => {
+        updateKeyboardHighlight(clickedDropdown?.querySelectorAll(".w-dyn-item") ?? []);
+      }, 10);
+    }
+    function closeDropdown(event2) {
+      var dropdown = event2?.currentTarget?.closest(".hero_dropdown-wrap");
+      if (dropdown) {
+        dropdown.classList.remove("is-active");
+        dropdown.removeAttribute("aria-expanded");
+        dropdown.setAttribute("aria-expanded", "false");
+        inputSearchListActiveIndex = -1;
+        setTimeout(() => {
+          updateKeyboardHighlight(dropdown.querySelectorAll(".w-dyn-item"));
+        }, 10);
+      }
+    }
+    function closeDropdownsOutsideForm(event2) {
+      var clickedElement = event2.target;
+      var isDropdownClicked = clickedElement.closest(".br__search-field-wr") !== null || clickedElement.closest(".cc_step-wr") !== null;
+      if (!isDropdownClicked) {
+        inputSearchListActiveIndex = -1;
+        for (var i2 = 0; i2 < dropdownElements.length; i2++) {
+          if (dropdownElements[i2].id == "specialty-dropdown" && dropdownElements[i2].classList.contains("is-active")) {
+            $("#save-specialty").trigger("click");
+            resetSpecialtiesInputSearch();
+          }
+          if (dropdownElements[i2].id == "specialty-dropdown-nav" && dropdownElements[i2].classList.contains("is-active")) {
+            $("#save-specialty-nav").trigger("click");
+            resetSpecialtiesInputSearch();
+          }
+          if ((dropdownElements[i2].id == "insurance-dropdown" || dropdownElements[i2].id == "insurance-dropdown-nav") && dropdownElements[i2].classList.contains("is-active")) {
+            resetInsuranceInputSearch();
+          }
+          dropdownElements[i2].classList.remove("is-active");
+          dropdownElements[i2].removeAttribute("aria-expanded");
+          dropdownElements[i2].setAttribute("aria-expanded", "false");
+          const dropdownItems = dropdownElements[i2]?.querySelectorAll(".w-dyn-item");
+          setTimeout(() => {
+            updateKeyboardHighlight(dropdownItems);
+          }, 10);
+        }
+      }
+    }
+    for (var i = 0; i < togElements.length; i++) {
+      togElements[i].addEventListener("click", toggleDropdown);
+    }
+    for (var i = 0; i < saveElements.length; i++) {
+      saveElements[i].addEventListener("click", closeDropdown);
+    }
+    document.addEventListener("click", closeDropdownsOutsideForm);
+    locationInput.addEventListener("click", closeDropdownsOutsideForm);
+    locationInputNav.addEventListener("click", closeDropdownsOutsideForm);
+    locationInputScroll.addEventListener("click", closeDropdownsOutsideForm);
+    const form = document.getElementById("wf-form-Select-your-needs-optional");
+    form.addEventListener("keypress", function preventSubmit() {
+      if (event.key === "Enter") {
+        event.preventDefault();
+      }
+    });
+    form.addEventListener("submit", function preventSubmit() {
+      event.preventDefault();
+      return false;
+    });
+    const triggers = document.querySelectorAll(".popup-trigger");
+    const popups = document.querySelectorAll(".mobile-filter-modal");
+    let lastTrigger = null;
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", (event2) => {
+        const popupId = event2.currentTarget.getAttribute("data-popup");
+        const popup = document.getElementById(popupId);
+        if (popup) {
+          openPopup(popup, trigger);
+        }
+      });
+    });
+    popups.forEach((popup) => {
+      const closeButton = popup.querySelectorAll(".close");
+      if (closeButton && closeButton.length > 0) {
+        closeButton.forEach((button) => {
+          button.addEventListener("click", () => closePopup(popup));
+        });
+      }
+      popup.addEventListener("click", (event2) => {
+        if (event2.target === popup) {
+          closePopup(popup);
+        }
+      });
+    });
+    function openPopup(popup, trigger) {
+      popups.forEach((otherPopup) => {
+        if (otherPopup !== popup) {
+          otherPopup.classList.remove("is-visible");
+          otherPopup.setAttribute("inert", "");
+          otherPopup.setAttribute("aria-hidden", "true");
+        }
+      });
+      popup.classList.add("is-visible");
+      popup.removeAttribute("inert");
+      popup.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+      const focusableElements = popup.querySelectorAll("a, button, input, select, textarea");
+      if (focusableElements.length > 0) {
+        focusableElements[0].focus();
+      }
+      lastTrigger = trigger;
+    }
+    function closePopup(popup) {
+      popup.classList.remove("is-visible");
+      popup.setAttribute("inert", "");
+      popup.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+      if (lastTrigger) {
+        lastTrigger.focus();
+        lastTrigger = null;
+      }
+      if (popup.id == "insurance") {
+        resetInsuranceInputSearch();
+      }
+      if (popup.id == "specialties") {
+        resetSpecialtiesInputSearch();
+      }
+    }
+    document.addEventListener("keydown", (event2) => {
+      if (event2.key === "Escape") {
+        popups.forEach((popup) => {
+          if (popup.classList.contains("is-visible")) {
+            closePopup(popup);
+            if (popup.id == "specialties") {
+              $("#specialties .save").trigger("click");
+            }
+          }
+        });
+      }
+    });
+    let locationInputs = document.querySelectorAll(
+      "#locationInput, #locationInputNav, #inputTextMobile, #locationInputScroll"
+    );
+    const insuranceLabel = document.getElementById("insurance-label");
+    const insuranceLabelMobileScroll = document.getElementById("insurance-label-scroll");
+    const insuranceRadio = document.querySelectorAll(
+      '#insurance .insurance-wrapper input[type="radio"], #insurance-dropdown .insurance-wrapper input[type="radio"], #insurance-dropdown-nav .insurance-wrapper input[type="radio"]'
+    );
+    const insuranceDropdown = $("#insurance-dropdown");
+    const insuranceDropdownNav = $("#insurance-dropdown-nav");
+    const specialtyDropdown = $("#specialty-dropdown");
+    const specialtyDropdownNav = $("#specialty-dropdown-nav");
+    let finalURL = "";
+    async function createURL() {
+      const statsigStatus = await window.statsigReady;
+      let url = "https://www.faynutrition.com/find";
+      const quizGateOn = statsigStatus.ok ? window.statsigClient.checkGate("quiz_flow_marketing_site") : false;
+      if (quizGateOn) {
+        url = "https://signup.faynutrition.com/quiz";
+      }
+      const buildUrl = new URL(url);
+      let stateURL;
+      let insuranceURL;
+      let specialtyURL;
+      if (selectedState.state !== void 0) {
+        stateURL = selectedState.state.replace(/\s+/g, "+");
+        buildUrl.searchParams.set("state", stateURL);
+        if (locationInput.value) {
+          buildUrl.searchParams.set("stateText", locationInput.value);
+        }
+        if (selectedState.userLatLong !== void 0 && selectedState.userLatLong.lat !== void 0 && selectedState.userLatLong.lng !== void 0) {
+          const userLatLong = `${selectedState.userLatLong.lat},${selectedState.userLatLong.lng}`;
+          buildUrl.searchParams.set("location_coordinates", userLatLong);
+        }
+      }
+      if (selectedInsurance != null) {
+        insuranceURL = selectedInsurance.replace(/\s+/g, "+");
+        buildUrl.searchParams.set("insurance", insuranceURL);
+      }
+      if (selectedSpecialties && selectedSpecialties.length > 0) {
+        selectedSpecialties.forEach((specialty, index) => {
+          buildUrl.searchParams.append("specialties", specialty);
+        });
+      }
+      shouldPersistParams.forEach((key) => {
+        const storedVal = localStorage.getItem(key);
+        if (storedVal) {
+          buildUrl.searchParams.append(key, storedVal);
+        }
+      });
+      const urlParams = new URLSearchParams(window.location.search);
+      const isAds2 = urlParams.get("ads");
+      if (isAds2 == "true") {
+        buildUrl.searchParams.set("ads", "true");
+      }
+      if (customerId) {
+        buildUrl.searchParams.set("customerId", customerId);
+      }
+      if (sessionId) {
+        buildUrl.searchParams.set("sessionId", sessionId);
+      }
+      if (referralToken) {
+        buildUrl.searchParams.set("referralToken", referralToken);
+      }
+      if (withingsToken) {
+        buildUrl.searchParams.set("withingsToken", withingsToken);
+      }
+      if (has_withings_plus) {
+        buildUrl.searchParams.set("has_withings_plus", has_withings_plus);
+      }
+      if (FayBookingCode) {
+        buildUrl.searchParams.set("FayBookingCode", FayBookingCode);
+      }
+      finalURL = buildUrl.toString();
+    }
+    function validateStateField() {
+      console.log("selectedState:", selectedState);
+      if (selectedState.state !== void 0) {
+        errorContainers.forEach((container) => container.classList.add("is-hidden"));
+        stateErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+        locationInput.classList.remove("is-error");
+        locationInputNav.classList.remove("is-error");
+      } else {
+        errorContainers.forEach((container) => container.classList.remove("is-hidden"));
+        stateErrorMessages.forEach((msg) => msg.classList.remove("is-hidden"));
+        locationInput.classList.add("is-error");
+        locationInputNav.classList.add("is-error");
+      }
+    }
+    function validateInsuranceField() {
+      if (selectedInsurance != null) {
+        errorContainers.forEach((container) => container.classList.add("is-hidden"));
+        insuranceErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+        if (insuranceLabelHero) insuranceLabelHero.classList.remove("is-error");
+        if (insuranceLabelNav) insuranceLabelNav.classList.remove("is-error");
+      } else {
+        errorContainers.forEach((container) => container.classList.remove("is-hidden"));
+        insuranceErrorMessages.forEach((msg) => msg.classList.remove("is-hidden"));
+        if (insuranceLabelHero) insuranceLabelHero.classList.add("is-error");
+        if (insuranceLabelNav) insuranceLabelNav.classList.add("is-error");
+      }
+    }
+    locationInput.addEventListener("input", function() {
+      locationInputNav.value = locationInput.value;
+      locationInputMobile.value = locationInput.value;
+      locationInputScroll.value = locationInput.value;
+      errorContainers.forEach((container) => container.classList.add("is-hidden"));
+      stateErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+      locationInput.classList.remove("is-error");
+      locationInputNav.classList.remove("is-error");
+    });
+    locationInputNav.addEventListener("input", function() {
+      locationInput.value = locationInputNav.value;
+      locationInputMobile.value = locationInputNav.value;
+      locationInputScroll.value = locationInputNav.value;
+      errorContainers.forEach((container) => container.classList.add("is-hidden"));
+      stateErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+      locationInput.classList.remove("is-error");
+      locationInputNav.classList.remove("is-error");
+    });
+    locationInputMobile.addEventListener("input", function() {
+      locationInput.value = locationInputMobile.value;
+      locationInputNav.value = locationInputMobile.value;
+      locationInputScroll.value = locationInputMobile.value;
+      errorContainers.forEach((container) => container.classList.add("is-hidden"));
+      stateErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+      locationInput.classList.remove("is-error");
+      locationInputNav.classList.remove("is-error");
+    });
+    locationInputScroll.addEventListener("input", function() {
+      locationInput.value = locationInputScroll.value;
+      locationInputNav.value = locationInputScroll.value;
+      locationInputMobile.value = locationInputScroll.value;
+      errorContainers.forEach((container) => container.classList.add("is-hidden"));
+      stateErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+      locationInput.classList.remove("is-error");
+      locationInputNav.classList.remove("is-error");
+    });
+    function initAutocomplete() {
+      var options = {
+        types: ["(regions)"],
+        componentRestrictions: { country: "us" }
+      };
+      locationInputs.forEach((locInput) => {
+        var autocomplete = new google.maps.places.Autocomplete(locInput, options);
+        locInput.addEventListener("input", function() {
+          clearTimeout(autocompleteTimer);
+          var input = locInput.value.trim();
+          if (input === "") {
+            if (locInput.id === "locationInput" || locInput.id === "locationInputNav" || locInput.id === "inputTextMobile" || locInput.id === "locationInputScroll") {
+              locationInput.classList.remove("is-active");
+              locationInputMobile.classList.remove("is-active");
+              locationInputNav.classList.remove("is-active");
+              locationInputScroll.classList.remove("is-active");
+              selectedState = {};
+              window.setTimeout(() => {
+                createURL();
+                validateStateField();
+              }, 100);
+            }
+            return;
+          }
+          if (/^\d{5}$/.test(input)) {
+            fetchStateFromZip(input).then((state) => {
+              if (state) {
+                if (locInput.id == "locationInput" || locInput.id == "locationInputNav" || locInput.id == "inputTextMobile" || locInput.id == "locationInputScroll") {
+                  selectedState = state;
+                  createURL();
+                  locationInput.classList.add("is-active");
+                  locationInputNav.classList.add("is-active");
+                  locationInputMobile.classList.add("is-active");
+                  locationInputScroll.classList.add("is-active");
+                  herofilterFieldElements?.[2]?.classList.add("is-active");
+                  navFilterFieldElements?.[2]?.classList.add("is-active");
+                  if (window.innerWidth > 991) {
+                    locInput.blur();
+                    validateStateField();
+                  }
+                }
+              } else {
+                console.log("Invalid ZIP code");
+              }
+            }).catch((err) => console.error("Error fetching state:", err));
+            return;
+          }
+          autocompleteTimer = setTimeout(function() {
+            if (input !== "") {
+              autocomplete.getPlace();
+              requestCounter++;
+              console.log("calls:", requestCounter);
+            }
+          }, 500);
+        });
+        const isOnlyStateSelected = (place) => {
+          if (!place || !place.address_components) return false;
+          const components = place.address_components;
+          const hasState = components.some(
+            (comp) => comp.types.includes("administrative_area_level_1")
+          );
+          const hasCityOrCounty = components.some(
+            (comp) => comp.types.includes("locality") || comp.types.includes("administrative_area_level_2")
+          );
+          return hasState && !hasCityOrCounty;
+        };
+        autocomplete.addListener("place_changed", function() {
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+            console.log("error");
+            return;
+          }
+          var zipCode = "";
+          var city = "";
+          var state = "";
+          const isState = isOnlyStateSelected(place);
+          let userLatLong = {};
+          if (!isState) {
+            userLatLong = {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            };
+          }
+          for (var i2 = 0; i2 < place.address_components.length; i2++) {
+            var component = place.address_components[i2];
+            if (component.types.includes("postal_code")) {
+              zipCode = component.long_name;
+            }
+            if (component.types.includes("locality")) {
+              city = component.long_name;
+            }
+            if (component.types.includes("administrative_area_level_1")) {
+              if (city === "Washington, D.C.") {
+                state = "District of Columbia";
+              } else {
+                state = component.short_name;
+              }
+            }
+          }
+          if (locInput.id === "locationInput" || locInput.id === "locationInputNav" || locInput.id === "inputTextMobile" || locInput.id === "locationInputScroll") {
+            locationInput.classList.add("is-active");
+            locationInputNav.classList.add("is-active");
+            locationInputMobile.classList.add("is-active");
+            locationInputScroll.classList.add("is-active");
+            selectedState = { userLatLong, state };
+            var event2 = new Event("input", { bubbles: true });
+            locInput.dispatchEvent(event2);
+            herofilterFieldElements?.[2]?.classList.add("is-active");
+            navFilterFieldElements?.[2]?.classList.add("is-active");
+            setTimeout(() => {
+              closePopup($("#location")[0]);
+            }, 100);
+            createURL();
+            resizeFilterButton();
+            validateStateField();
+          }
+        });
+      });
+      const observer = new window.MutationObserver(() => {
+        const pacContainer = document.querySelector(".pac-container");
+        if (pacContainer && !pacContainer.dataset.moved) {
+          pacContainer.classList.add("is-nav");
+        }
+      });
+      observer.observe(document.body, { childList: true });
+    }
+    function fetchStateFromZip(zipCode) {
+      return new Promise((resolve, reject) => {
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode(
+          { address: zipCode, componentRestrictions: { country: "us" } },
+          function(results, status) {
+            if (status === "OK" && results[0]) {
+              var addressComponents = results[0].address_components;
+              const userLatLong = {
+                lat: results[0].geometry.location.lat(),
+                lng: results[0].geometry.location.lng()
+              };
+              for (var i2 = 0; i2 < addressComponents.length; i2++) {
+                var component = addressComponents[i2];
+                if (component.types.includes("administrative_area_level_1")) {
+                  resolve({ state: component.short_name, userLatLong });
+                  return;
+                }
+              }
+              resolve(null);
+            } else {
+              reject(`Geocoding failed: ${status}`);
+            }
+          }
+        );
+      });
+    }
+    insuranceRadio.forEach(function(radio) {
+      radio.addEventListener("change", function() {
+        const nextElement = this.nextElementSibling;
+        selectedInsurance = radio.getAttribute("data-value");
+        insuranceLabel.textContent = nextElement.textContent;
+        insuranceLabel.classList.add("is-active");
+        insuranceLabelNav.textContent = nextElement.textContent;
+        insuranceLabelNav.classList.add("is-active");
+        insuranceLabelMobileScroll.textContent = nextElement.textContent;
+        insuranceLabelMobileScroll.classList.add("is-active");
+        insuranceDropdown.removeClass("is-active");
+        insuranceDropdownNav.removeClass("is-active");
+        resetInsuranceInputSearch();
+        closePopup($("#insurance.mobile-filter-modal")[0]);
+        createURL();
+        validateInsuranceField();
+        resizeFilterButton();
+        if (selectedState.state !== void 0) {
+          herofilterFieldElements?.[1]?.classList.add("is-active");
+          navFilterFieldElements?.[1]?.classList.add("is-active");
+          herofilterFieldElements?.[2]?.classList.add("is-active");
+          navFilterFieldElements?.[2]?.classList.add("is-active");
+        } else {
+          herofilterFieldElements?.[1]?.classList.add("is-active");
+          navFilterFieldElements?.[1]?.classList.add("is-active");
+        }
+        $(
+          '#insurance .insurance-wrapper input[type="radio"], #insurance-dropdown .insurance-wrapper input[type="radio"], #insurance-dropdown-nav .insurance-wrapper input[type="radio"]'
+        ).each(function() {
+          if (selectedInsurance == $(this).attr("data-value")) {
+            $(this).prop("checked", true).closest(".w-radio").find(".w-radio-input").addClass("w--redirected-checked");
+          } else {
+            $(this).prop("checked", false).closest(".w-radio").find(".w-radio-input").removeClass("w--redirected-checked");
+          }
+        });
+      });
+    });
+    $("#save-specialty").click(function() {
+      var checkboxes = $('#specialty-dropdown .filter-item input[type="checkbox"]');
+      selectedSpecialties = [];
+      var selectedValues = [];
+      checkboxes.each((index, checkbox) => {
+        const isChecked = $(checkbox).prop("checked");
+        if (isChecked) {
+          selectedSpecialties.push(checkbox.getAttribute("data-value"));
+          const label = $(checkbox).closest(".filter-item").find(".checkbox-label").text().trim();
+          selectedValues.push(label);
+        }
+      });
+      if (selectedSpecialties && selectedSpecialties.length > 0) {
+        $("#specialties-label").text(selectedValues.join(", ")).addClass("is-active");
+        $("#specialties-label-scroll").text(selectedValues.join(", ")).addClass("is-active");
+        $("#specialties-label-nav").text(selectedValues.join(", ")).addClass("is-active");
+      } else {
+        $("#specialties-label").text("Needs").removeClass("is-active");
+        $("#specialties-label-scroll").text("Needs").removeClass("is-active");
+        $("#specialties-label-nav").text("Needs").removeClass("is-active");
+      }
+      resetSpecialtiesInputSearch();
+      $(
+        '#specialty-dropdown .filter-item input[type="checkbox"], #specialty-dropdown-nav .filter-item input[type="checkbox"], #specialty-collection-mobile .filter-item input[type="checkbox"]'
+      ).each((index, checkboxInput) => {
+        const value = $(checkboxInput).attr("data-value");
+        if (selectedSpecialties.includes(value)) {
+          $(checkboxInput).prop("checked", true);
+          $(checkboxInput).closest(".specialties-field").find(".w-checkbox-input").addClass("w--redirected-checked");
+        } else {
+          $(checkboxInput).prop("checked", false);
+          $(checkboxInput).closest(".specialties-field").find(".w-checkbox-input").removeClass("w--redirected-checked");
+        }
+      });
+      setTimeout(() => {
+        specialtyDropdown.hasClass("is-active") ? specialtyDropdown.removeClass("is-active") : null;
+        specialtyDropdownNav.hasClass("is-active") ? specialtyDropdownNav.removeClass("is-active") : null;
+      }, 100);
+      createURL();
+    });
+    $("#save-specialty-nav").click(function() {
+      var checkboxes = $('#specialty-dropdown-nav .filter-item input[type="checkbox"]');
+      selectedSpecialties = [];
+      var selectedValues = [];
+      checkboxes.each((index, checkbox) => {
+        const isChecked = $(checkbox).prop("checked");
+        if (isChecked) {
+          selectedSpecialties.push(checkbox.getAttribute("data-value"));
+          const label = $(checkbox).closest(".filter-item").find(".checkbox-label").text().trim();
+          selectedValues.push(label);
+        }
+      });
+      if (selectedSpecialties && selectedSpecialties.length > 0) {
+        $("#specialties-label").text(selectedValues.join(", ")).addClass("is-active");
+        $("#specialties-label-scroll").text(selectedValues.join(", ")).addClass("is-active");
+        $("#specialties-label-nav").text(selectedValues.join(", ")).addClass("is-active");
+      } else {
+        $("#specialties-label").text("Needs").removeClass("is-active");
+        $("#specialties-label-scroll").text("Needs").removeClass("is-active");
+        $("#specialties-label-nav").text("Needs").removeClass("is-active");
+      }
+      resetSpecialtiesInputSearch();
+      $(
+        '#specialty-dropdown .filter-item input[type="checkbox"], #specialty-dropdown-nav .filter-item input[type="checkbox"], #specialty-collection-mobile .filter-item input[type="checkbox"]'
+      ).each((index, checkboxInput) => {
+        const value = $(checkboxInput).attr("data-value");
+        if (selectedSpecialties.includes(value)) {
+          $(checkboxInput).prop("checked", true);
+          $(checkboxInput).closest(".specialties-field").find(".w-checkbox-input").addClass("w--redirected-checked");
+        } else {
+          $(checkboxInput).prop("checked", false);
+          $(checkboxInput).closest(".specialties-field").find(".w-checkbox-input").removeClass("w--redirected-checked");
+        }
+      });
+      setTimeout(() => {
+        specialtyDropdown.hasClass("is-active") ? specialtyDropdown.removeClass("is-active") : null;
+        specialtyDropdownNav.hasClass("is-active") ? specialtyDropdownNav.removeClass("is-active") : null;
+      }, 100);
+      createURL();
+    });
+    $("#specialties .save").click(function() {
+      var checkboxes = $('#specialty-collection-mobile .filter-item input[type="checkbox"]');
+      selectedSpecialties = [];
+      var selectedValues = [];
+      checkboxes.each((index, checkbox) => {
+        const isChecked = $(checkbox).prop("checked");
+        if (isChecked) {
+          selectedSpecialties.push(checkbox.getAttribute("data-value"));
+          const label = $(checkbox).closest(".filter-item").find(".checkbox-label").text().trim();
+          selectedValues.push(label);
+        }
+      });
+      if (selectedSpecialties && selectedSpecialties.length > 0) {
+        $("#specialties-label").text(selectedValues.join(", ")).addClass("is-active");
+        $("#specialties-label-scroll").text(selectedValues.join(", ")).addClass("is-active");
+        $("#specialties-label-nav").text(selectedValues.join(", ")).addClass("is-active");
+      } else {
+        $("#specialties-label").text("Needs").removeClass("is-active");
+        $("#specialties-label-scroll").text("Needs").removeClass("is-active");
+        $("#specialties-label-nav").text("Needs").removeClass("is-active");
+      }
+      $(
+        '#specialty-dropdown .filter-item input[type="checkbox"], #specialty-dropdown-nav .filter-item input[type="checkbox"]'
+      ).each((index, checkboxInput) => {
+        const value = $(checkboxInput).attr("data-value");
+        if (selectedSpecialties.includes(value)) {
+          $(checkboxInput).prop("checked", true);
+          $(checkboxInput).closest(".specialties-field").find(".w-checkbox-input").addClass("w--redirected-checked");
+        } else {
+          $(checkboxInput).prop("checked", false);
+          $(checkboxInput).closest(".specialties-field").find(".w-checkbox-input").removeClass("w--redirected-checked");
+        }
+      });
+      createURL();
+      closePopup($("#specialties.mobile-filter-modal")[0]);
+    });
+    $("#specialties .close").click(function() {
+      $("#specialties .save").trigger("click");
+    });
+    $("form").submit(function(e) {
+      e.preventDefault();
+      return false;
+    });
+    function storeInputText() {
+      if (selectedInsurance == null || selectedState.state === void 0) {
+        errorContainers.forEach((container) => container.classList.remove("is-hidden"));
+        if (selectedInsurance == null) {
+          stateErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+          insuranceErrorMessages.forEach((msg) => msg.classList.remove("is-hidden"));
+          locationInput.classList.remove("is-error");
+          locationInputNav.classList.remove("is-error");
+          if (insuranceLabelHero) insuranceLabelHero.classList.add("is-error");
+          if (insuranceLabelNav) insuranceLabelNav.classList.add("is-error");
+        } else if (selectedInsurance != null && selectedState.state === void 0) {
+          insuranceErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+          stateErrorMessages.forEach((msg) => msg.classList.remove("is-hidden"));
+          if (insuranceLabelHero) insuranceLabelHero.classList.remove("is-error");
+          if (insuranceLabelNav) insuranceLabelNav.classList.remove("is-error");
+          locationInput.classList.add("is-error");
+          locationInputNav.classList.add("is-error");
+        }
+      } else {
+        errorContainers.forEach((container) => container.classList.add("is-hidden"));
+        insuranceErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+        stateErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+        locationInput.classList.remove("is-error");
+        locationInputNav.classList.remove("is-error");
+        if (insuranceLabelHero) insuranceLabelHero.classList.remove("is-error");
+        if (insuranceLabelNav) insuranceLabelNav.classList.remove("is-error");
+        setTimeout(() => {
+          const inputText = locationInput.value;
+          sessionStorage.setItem("stateInputText", inputText);
+          sessionStorage.setItem(
+            "filterValue",
+            JSON.stringify({
+              selectedSpecialties,
+              selectedInsurance,
+              selectedState: {
+                ...selectedState,
+                location: $("#locationInput").val()
+              }
+            })
+          );
+          window.location.href = finalURL;
+        }, 50);
+      }
+      return false;
+    }
+    const insuranceSearchInputs = document.querySelectorAll(
+      "#insurance-dropdown .br__insurance-search-input, #insurance-dropdown-nav .br__insurance-search-input, #insuranceSearchMobile"
+    );
+    const specialtySearchInputs = document.querySelectorAll(
+      "#specialty-dropdown .br__insurance-search-input, #specialty-dropdown-nav .br__insurance-search-input, #specialitiesSearchMobile"
+    );
+    const insuranceItems = document.querySelectorAll(".insurance-wrapper .insurance-item");
+    const specialtyItems = document.querySelectorAll(
+      "#specialty-dropdown .filter-item, #specialty-dropdown-nav .filter-item, #specialty-collection-mobile.specialtity-collection .filter-item"
+    );
+    insuranceSearchInputs.forEach((input) => {
+      input.addEventListener("input", function() {
+        inputSearchListActiveIndex = -1;
+        const query = this.value.trim().toLowerCase();
+        document.getElementById("insurance")?.querySelector(".insurance-wrapper").classList.toggle("is-searching-active", query);
+        $(
+          "#insurance-dropdown .br__insurance-search-input, #insurance-dropdown-nav .br__insurance-search-input, #insuranceSearchMobile"
+        ).val(this.value.trim());
+        errorContainers.forEach((container) => container.classList.add("is-hidden"));
+        insuranceErrorMessages.forEach((msg) => msg.classList.add("is-hidden"));
+        if (insuranceLabelHero) insuranceLabelHero.classList.remove("is-error");
+        if (insuranceLabelNav) insuranceLabelNav.classList.remove("is-error");
+        insuranceItems.forEach((item) => {
+          const label = item.querySelector(".w-form-label");
+          const originalText = label.getAttribute("original-text");
+          const lowerText = originalText.toLowerCase();
+          if (!query || lowerText.includes(query)) {
+            item.classList.remove("hide");
+          } else {
+            item.classList.add("hide");
+          }
+          if (query) {
+            const regex = new RegExp(`(${query})`, "gi");
+            label.innerHTML = originalText.replace(regex, `<span class="pac-matched">$1</span>`);
+          } else {
+            label.innerHTML = originalText;
+          }
+        });
+      });
+    });
+    function resetInsuranceInputSearch() {
+      const insuranceInput = document.getElementById("insurance-dropdown")?.querySelector(".br__insurance-search-input");
+      if (insuranceInput) insuranceInput.value = "";
+      const insuranceInputNav = document.getElementById("insurance-dropdown-nav")?.querySelector(".br__insurance-search-input");
+      if (insuranceInputNav) insuranceInputNav.value = "";
+      const mobileInput = document.getElementById("insuranceSearchMobile");
+      if (mobileInput) mobileInput.value = "";
+      const insuranceWrapper = document.getElementById("insurance")?.querySelector(".insurance-wrapper");
+      if (insuranceWrapper) insuranceWrapper.classList.remove("is-searching-active");
+      insuranceItems.forEach((item) => {
+        const label = item.querySelector(".w-form-label");
+        if (!label) return;
+        const originalText = label.getAttribute("original-text");
+        if (originalText) {
+          label.innerHTML = originalText;
+        }
+        item.classList.remove("hide");
+      });
+      inputSearchListActiveIndex = -1;
+      setTimeout(() => {
+        updateKeyboardHighlight(insuranceItems);
+      }, 10);
+    }
+    specialtySearchInputs.forEach((input) => {
+      input.addEventListener("input", function() {
+        const query = this.value.trim().toLowerCase();
+        const specialitiesSearch = document.getElementById("specialty-dropdown").querySelector(".br__insurance-search-input");
+        if (specialitiesSearch) specialitiesSearch.valaue = this.value.trim();
+        const specialitiesSearchNav = document.getElementById("specialty-dropdown-nav").querySelector(".br__insurance-search-input");
+        if (specialitiesSearchNav) specialitiesSearchNav.valaue = this.value.trim();
+        const specialitiesSearchMobile = document.getElementById("specialitiesSearchMobile");
+        if (specialitiesSearchMobile) specialitiesSearchMobile.valaue = this.value.trim();
+        document.getElementById("specialties")?.querySelector(".specialties-wrapper").classList.toggle("is-searching-active", query);
+        specialtyItems.forEach((item) => {
+          const label = item.querySelector(".w-form-label");
+          const originalText = label.getAttribute("original-text");
+          const lowerText = originalText.toLowerCase();
+          if (!query || lowerText.includes(query)) {
+            item.classList.remove("hide");
+          } else {
+            item.classList.add("hide");
+          }
+          const searchText = this.value.trim();
+          if (query) {
+            const regex = new RegExp(`(${query})`, "gi");
+            label.innerHTML = originalText.replace(regex, `<span class="pac-matched">$1</span>`);
+          } else {
+            label.innerHTML = originalText;
+          }
+        });
+      });
+    });
+    function resetSpecialtiesInputSearch() {
+      const specialtyInput = document.getElementById("specialty-dropdown")?.querySelector(".br__insurance-search-input");
+      if (specialtyInput) specialtyInput.value = "";
+      const specialtyInputNav = document.getElementById("specialty-dropdown-nav")?.querySelector(".br__insurance-search-input");
+      if (specialtyInputNav) specialtyInputNav.value = "";
+      const mobileInput = document.getElementById("specialitiesSearchMobile");
+      if (mobileInput) mobileInput.value = "";
+      const specialtyWrapper = document.getElementById("specialties")?.querySelector(".specialties-wrapper");
+      if (specialtyWrapper) specialtyWrapper.classList.remove("is-searching-active");
+      specialtyItems.forEach((item) => {
+        const label = item.querySelector(".w-form-label");
+        if (!label) return;
+        const originalText = label.getAttribute("original-text");
+        if (originalText) {
+          label.innerHTML = originalText;
+        }
+        item.classList.remove("hide");
+      });
+      inputSearchListActiveIndex = -1;
+      setTimeout(() => {
+        updateKeyboardHighlight(specialtyItems);
+      }, 10);
+    }
+    function clearSpecialties(event2) {
+      specialtyItems.forEach((item) => {
+        item.querySelector("input[type=checkbox]").checked = false;
+        item.querySelector(".w-checkbox-input")?.classList.remove("w--redirected-checked");
+      });
+      selectedSpecialties = null;
+      $("#specialties-label").text("Needs").removeClass("is-active");
+      $("#specialties-label-scroll").text("Needs").removeClass("is-active");
+      $("#specialties-label-nav").text("Needs").removeClass("is-active");
+      setTimeout(() => {
+        createURL();
+      }, 200);
+      closeDropdown(event2);
+      closePopup($("#specialties.mobile-filter-modal")[0]);
+    }
+    clearSpecialtiesLinkD.addEventListener("click", clearSpecialties);
+    clearSpecialtiesLinkNavD.addEventListener("click", clearSpecialties);
+    clearSpecialtiesLinkM.addEventListener("click", clearSpecialties);
+    function resetSpecialtyHeroSearch() {
+      let selectedSpecialtiesText = [];
+      $(
+        "#specialty-dropdown .filter-item, #specialty-dropdown-nav .filter-item, #specialty-collection-mobile .filter-item"
+      ).each((index, element) => {
+        const input = $(element).find('input[type="checkbox"]');
+        const dataValue = input.attr("data-value");
+        if (selectedSpecialties && selectedSpecialties.includes(dataValue)) {
+          input.prop("checked", true);
+          const text = $(element).find(".w-form-label").text().trim();
+          selectedSpecialtiesText[dataValue] = text;
+          $(element).find(".w-checkbox-input").addClass("w--redirected-checked");
+        } else {
+          input.prop("checked", false);
+          $(element).find(".w-checkbox-input").removeClass("w--redirected-checked");
+        }
+      });
+      if (selectedSpecialties && selectedSpecialties.length > 0) {
+        $("#specialties-label").text(Object.values(selectedSpecialtiesText).join(", "));
+        $("#specialties-label").addClass("is-active");
+        $("#specialties-label-scroll").text(Object.values(selectedSpecialtiesText).join(", "));
+        $("#specialties-label-scroll").addClass("is-active");
+        $("#specialties-label-nav").text(Object.values(selectedSpecialtiesText).join(", "));
+        $("#specialties-label-nav").addClass("is-active");
+      } else {
+        $("#specialties-label").text("Needs");
+        $("#specialties-label").removeClass("is-active");
+        $("#specialties-label-scroll").text("Needs");
+        $("#specialties-label-scroll").removeClass("is-active");
+        $("#specialties-label-nav").text("Needs");
+        $("#specialties-label-nav").removeClass("is-active");
+      }
+    }
+    function resizeFilterButton() {
+      if (window.innerWidth > 991) {
+        $(".br__hero-wr .br__search-wr").addClass("is-active");
+      } else {
+        if (selectedInsurance) {
+          $(".br__hero-wr .br__search-wr").addClass("is-active");
+          $(".br__hero-wr #insurance-tog .br__embed-icon").removeClass("is-active");
+          if (selectedState?.state) {
+            $(
+              ".br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button"
+            ).removeClass("is-disable");
+          } else {
+            $(
+              ".br__hero-wr .br__search-wr button, .br__hero-search-wr .br__search-wr button"
+            ).addClass("is-disable");
+          }
+        } else {
+          $(".br__hero-wr .br__search-wr").removeClass("is-active");
+          $(".br__hero-wr #insurance-tog .br__embed-icon").addClass("is-active");
+        }
+      }
+    }
+    resizeFilterButton();
+    window.addEventListener("resize", () => {
+      resizeFilterButton();
+    });
+    let userLocation = {};
+    async function getUserLocation() {
+      try {
+        const response = await fetch(`https://marketing-site.cdn.faynutrition.com/_geo`);
+        const data = await response.json();
+        if (data?.country?.toLowerCase() == "us") {
+          userLocation = {
+            userLatLong: { lat: data.latitude, lng: data.longitude },
+            state: data.state,
+            location: data.stateName
+          };
+          try {
+            const filterValue = JSON.parse(sessionStorage.getItem("filterValue"));
+            if (filterValue?.selectedState?.location) {
+            } else {
+              $("#locationInput").val(userLocation?.location);
+              $("#locationInputNav").val(userLocation?.location);
+              $("#inputTextMobile").val(userLocation?.location);
+              $("#locationInputScroll").val(userLocation?.location);
+              locationInputNav.classList.add("is-active");
+              locationInput.classList.add("is-active");
+              inputTextMobile.classList.add("is-active");
+              locationInputScroll.classList.add("is-active");
+              selectedState = userLocation;
+            }
+          } catch (error) {
+          }
+        }
+      } catch (error) {
+        userLocation = {};
+      }
+    }
+    (async () => {
+      getUserLocation();
+    })();
+    window.addEventListener("pageshow", function(event2) {
+      $("#loading-div").hide();
+      setTimeout(() => {
+        preFillHeroFilterAfterBack();
+      }, 300);
+    });
+    function preFillHeroFilterAfterBack() {
+      try {
+        let filterValue = JSON.parse(sessionStorage.getItem("filterValue"));
+        if (filterValue?.selectedInsurance) {
+          if (selectedInsurance) {
+            filterValue.selectedInsurance = selectedInsurance;
+          }
+          $("#insurance-dropdown .insurance-item, #insurance-dropdown-nav .insurance-item").each(
+            (index, element) => {
+              const input = $(element).find('input[type="radio"]');
+              const dataValue = input.attr("data-value");
+              const dataLabel = $(element).find(".radio-dropdwn-label").text().trim();
+              if (dataValue === filterValue.selectedInsurance) {
+                input.prop("checked", true);
+                $("#insurance-label").text(dataLabel).addClass("is-active");
+                $("#insurance-label-scroll").text(dataLabel).addClass("is-active");
+                $("#insurance-label-nav").text(dataLabel).addClass("is-active");
+                $("#insurance .insurance-item").find('input[data-value="' + filterValue.selectedInsurance + '"]').closest(".filter-item-radio").find(".w-form-formradioinput").addClass("w--redirected-checked");
+                $(element).find(".w-form-formradioinput").addClass("w--redirected-checked");
+              } else {
+                input.prop("checked", false);
+                $("#insurance .insurance-item").find('input[data-value="' + filterValue.selectedInsurance + '"]').closest(".filter-item-radio").find(".w-form-formradioinput").removeClass("w--redirected-checked");
+                $(element).find(".w-form-formradioinput").removeClass("w--redirected-checked");
+              }
+            }
+          );
+          selectedInsurance = filterValue?.selectedInsurance;
+          herofilterFieldElements?.[1]?.classList.add("is-active");
+          navFilterFieldElements?.[1]?.classList.add("is-active");
+          if (window.innerWidth < 992) {
+            $(".br__search-wr").addClass("is-active");
+          }
+        } else {
+          if (!selectedInsurance) {
+            $("#insurance-label").text("Select your insurance*").removeClass("is-active");
+            $("#insurance-label-scroll").text("Select your insurance*").removeClass("is-active");
+            $("#insurance-label-nav").text("Select your insurance*").removeClass("is-active");
+          }
+        }
+        if (filterValue?.selectedState?.location) {
+          $("#locationInput").val(filterValue?.selectedState?.location);
+          $("#locationInputNav").val(filterValue?.selectedState?.location);
+          $("#inputTextMobile").val(filterValue?.selectedState?.location);
+          $("#locationInputScroll").val(filterValue?.selectedState?.location);
+          delete filterValue?.selectedState.location;
+          selectedState = filterValue?.selectedState;
+          herofilterFieldElements?.[2]?.classList.add("is-active");
+          navFilterFieldElements?.[2]?.classList.add("is-active");
+          locationInputNav.classList.add("is-active");
+          locationInput.classList.add("is-active");
+          inputTextMobile.classList.add("is-active");
+          locationInputScroll.classList.add("is-active");
+        } else if (userLocation && userLocation?.location) {
+          $("#locationInput").val(userLocation?.location);
+          $("#locationInputNav").val(userLocation?.location);
+          $("#inputTextMobile").val(userLocation?.location);
+          $("#locationInputScroll").val(userLocation?.location);
+          locationInputNav.classList.add("is-active");
+          locationInput.classList.add("is-active");
+          inputTextMobile.classList.add("is-active");
+          locationInputScroll.classList.add("is-active");
+          selectedState = userLocation;
+        }
+        if (filterValue?.selectedSpecialties) {
+          if (selectedSpecialties) {
+            filterValue.selectedSpecialties = selectedSpecialties;
+          } else {
+            selectedSpecialties = filterValue?.selectedSpecialties;
+          }
+        }
+        setTimeout(() => {
+          resetSpecialtyHeroSearch();
+        }, 10);
+      } catch (error) {
+        console.log("error", error);
+      }
+      resizeFilterButton();
+      createURL();
+    }
+    const searchInputs = document.querySelectorAll(
+      ".br__insurance-search-input, .input-search-popups"
+    );
+    searchInputs.forEach((input) => {
+      input.addEventListener("keydown", function(e) {
+        const visibleItems = input?.closest(".hero_dropdown-wrap")?.querySelectorAll(".w-dyn-item:not(.hide)");
+        if (!visibleItems || visibleItems.length === 0) return;
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          inputSearchListActiveIndex = (inputSearchListActiveIndex + 1) % visibleItems.length;
+          updateKeyboardHighlight(visibleItems);
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          inputSearchListActiveIndex = (inputSearchListActiveIndex - 1 + visibleItems.length) % visibleItems.length;
+          updateKeyboardHighlight(visibleItems);
+        }
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (inputSearchListActiveIndex >= 0) {
+            const selectedItem = visibleItems[inputSearchListActiveIndex];
+            selectedItem.querySelector("input[type='checkbox'], input[type='radio']").click();
+            if (selectedItem.querySelector("input[type='checkbox'], input[type='radio']").type === "radio") {
+              inputSearchListActiveIndex = -1;
+              updateKeyboardHighlight(visibleItems);
+            }
+          }
+        }
+      });
+    });
+    function updateKeyboardHighlight(visibleItems) {
+      visibleItems.forEach((item, idx) => {
+        if (idx === inputSearchListActiveIndex) item.classList.add("keyboard-highlight");
+        else item.classList.remove("keyboard-highlight");
+      });
+      if (inputSearchListActiveIndex > -1) {
+        visibleItems[inputSearchListActiveIndex].scrollIntoView({
+          block: "nearest"
+        });
+      }
+    }
+    function handleKeyboardResize() {
+      if (!window.visualViewport) return;
+      const modals = document.querySelectorAll(".mobile-filter-modal .home-modal-form");
+      const viewport = window.visualViewport;
+      const keyboardHeight = window.innerHeight - viewport.height;
+      if (keyboardHeight > 100) {
+        const availableHeight = viewport.height;
+        modals.forEach((modal) => {
+          modal.style.maxHeight = `${availableHeight}px`;
+          modal.style.height = `${availableHeight}px`;
+        });
+      } else {
+        modals.forEach((modal) => {
+          modal.style.maxHeight = "";
+          modal.style.height = "";
+        });
+      }
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleKeyboardResize);
+      window.visualViewport.addEventListener("scroll", handleKeyboardResize);
+    }
+    window.initMap = initMap;
+    window.storeInputText = storeInputText;
+    function initMap() {
+      initAutocomplete();
+    }
+    const script = document.createElement("script");
+    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCoibblXX0z3Zr5fSF9V0enYBD5_EZIgiA&callback=initMap&loading=async&libraries=places&v=weekly&region=us";
+    script.async = true;
+    document.head.appendChild(script);
+  });
+})();
+//# sourceMappingURL=home-body.js.map
