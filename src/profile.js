@@ -624,6 +624,8 @@ function updatePriceIframeUrl(providerId = '') {
   let baseUrl = iframe.getAttribute('data-src');
   if (!baseUrl) return;
 
+  if (!state.provider) return;
+
   const insurance = urlParams.get('insurance');
   const specialties = urlParams.getAll('specialties');
 
@@ -684,9 +686,7 @@ async function fetchProviderProfile() {
       state.providerId = providerProfile.provider_id;
       providerProfileCache = providerProfile;
 
-      // Update price iframe URL now that we have the provider_id
       updatePriceIframeUrl();
-
       renderProviderProfile(providerProfile);
 
       return providerProfile;
@@ -1387,5 +1387,6 @@ if (document.readyState === 'loading') {
   init();
 }
 
-// updatePriceIframeUrl is now called after fetchProviderProfile completes
-// to avoid race condition where state.providerId is not yet set
+window.onload = function () {
+  updatePriceIframeUrl();
+};
