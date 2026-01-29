@@ -709,7 +709,9 @@
 
       if (response.status === 200) {
         const providerProfile = await response.json();
-        state.providerProfile = providerProfile;
+        // console.log('api request made')
+        // console.log(providerProfile)
+       state.providerProfile = providerProfile;
         state.providerId = providerProfile.provider_id;
         providerProfileCache = providerProfile;
 
