@@ -624,6 +624,8 @@ function updatePriceIframeUrl(providerId = '') {
   let baseUrl = iframe.getAttribute('data-src');
   if (!baseUrl) return;
 
+  if (!state.provider) return;
+
   const insurance = urlParams.get('insurance');
   const specialties = urlParams.getAll('specialties');
 
@@ -684,9 +686,7 @@ async function fetchProviderProfile() {
       state.providerId = providerProfile.provider_id;
       providerProfileCache = providerProfile;
 
-      // Update price iframe URL now that we have the provider_id
       updatePriceIframeUrl();
-
       renderProviderProfile(providerProfile);
 
       return providerProfile;
@@ -1373,11 +1373,11 @@ function init() {
 
   // Defer non-critical operations
   /*  requestIdleCallback(
-       () => {
-         fetchProviderProfile();
-       },
-       { timeout: 500 }
-     ); */
+      () => {
+        fetchProviderProfile();
+      },
+      { timeout: 500 }
+    ); */
 }
 
 // Run initialization when DOM is ready

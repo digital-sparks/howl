@@ -228,7 +228,7 @@
   /**
    * Generate Statsig stable ID if not exists
    */
-  !function () { let t = "STATSIG_LOCAL_STORAGE_STABLE_ID"; function e() { if (crypto && crypto.randomUUID) return crypto.randomUUID(); let t = () => Math.floor(65536 * Math.random()).toString(16).padStart(4, "0"); return `${t()}${t()}-${t()}-4${t().substring(1)}-${t()}-${t()}${t()}${t()}` } let i = null, n = localStorage.getItem(t) || null; if (document.cookie.match(/statsiguuid=([\w-]+);?/) && ([, i] = document.cookie.match(/statsiguuid=([\w-]+);?/)), i && n && i === n); else if (i && n && i !== n) localStorage.setItem(t, i); else if (i && !n) localStorage.setItem(t, i); else { let o = e(); localStorage.setItem(t, o), function t(i) { let n = new Date; n.setMonth(n.getMonth() + 12); let o = window.location.host.split("."); o.length > 2 && o.shift(); let s = `.${o.join(".")}`; document.cookie = `statsiguuid=${i || e()};Expires=${n};Domain=${s};Path=/;Secure` }(o) } }();
+  !function(){let t="STATSIG_LOCAL_STORAGE_STABLE_ID";function e(){if(crypto&&crypto.randomUUID)return crypto.randomUUID();let t=()=>Math.floor(65536*Math.random()).toString(16).padStart(4,"0");return`${t()}${t()}-${t()}-4${t().substring(1)}-${t()}-${t()}${t()}${t()}`}let i=null,n=localStorage.getItem(t)||null;if(document.cookie.match(/statsiguuid=([\w-]+);?/)&&([,i]=document.cookie.match(/statsiguuid=([\w-]+);?/)),i&&n&&i===n);else if(i&&n&&i!==n)localStorage.setItem(t,i);else if(i&&!n)localStorage.setItem(t,i);else{let o=e();localStorage.setItem(t,o),function t(i){let n=new Date;n.setMonth(n.getMonth()+12);let o=window.location.host.split(".");o.length>2&&o.shift();let s=`.${o.join(".")}`;document.cookie=`statsiguuid=${i||e()};Expires=${n};Domain=${s};Path=/;Secure`}(o)}}();
 
   
   const STATSIG_TIMEOUT_MS = 500;
@@ -246,28 +246,28 @@
 
   function configStatsig() {
     const { StatsigClient } = window.Statsig || {};
-    if (StatsigClient && !window.statsigClient) {
-      let userObj = {};
-      if (localStorage.getItem("STATSIG_LOCAL_STORAGE_STABLE_ID")) {
-        const stableID = localStorage.getItem("STATSIG_LOCAL_STORAGE_STABLE_ID")
-        userObj = {
-          userID: stableID,
-          customIDs: {
-            stableID: stableID
+      if (StatsigClient && !window.statsigClient) {
+        let userObj = {};
+        if (localStorage.getItem("STATSIG_LOCAL_STORAGE_STABLE_ID")) {
+          const stableID = localStorage.getItem("STATSIG_LOCAL_STORAGE_STABLE_ID")
+          userObj =  {
+            userID: stableID,
+              customIDs: {
+                stableID: stableID
+              }
           }
         }
-      }
 
-      // const client = new StatsigClient("client-qFGr4zDaYW5oH0a40Gf5rZInM1UXVqvLJuByLtwUJQt", userObj, {environment: {tier: 'staging'} });
-      const client = new StatsigClient(
-        "client-eNg4fu7Fpe036cvkjwJk5AheQdNZUgFIWeSme9TRQMw",
-        userObj,
-        { environment: { tier: "production" } }
-      );
+        // const client = new StatsigClient("client-qFGr4zDaYW5oH0a40Gf5rZInM1UXVqvLJuByLtwUJQt", userObj, {environment: {tier: 'staging'} });
+        const client = new StatsigClient(
+          "client-eNg4fu7Fpe036cvkjwJk5AheQdNZUgFIWeSme9TRQMw",
+          userObj,
+          { environment: { tier: "production" } }
+        );
        
 
-      window.statsigClient = client;
-    }
+        window.statsigClient = client;
+      }
   }
 
   // --- Retry logic for Statsig initialization
@@ -713,9 +713,6 @@
         state.providerId = providerProfile.provider_id;
         providerProfileCache = providerProfile;
 
-        // Update price iframe URL now that we have the provider_id
-        updatePriceIframeUrl();
-
         renderProviderProfile(providerProfile);
 
         return providerProfile;
@@ -868,12 +865,12 @@
       });
     }
 
-    const iframeParams = buildIframeParams({
+     const iframeParams = buildIframeParams({
       providerId: state.providerId,
     });
     
-    if (iframeParams) {
-      Object.keys(iframeParams).forEach(function (key) {
+    if(iframeParams) {
+      Object.keys(iframeParams).forEach(function(key) {
         booking_url.searchParams.append(key, iframeParams[key]);
       })
     }
@@ -939,8 +936,8 @@
         const ready = await window.statsigReady;
         const gateOn = ready.ok
           ? window.statsigClient.checkGate(
-            "dietitian_profile_reviews_and_ratings"
-          )
+              "dietitian_profile_reviews_and_ratings"
+            )
           : false;
 
         if (gateOn) {
@@ -1258,7 +1255,7 @@
    * Initialize appointment popup - OPTIMIZED with event delegation
    */
   function initAppointmentPopup() {
-    const iframe = document.getElementById("availability-iframe");
+     const iframe = document.getElementById("availability-iframe");
 
     if (iframe && !iframe.src) {
       iframe.src = iframe.dataset.src;
@@ -1455,12 +1452,12 @@
     initMessageHandlers();
 
     // Defer non-critical operations
-    /*  requestIdleCallback(
-       () => {
-         fetchProviderProfile();
-       },
-       { timeout: 500 }
-     ); */
+   /*  requestIdleCallback(
+      () => {
+        fetchProviderProfile();
+      },
+      { timeout: 500 }
+    ); */
   }
 
   // Run initialization when DOM is ready
@@ -1473,4 +1470,3 @@
   window.onload = function () {
     updatePriceIframeUrl();
   };
-  
