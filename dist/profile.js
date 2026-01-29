@@ -709,9 +709,14 @@
 
       if (response.status === 200) {
         const providerProfile = await response.json();
-        state.providerProfile = providerProfile;
+        // console.log('api request made')
+        // console.log(providerProfile)
+       state.providerProfile = providerProfile;
         state.providerId = providerProfile.provider_id;
         providerProfileCache = providerProfile;
+
+        // Update price iframe URL now that we have the provider_id
+        updatePriceIframeUrl();
 
         renderProviderProfile(providerProfile);
 
@@ -1467,6 +1472,5 @@
     init();
   }
 
-  window.onload = function () {
-    updatePriceIframeUrl();
-  };
+  // updatePriceIframeUrl is now called after fetchProviderProfile completes
+  // to avoid race condition where state.providerId is not yet set
