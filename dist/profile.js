@@ -650,8 +650,6 @@
     let baseUrl = iframe.getAttribute("data-src");
     if (!baseUrl) return;
 
-    if (!state.provider) return;
-
     const insurance = urlParams.get("insurance");
     const specialties = urlParams.getAll("specialties");
 
