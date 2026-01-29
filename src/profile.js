@@ -686,7 +686,10 @@ async function fetchProviderProfile() {
       state.providerId = providerProfile.provider_id;
       providerProfileCache = providerProfile;
 
-      updatePriceIframeUrl();
+      const iframe = document.getElementById('provider-price');
+      if (iframe && !iframe.src) {
+        updatePriceIframeUrl();
+      }
       renderProviderProfile(providerProfile);
 
       return providerProfile;
