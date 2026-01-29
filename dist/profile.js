@@ -650,6 +650,8 @@
     let baseUrl = iframe.getAttribute("data-src");
     if (!baseUrl) return;
 
+    if (!state.provider) return;
+
     const insurance = urlParams.get("insurance");
     const specialties = urlParams.getAll("specialties");
 
@@ -713,6 +715,10 @@
         state.providerId = providerProfile.provider_id;
         providerProfileCache = providerProfile;
 
+        const iframe = document.getElementById('provider-price');
+        if (iframe && !iframe.src) {
+          updatePriceIframeUrl();
+        }
         renderProviderProfile(providerProfile);
 
         return providerProfile;
