@@ -1373,11 +1373,11 @@ function init() {
 
   // Defer non-critical operations
   /*  requestIdleCallback(
-      () => {
-        fetchProviderProfile();
-      },
-      { timeout: 500 }
-    ); */
+       () => {
+         fetchProviderProfile();
+       },
+       { timeout: 500 }
+     ); */
 }
 
 // Run initialization when DOM is ready
@@ -1387,5 +1387,6 @@ if (document.readyState === 'loading') {
   init();
 }
 
-// updatePriceIframeUrl is now called after fetchProviderProfile completes
-// to avoid race condition where state.providerId is not yet set
+window.onload = function () {
+  updatePriceIframeUrl();
+};
