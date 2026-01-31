@@ -1,5 +1,6 @@
 import * as esbuild from 'esbuild';
 import { readdirSync } from 'fs';
+import { createServer, request } from 'http';
 import { join, sep } from 'path';
 
 // Config output
@@ -7,13 +8,17 @@ const BUILD_DIRECTORY = 'dist';
 const PRODUCTION = process.env.NODE_ENV === 'production';
 
 // Config entrypoint files
+// You can use both .js and .ts files as entry points
 const ENTRY_POINTS = [
-  'src/global.js',
-  'src/home.js',
-  'src/about.js',
-  'src/careers.js',
-  'src/marketers.js',
-  'src/terms.js',
+  'src/home-head.js',
+  'src/home-body.js',
+  'src/redirect.js',
+  // 'src/find-withings.js',
+  // 'src/find.js',
+  // 'src/home.js',
+  // 'src/osano.css',
+  // 'src/profile.js',
+  // 'src/web-536-profile.js',
 ];
 
 // Config dev serving
@@ -29,6 +34,7 @@ const context = await esbuild.context({
   minify: PRODUCTION,
   sourcemap: !PRODUCTION,
   target: PRODUCTION ? 'es2020' : 'esnext',
+  format: 'iife',
   inject: LIVE_RELOAD ? ['./bin/live-reload.js'] : undefined,
   define: {
     SERVE_ORIGIN: JSON.stringify(SERVE_ORIGIN),
@@ -44,12 +50,58 @@ if (PRODUCTION) {
 // Watch and serve files in dev
 else {
   await context.watch();
-  await context
-    .serve({
-      servedir: BUILD_DIRECTORY,
-      port: SERVE_PORT,
-    })
-    .then(logServedFiles);
+
+  // Start esbuild's server
+  const { host, port } = await context.serve({
+    servedir: BUILD_DIRECTORY,
+    host: 'localhost',
+  });
+
+  // Create a proxy server with CORS headers
+  createServer((req, res) => {
+    // Handle CORS preflight requests
+    if (req.method === 'OPTIONS') {
+      res.writeHead(200, {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Request-Private-Network',
+        'Access-Control-Allow-Private-Network': 'true',
+        'Access-Control-Max-Age': '86400',
+      });
+      res.end();
+      return;
+    }
+
+    const options = {
+      hostname: host,
+      port: port,
+      path: req.url,
+      method: req.method,
+      headers: req.headers,
+    };
+
+    const proxyReq = request(options, (proxyRes) => {
+      // Remove any existing CORS headers from esbuild to avoid duplicates
+      const headers = { ...proxyRes.headers };
+      delete headers['access-control-allow-origin'];
+      delete headers['access-control-allow-methods'];
+      delete headers['access-control-allow-headers'];
+
+      // Add CORS headers to allow any origin
+      res.writeHead(proxyRes.statusCode, {
+        ...headers,
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Request-Private-Network',
+        'Access-Control-Allow-Private-Network': 'true',
+      });
+      proxyRes.pipe(res, { end: true });
+    });
+
+    req.pipe(proxyReq, { end: true });
+  }).listen(SERVE_PORT, () => {
+    logServedFiles();
+  });
 }
 
 /**
